@@ -6,6 +6,7 @@ export default function Header() {
   const [cartCount, setCartCount] = useState(0); // Cart count
   const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Toggle profile dropdown
   const [isMenuOpen, setIsMenuOpen] = useState(false); // Toggle mobile menu
+  const [isActive, setIsActive] = useState("#home"); //set active link
 
   const handleSearchToggle = () => {
     setIsSearchOpen(!isSearchOpen);
@@ -26,14 +27,24 @@ export default function Header() {
         {/* Navigation Links */}
         <div className="hidden md:flex space-x-6">
           <a
-            href="#"
-            className="text-gray-600 hover:border-b-2 p-x-5 hover:border-black pb-1 font-outfit font-medium"
+            href="#home"
+            onClick={() => setIsActive("#home")}
+            className={
+              isActive === "#home"
+                ? `text-gray-600 hover:border-b-2 p-x-5  pb-1 font-outfit font-medium border-black`
+                : `text-gray-600 hover:border-b-2 p-x-5 pb-1 font-outfit font-medium hover:border-black`
+            }
           >
             Home
           </a>
           <a
-            href="#"
-            className="text-gray-600 hover:border-b-2 hover:border-black pb-1 font-outfit font-medium"
+            href="#collection"
+            onClick={() => setIsActive("#collection")}
+            className={
+              isActive === "#home"
+                ? `text-gray-600 hover:border-b-2 p-x-5 hover:border-black pb-1 font-outfit font-medium border-black`
+                : `text-gray-600 hover:border-b-2 p-x-5 pb-1 font-outfit font-medium`
+            }
           >
             Collection
           </a>
@@ -47,7 +58,7 @@ export default function Header() {
             href="#"
             className="text-gray-600 hover:border-b-2 hover:border-black pb-1 font-outfit font-medium"
           >
-            Contact
+            Contact us
           </a>
         </div>
 
@@ -151,7 +162,7 @@ export default function Header() {
             href="#"
             className="block text-gray-600 hover:border-b-2 hover:border-black pb-1 font-outfit font-medium"
           >
-            Contact
+            Contact us
           </a>
         </div>
       )}
