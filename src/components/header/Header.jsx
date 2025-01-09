@@ -1,96 +1,107 @@
 import { FiSearch, FiUser, FiBell } from "react-icons/fi";
 import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import SearchModal from "./SearchModal";
 
 export default function Header() {
-  const [isSearchOpen, setIsSearchOpen] = useState(false); // Toggle search bar
-  const [cartCount, setCartCount] = useState(0); // Cart count
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // Toggle profile dropdown
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // Toggle mobile menu
-  const [isActive, setIsActive] = useState("#home"); //set active link
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [cartCount] = useState(0);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
 
-  const handleSearchToggle = () => {
-    setIsSearchOpen(!isSearchOpen);
+  const isActive = (path) => location.pathname === path;
+
+  const handleSearchClick = () => {
+    setIsDropdownOpen(false); // Close the profile dropdown
+    setIsSearchOpen(true); // Open the search modal
   };
 
-  const handleHoverDropdown = (state) => {
-    setIsDropdownOpen(state); // Toggle dropdown based on hover state
+  const toggleProfileDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+    setIsSearchOpen(false); // Close the search modal
+    setIsMenuOpen(false); // Close the menu
+  };
+
+  const handleMenuToggle = () => {
+    setIsMenuOpen(!isMenuOpen);
+    setIsSearchOpen(false); // Close the search modal
+    setIsDropdownOpen(false); // Close the profile dropdown
+  };
+
+  const handleMenuClose = () => {
+    setIsMenuOpen(false);
   };
 
   return (
     <nav className="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-10">
       <div className="flex justify-between items-center">
-        {/* Brand */}
-        <a href="/" className="text-xl font-semibold">
+        <Link to="/" className="text-xl font-semibold">
           Praise Shop
-        </a>
+        </Link>
 
-        {/* Navigation Links */}
         <div className="hidden md:flex space-x-6">
-          <a
-            href="#home"
-            onClick={() => setIsActive("#home")}
-            className={
-              isActive === "#home"
-                ? `text-gray-600 hover:border-b-2 p-x-5  pb-1 font-outfit font-medium border-black`
-                : `text-gray-600 hover:border-b-2 p-x-5 pb-1 font-outfit font-medium hover:border-black`
-            }
+          <Link
+            to="/"
+            className={`text-gray-600 pb-1 font-outfit font-medium ${
+              isActive("/")
+                ? "border-b-2 border-black"
+                : "hover:border-b-2 hover:border-black"
+            }`}
           >
             Home
-          </a>
-          <a
-            href="#collection"
-            onClick={() => setIsActive("#collection")}
-            className={
-              isActive === "#home"
-                ? `text-gray-600 hover:border-b-2 p-x-5 hover:border-black pb-1 font-outfit font-medium border-black`
-                : `text-gray-600 hover:border-b-2 p-x-5 pb-1 font-outfit font-medium`
-            }
+          </Link>
+          <Link
+            to="/collection"
+            className={`text-gray-600 pb-1 font-outfit font-medium ${
+              isActive("/collection")
+                ? "border-b-2 border-black"
+                : "hover:border-b-2 hover:border-black"
+            }`}
           >
             Collection
-          </a>
-          <a
-            href="#"
-            className="text-gray-600 hover:border-b-2 hover:border-black pb-1 font-outfit font-medium"
+          </Link>
+          <Link
+            to="/about"
+            className={`text-gray-600 pb-1 font-outfit font-medium ${
+              isActive("/about")
+                ? "border-b-2 border-black"
+                : "hover:border-b-2 hover:border-black"
+            }`}
           >
             About
-          </a>
-          <a
-            href="#"
-            className="text-gray-600 hover:border-b-2 hover:border-black pb-1 font-outfit font-medium"
+          </Link>
+          <Link
+            to="/contact"
+            className={`text-gray-600 pb-1 font-outfit font-medium ${
+              isActive("/contact")
+                ? "border-b-2 border-black"
+                : "hover:border-b-2 hover:border-black"
+            }`}
           >
-            Contact us
-          </a>
+            Contact Us
+          </Link>
         </div>
 
-        {/* Right Side Actions */}
         <div className="flex items-center space-x-6 relative">
-          {/* Search Icon */}
           <div className="relative">
             <FiSearch
               size={20}
-              onClick={handleSearchToggle}
+              onClick={handleSearchClick} // Close dropdown and open modal
               className="cursor-pointer"
             />
-            {isSearchOpen && (
-              <input
-                type="text"
-                className="absolute top-[-10px] right-5 p-2 border rounded-md shadow-md w-50 focus:outline-none focus:ring-0 text-sm font-medium text-gray-700"
-                placeholder="Search..."
-              />
-            )}
           </div>
 
-          {/* Profile Icon with Hover Dropdown */}
-          <div
-            className="relative"
-            onMouseEnter={() => handleHoverDropdown(true)}
-            onMouseLeave={() => handleHoverDropdown(false)}
-          >
-            <FiUser size={20} className="cursor-pointer" />
+          <div className="relative">
+            <FiUser
+              size={20}
+              className="cursor-pointer"
+              onClick={toggleProfileDropdown}
+            />
             {isDropdownOpen && (
               <div className="absolute right-0 mt-2 bg-white border rounded-md shadow-md w-40">
                 <ul className="py-2">
-                  {false ? ( // Replace `false` with the actual login state
+                  {false ? (
                     <>
                       <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal">
                         Profile
@@ -117,7 +128,6 @@ export default function Header() {
             )}
           </div>
 
-          {/* Bell Icon with Cart Count */}
           <div className="relative cursor-pointer">
             <FiBell size={20} />
             <span className="absolute top-[+2px] right-[-8px] bg-red-500 text-white text-xs rounded-full px-1">
@@ -125,11 +135,7 @@ export default function Header() {
             </span>
           </div>
 
-          {/* Hamburger Menu */}
-          <button
-            className="block md:hidden"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
+          <button className="block md:hidden" onClick={handleMenuToggle}>
             <div className="w-6 h-1 bg-gray-600 mb-1"></div>
             <div className="w-6 h-1 bg-gray-600 mb-1"></div>
             <div className="w-6 h-1 bg-gray-600"></div>
@@ -137,35 +143,41 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden mt-4 space-y-2">
-          <a
-            href="#"
+        <div className="md:hidden mt-4 space-y-2 transition-all duration-300 ease-in-out">
+          <Link
+            to="/"
             className="block text-gray-600 hover:border-b-2 hover:border-black pb-1 font-outfit font-medium"
+            onClick={handleMenuClose}
           >
             Home
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/collection"
             className="block text-gray-600 hover:border-b-2 hover:border-black pb-1 font-outfit font-medium"
+            onClick={handleMenuClose}
           >
             Collection
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/about"
             className="block text-gray-600 hover:border-b-2 hover:border-black pb-1 font-outfit font-medium"
+            onClick={handleMenuClose}
           >
             About
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/contact"
             className="block text-gray-600 hover:border-b-2 hover:border-black pb-1 font-outfit font-medium"
+            onClick={handleMenuClose}
           >
-            Contact us
-          </a>
+            Contact Us
+          </Link>
         </div>
       )}
+
+      {/* Import and use the SearchModal */}
+      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </nav>
   );
 }
