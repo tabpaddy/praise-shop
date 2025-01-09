@@ -2,9 +2,9 @@ export default function ChooseUs() {
   return (
     <div>
       <div className="text-left my-2 mt-8">
-        <h3 className="relative font-outfit font-normal text-3xl sm:text-4xl">
+        <h3 className="text-slate-700 relative font-outfit font-normal text-3xl sm:text-4xl">
           WHY{" "}
-          <span className="relative font-semibold after:content-[''] after:absolute after:w-[50px] after:pt-1 after:h-[1px] after:bg-black after:top-1/2 after:left-full after:ml-2">
+          <span className="text-black relative font-semibold after:content-[''] after:absolute after:w-[50px] after:pt-1 after:h-[1px] after:bg-black after:top-1/2 after:left-full after:ml-2">
             CHOOSE US
           </span>
         </h3>

@@ -6,9 +6,9 @@ export default function About() {
   return (
     <div>
       <div className="text-center my-2 mt-10">
-        <h3 className="relative font-outfit font-normal text-2xl sm:text-3xl">
+        <h3 className="text-slate-700 relative font-outfit font-normal text-2xl sm:text-3xl">
           ABOUT{" "}
-          <span className="relative font-semibold after:content-[''] after:absolute after:w-[50px] after:pt-1 after:h-[1px] after:bg-black after:top-1/2 after:left-full after:ml-2">
+          <span className="text-black relative font-semibold after:content-[''] after:absolute after:w-[50px] after:pt-1 after:h-[1px] after:bg-black after:top-1/2 after:left-full after:ml-2">
             US
           </span>
         </h3>
