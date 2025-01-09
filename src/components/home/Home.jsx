@@ -1,8 +1,12 @@
 import React from 'react'
+import Subscribe from '../subscribe/Subscribe'
 
 const Home = () => {
   return (
-    <div>home</div>
+    <div>
+
+      <Subscribe/>
+    </div>
   )
 }
 
