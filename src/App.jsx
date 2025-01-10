@@ -6,6 +6,9 @@ import Collection from "./components/collection/Collection";
 import About from "./components/about/About";
 import Contact from "./components/contact/Contact";
 import Footer from "./components/footer/Footer";
+import SignUp from "./components/auth/SignUp";
+import LogIn from "./components/auth/LogIn";
+
 
 function App() {
   return (
@@ -18,6 +21,8 @@ function App() {
           <Route path="/collection" element={<Collection />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/login" element={<LogIn/>}/>
+          <Route path="/signup" element={<SignUp/>}/>
         </Routes>
         <Footer/>
       </BrowserRouter>
