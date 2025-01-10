@@ -1,4 +1,5 @@
-import { useReducer, useState } from "react";
+import axios from "axios";
+import { useEffect, useReducer, useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function SignUpForm() {
@@ -22,10 +23,15 @@ export default function SignUpForm() {
           password: action.payload,
           errors: { ...state.errors, password: "" },
         };
+      case "setIpAddress":
+        return {
+          ...state,
+          ipAddress: action.payload, // Update IP address
+        };
       case "setError":
         return { ...state, errors: { ...state.errors, ...action.payload } };
       case "clearForm":
-        return { name: "", email: "", password: "", errors: {} };
+        return { name: "", email: "", password: "", ipAddress: "", errors: {} };
       default:
         return state;
     }
@@ -35,12 +41,26 @@ export default function SignUpForm() {
     name: "",
     email: "",
     password: "",
+    ipAddress: "",
     errors: {},
   };
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const [passwordStrength, setPasswordStrength] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false); // State to toggle password visibility
+
+  useEffect(() => {
+    const fetchIpAddress = async () => {
+      try {
+        const response = await axios.get("https://api.ipify.org?format=json"); // Use IPify API to get the user's IP
+        dispatch({ type: "setIpAddress", payload: response.data.ip }); // Dispatch an action to set the IP address
+      } catch (error) {
+        console.error("Error fetching IP address:", error);
+      }
+    };
+
+    fetchIpAddress();
+  }, []);
 
   const checkPasswordStrength = (password) => {
     let strength = "weak";
@@ -81,6 +101,7 @@ export default function SignUpForm() {
         name: state.name,
         email: state.email,
         password: state.password,
+        ipAddress: state.ipAddress,
       });
       dispatch({ type: "clearForm" });
       setPasswordStrength("");
