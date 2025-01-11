@@ -103,23 +103,48 @@ export default function Header() {
                 <ul className="py-2">
                   {false ? (
                     <>
-                      <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal">
-                        Profile
+                      <li>
+                        <Link
+                          to="/profile"
+                          className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
+                        >
+                          Profile
+                        </Link>
                       </li>
-                      <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal">
-                        Orders
+                      <li>
+                        <Link
+                          to="/orders"
+                          className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
+                        >
+                          Orders
+                        </Link>
                       </li>
-                      <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal">
-                        Logout
+                      <li>
+                        <Link
+                          to="/logout"
+                          className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
+                        >
+                          Logout
+                        </Link>
                       </li>
                     </>
                   ) : (
                     <>
-                      <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal">
-                        Login
+                      <li>
+                        <Link
+                          to="/login"
+                          className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
+                        >
+                          Login
+                        </Link>
                       </li>
-                      <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal">
-                        Signup
+                      <li>
+                        <Link
+                          to="/signup"
+                          className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
+                        >
+                          Signup
+                        </Link>
                       </li>
                     </>
                   )}
@@ -177,7 +202,10 @@ export default function Header() {
       )}
 
       {/* Import and use the SearchModal */}
-      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
+      <SearchModal
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
+      />
     </nav>
   );
 }

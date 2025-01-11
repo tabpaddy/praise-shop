@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useEffect, useReducer, useState } from "react";
 import { Link } from "react-router-dom";
+import Svg1 from "./Svg1";
+import Svg2 from "./Svg2";
 
 export default function SignUpForm() {
   const reducer = (state, action) => {
@@ -23,6 +25,13 @@ export default function SignUpForm() {
           password: action.payload,
           errors: { ...state.errors, password: "" },
         };
+      case "setPasswordConfirmation":
+        return {
+          ...state,
+          passwordConfirmation: action.payload,
+          errors: { ...state.errors, passwordConfirmation: "" }, // Clear password errors when updated
+        };
+
       case "setIpAddress":
         return {
           ...state,
@@ -30,6 +39,8 @@ export default function SignUpForm() {
         };
       case "setError":
         return { ...state, errors: { ...state.errors, ...action.payload } };
+      case "setSuccess":
+        return { ...state, success: { ...state.success, ...action.payload } };
       case "clearForm":
         return { name: "", email: "", password: "", ipAddress: "", errors: {} };
       default:
@@ -41,13 +52,16 @@ export default function SignUpForm() {
     name: "",
     email: "",
     password: "",
+    passwordConfirmation: "",
     ipAddress: "",
     errors: {},
+    success: "",
   };
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const [passwordStrength, setPasswordStrength] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false); // State to toggle password visibility
+  const [passwordConfirmationVisible, setPasswordConfirmationVisible] = useState(false); // State to toggle password visibility
 
   useEffect(() => {
     const fetchIpAddress = async () => {
@@ -82,6 +96,7 @@ export default function SignUpForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const errors = {};
     if (!state.name) errors.name = "Name is required.";
     if (!state.email) errors.email = "Email is required.";
@@ -90,6 +105,8 @@ export default function SignUpForm() {
     if (!state.password) errors.password = "Password is required.";
     else if (state.password.length < 8)
       errors.password = "Password must be at least 8 characters.";
+    if (state.password !== state.passwordConfirmation)
+      errors.passwordConfirmation = "Passwords do not match.";
 
     if (Object.keys(errors).length > 0) {
       dispatch({ type: "setError", payload: errors });
@@ -97,16 +114,34 @@ export default function SignUpForm() {
     }
 
     try {
-      console.log("Form submitted:", {
-        name: state.name,
-        email: state.email,
-        password: state.password,
-        ipAddress: state.ipAddress,
-      });
-      dispatch({ type: "clearForm" });
-      setPasswordStrength("");
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/register",
+        {
+          name: state.name,
+          email: state.email,
+          password: state.password,
+          password_confirmation: state.passwordConfirmation, // Include this
+          ipAddress: state.ipAddress,
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      if (response.status === 200) {
+        dispatch({ type: "setSuccess", payload: "Registration successful!" });
+        setTimeout(() => {
+          dispatch({ type: "clearForm" });
+          window.location.href = "/login";
+        }, 1000);
+      }
     } catch (error) {
-      console.error("Submission failed:", error);
+      if (error.response && error.response.status === 422) {
+        console.error("Validation errors:", error.response.data);
+        dispatch({ type: "setError", payload: error.response.data.errors });
+      } else {
+        console.error("Submission failed:", error);
+      }
     }
   };
 
@@ -172,35 +207,9 @@ export default function SignUpForm() {
             onClick={() => setPasswordVisible(!passwordVisible)}
           >
             {passwordVisible ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-gray-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 12l-3-3m0 0l-3 3m3-3v12m6 0H6"
-                />
-              </svg>
+              <Svg1/>
             ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-gray-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 5v7m0 4h-3m3 0h3"
-                />
-              </svg>
+              <Svg2/>
             )}
           </span>
           {/* Error Message */}
@@ -221,6 +230,56 @@ export default function SignUpForm() {
               }`}
             >
               {passwordStrength}
+            </span>
+          )}
+        </div>
+        <div className="mb-4 relative">
+          <input
+            className={`p-2 my-1 w-full border-2 rounded ${
+              state.errors.password ? "border-red-500" : "border-slate-900"
+            }`}
+            type={passwordConfirmationVisible ? "text" : "password"}
+            name="passwordConfirmation"
+            placeholder="Confirm Password"
+            value={state.passwordConfirmation}
+            onChange={(e) =>
+              dispatch({
+                type: "setPasswordConfirmation",
+                payload: e.target.value,
+              })
+            }
+          />
+          {/* Eye Icon */}
+          <span
+            className="absolute top-3 right-3 cursor-pointer"
+            onClick={() => setPasswordConfirmationVisible(!passwordConfirmationVisible)}
+          >
+            {passwordConfirmationVisible ? (
+              <Svg1/>
+            ) : (
+              <Svg2/>
+            )}
+          </span>
+          {state.errors.passwordConfirmation && (
+            <span className="text-red-500 text-sm">
+              {state.errors.passwordConfirmation}
+            </span>
+          )}
+        </div>
+
+        <div>
+          {/*success and error messages*/}
+          {(state.success || state.error) && (
+            <span
+              className={`text-sm ${
+                state.success
+                  ? `text-green-500 `
+                  : state.error
+                  ? `text-red-500`
+                  : ``
+              }`}
+            >
+              {state.success || state.errors}
             </span>
           )}
         </div>
