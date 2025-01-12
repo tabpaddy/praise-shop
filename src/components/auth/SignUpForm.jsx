@@ -35,7 +35,7 @@ export default function SignUpForm() {
       case "setIpAddress":
         return {
           ...state,
-          ipAddress: action.payload, // Update IP address
+          ip_address: action.payload, // Update IP address
         };
       case "setError":
         return { ...state, errors: { ...state.errors, ...action.payload } };
@@ -53,7 +53,7 @@ export default function SignUpForm() {
     email: "",
     password: "",
     passwordConfirmation: "",
-    ipAddress: "",
+    ip_address: "",
     errors: {},
     success: "",
   };
@@ -61,7 +61,8 @@ export default function SignUpForm() {
   const [state, dispatch] = useReducer(reducer, initialState);
   const [passwordStrength, setPasswordStrength] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false); // State to toggle password visibility
-  const [passwordConfirmationVisible, setPasswordConfirmationVisible] = useState(false); // State to toggle password visibility
+  const [passwordConfirmationVisible, setPasswordConfirmationVisible] =
+    useState(false); // State to toggle password visibility
 
   useEffect(() => {
     const fetchIpAddress = async () => {
@@ -121,13 +122,13 @@ export default function SignUpForm() {
           email: state.email,
           password: state.password,
           password_confirmation: state.passwordConfirmation, // Include this
-          ipAddress: state.ipAddress,
+          ip_address: state.ip_address,
         },
         {
           headers: { "Content-Type": "application/json" },
         }
       );
-
+      
       if (response.status === 200) {
         dispatch({ type: "setSuccess", payload: "Registration successful!" });
         setTimeout(() => {
@@ -138,6 +139,13 @@ export default function SignUpForm() {
     } catch (error) {
       if (error.response && error.response.status === 422) {
         console.error("Validation errors:", error.response.data);
+        console.log({
+          name: state.name,
+          email: state.email,
+          password: state.password,
+          password_confirmation: state.passwordConfirmation, // Include this
+          ip_address: state.ip_address,
+        });
         dispatch({ type: "setError", payload: error.response.data.errors });
       } else {
         console.error("Submission failed:", error);
@@ -163,6 +171,7 @@ export default function SignUpForm() {
             onChange={(e) =>
               dispatch({ type: "setName", payload: e.target.value })
             }
+            autoComplete="off"
           />
           {state.errors.name && (
             <span className="text-red-500 text-sm">{state.errors.name}</span>
@@ -181,6 +190,7 @@ export default function SignUpForm() {
             onChange={(e) =>
               dispatch({ type: "setEmail", payload: e.target.value })
             }
+            autoComplete="off"
           />
           {state.errors.email && (
             <span className="text-red-500 text-sm">{state.errors.email}</span>
@@ -200,17 +210,14 @@ export default function SignUpForm() {
               dispatch({ type: "setPassword", payload: e.target.value });
               checkPasswordStrength(e.target.value);
             }}
+            autoComplete="off"
           />
           {/* Eye Icon */}
           <span
             className="absolute top-3 right-3 cursor-pointer"
             onClick={() => setPasswordVisible(!passwordVisible)}
           >
-            {passwordVisible ? (
-              <Svg1/>
-            ) : (
-              <Svg2/>
-            )}
+            {passwordVisible ? <Svg1 /> : <Svg2 />}
           </span>
           {/* Error Message */}
           {state.errors.password && (
@@ -248,17 +255,16 @@ export default function SignUpForm() {
                 payload: e.target.value,
               })
             }
+            autoComplete="off"
           />
           {/* Eye Icon */}
           <span
             className="absolute top-3 right-3 cursor-pointer"
-            onClick={() => setPasswordConfirmationVisible(!passwordConfirmationVisible)}
+            onClick={() =>
+              setPasswordConfirmationVisible(!passwordConfirmationVisible)
+            }
           >
-            {passwordConfirmationVisible ? (
-              <Svg1/>
-            ) : (
-              <Svg2/>
-            )}
+            {passwordConfirmationVisible ? <Svg1 /> : <Svg2 />}
           </span>
           {state.errors.passwordConfirmation && (
             <span className="text-red-500 text-sm">
