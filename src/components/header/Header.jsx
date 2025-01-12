@@ -23,6 +23,10 @@ export default function Header() {
     setIsMenuOpen(false); // Close the menu
   };
 
+  const toggleProfileDropdownClose = () => {
+    setIsDropdownOpen(false);
+  };
+
   const handleMenuToggle = () => {
     setIsMenuOpen(!isMenuOpen);
     setIsSearchOpen(false); // Close the search modal
@@ -107,6 +111,7 @@ export default function Header() {
                         <Link
                           to="/profile"
                           className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
+                          onClick={toggleProfileDropdownClose}
                         >
                           Profile
                         </Link>
@@ -115,6 +120,7 @@ export default function Header() {
                         <Link
                           to="/orders"
                           className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
+                          onClick={toggleProfileDropdownClose}
                         >
                           Orders
                         </Link>
@@ -123,6 +129,7 @@ export default function Header() {
                         <Link
                           to="/logout"
                           className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
+                          onClick={toggleProfileDropdownClose}
                         >
                           Logout
                         </Link>
@@ -134,6 +141,7 @@ export default function Header() {
                         <Link
                           to="/login"
                           className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
+                          onClick={toggleProfileDropdownClose}
                         >
                           Login
                         </Link>
@@ -142,6 +150,7 @@ export default function Header() {
                         <Link
                           to="/signup"
                           className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
+                          onClick={toggleProfileDropdownClose}
                         >
                           Signup
                         </Link>

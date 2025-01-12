@@ -12,10 +12,10 @@ export default function Footer() {
         <div>
           <h2 className="text-xl font-semibold text-black">Praise Shop</h2>
           <article className="font-outfit font-normal text-sm sm:text-base my-2">
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book.
+            Welcome to Praise Shop, your one-stop destination for quality
+            products. Since our inception, we have been committed to providing
+            exceptional service and a seamless shopping experience. Explore our
+            wide range of products and enjoy the best deals every day.
           </article>
         </div>
 

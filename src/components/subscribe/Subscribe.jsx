@@ -46,7 +46,8 @@ export default function Subscribe() {
         Subscribe now & get 20% off
       </h3>
       <article className="font-outfit font-normal text-stone-400 text-base sm:text-lg my-2 text-center">
-        Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+        Stay updated with our latest offers and products. Subscribe to our
+        newsletter for exclusive deals and updates.
       </article>
       <form className="flex w-full max-w-3xl mt-4" onSubmit={handleSubscribe}>
         <input
