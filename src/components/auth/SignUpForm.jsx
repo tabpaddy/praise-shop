@@ -128,7 +128,7 @@ export default function SignUpForm() {
           headers: { "Content-Type": "application/json" },
         }
       );
-      
+
       if (response.status === 200) {
         dispatch({ type: "setSuccess", payload: "Registration successful!" });
         setTimeout(() => {
@@ -139,13 +139,7 @@ export default function SignUpForm() {
     } catch (error) {
       if (error.response && error.response.status === 422) {
         console.error("Validation errors:", error.response.data);
-        console.log({
-          name: state.name,
-          email: state.email,
-          password: state.password,
-          password_confirmation: state.passwordConfirmation, // Include this
-          ip_address: state.ip_address,
-        });
+
         dispatch({ type: "setError", payload: error.response.data.errors });
       } else {
         console.error("Submission failed:", error);
@@ -273,9 +267,9 @@ export default function SignUpForm() {
           )}
         </div>
 
-        <div>
+        <div className="mb-4">
           {/*success and error messages*/}
-          {(state.success || state.error) && (
+          {state.success && (
             <span
               className={`text-sm ${
                 state.success
@@ -285,7 +279,7 @@ export default function SignUpForm() {
                   : ``
               }`}
             >
-              {state.success || state.errors}
+              {state.success}
             </span>
           )}
         </div>
