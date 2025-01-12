@@ -3,23 +3,23 @@ import { createSlice } from "@reduxjs/toolkit";
 const loginSlice = createSlice({
   name: "login",
   initialState: {
-    nameOrEmail: "",
+    email: "",
     password: "",
   },
   reducers: {
-    setNameOrEmail: (state, action) => {
-      state.nameOrEmail = action.payload;
+    setEmail: (state, action) => {
+      state.email = action.payload;
     },
     setPassword: (state, action) => {
       state.password = action.payload;
     },
     clearForm: (state) => {
-      state.nameOrEmail = "";
+      state.email = "";
       state.password = "";
     },
   },
 });
 
-export const { setNameOrEmail, setPassword, clearForm } = loginSlice.actions;
+export const { setEmail, setPassword, clearForm } = loginSlice.actions;
 
 export default loginSlice.reducer;
