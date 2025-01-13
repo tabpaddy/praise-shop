@@ -5,12 +5,12 @@ import {
   setError,
   clearForm,
 } from "../redux/LoginSlice";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import Svg1 from "./Svg1";
 import Svg2 from "./Svg2";
 import axios from "axios";
-const { updateUser } = useContext(UserContext); // Use the context
+import { UserContext } from "../context/UserContext";
 
 export default function LogInForm() {
   const dispatch = useDispatch();
@@ -19,6 +19,8 @@ export default function LogInForm() {
   const [passwordVisible, setPasswordVisible] = useState(false); // Local state for password visibility
   const [errors, setErrors] = useState({}); // Local state for error messages
 
+  const { updateUser } = useContext(UserContext); // Use the context
+
   const validateForm = () => {
     const newErrors = {};
     if (!email.trim()) {
@@ -26,6 +28,8 @@ export default function LogInForm() {
     }
     if (!password.trim()) {
       newErrors.password = "Password is required.";
+    } else if (password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters.";
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0; // Return true if no errors
@@ -53,24 +57,23 @@ export default function LogInForm() {
 
       if (response.status === 200) {
         // Update the user context with user data
-        const userData = response.json; // Replace `response.data.user` with the actual user object from your API
+        const userData = response.data; // Replace `response.data.user` with the actual user object from your API
         updateUser(userData);
-        
+
         setTimeout(() => {
           dispatch(clearForm());
           window.location.href = "/";
-        }, 2000);
+        }, 1000);
       }
     } catch (error) {
       if (error.response && error.response.status === 422) {
-        console.error("validation errors:", error.response.data);
-        dispatch(setError(error.response.data.errors));
+        const validationErrors = error.response.data.errors;
+        console.error("Validation errors:", validationErrors);
+        dispatch(setError(validationErrors));
       } else {
-        console.error("submission failed:", error);
+        console.error("Submission failed:", error);
       }
     }
-
-    console.log("Form submitted:", { email, password });
   };
 
   return (
@@ -126,9 +129,17 @@ export default function LogInForm() {
         </div>
 
         <div className="mb-4">
-          {/*success and error messages*/}
-          {error && (
-            <span className={`text-sm ${`text-red-500`}`}>{error}</span>
+          {/* General error message */}
+          {error.message && (
+            <span className="text-sm text-red-500">{error.message}</span>
+          )}
+
+          {/* Field-specific error messages */}
+          {error.email && (
+            <span className="text-sm text-red-500">{error.email[0]}</span>
+          )}
+          {error.password && (
+            <span className="text-sm text-red-500">{error.password[0]}</span>
           )}
         </div>
 
