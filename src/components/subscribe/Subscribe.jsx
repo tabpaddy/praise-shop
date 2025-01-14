@@ -33,11 +33,33 @@ export default function Subscribe() {
       return;
     }
 
+    try{
+      const response = await axios.post("", {
+        email: email,
+        ip_address: ipAddress,
+      },
+      {
+        headers: {"content-Type": "application/json"},
+      });
+
+      if(response.status === 200){
+        setMessage("Subscription data stored successfully!");
+        setTimeout(() => {
+          setEmail(""); // Clear the input field
+        }, 2000)
+      }
+    }catch (error){
+      if (error.response && error.response.status === 422){
+        console.error("validation errors:", error.response.data)
+      }else{
+        console.error("Submission failed:", error)
+      }
+    }
     // Temporarily store email and IP (to send to backend later)
     console.log({ email, ipAddress });
 
-    setMessage("Subscription data stored successfully!");
-    setEmail(""); // Clear the input field
+    
+    
   };
 
   return (
