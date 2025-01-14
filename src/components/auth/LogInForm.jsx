@@ -11,8 +11,11 @@ import Svg1 from "./Svg1";
 import Svg2 from "./Svg2";
 import axios from "axios";
 import { UserContext } from "../context/UserContext";
+import ForgotPasswordInput from "./ForgotPasswordInput";
 
 export default function LogInForm() {
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+
   const dispatch = useDispatch();
   const { email, password, error } = useSelector((state) => state.login);
 
@@ -20,6 +23,10 @@ export default function LogInForm() {
   const [errors, setErrors] = useState({}); // Local state for error messages
 
   const { updateUser } = useContext(UserContext); // Use the context
+
+  const handleForgotPasswordClick = () => {
+    setIsForgotPasswordOpen(true);
+  };
 
   const validateForm = () => {
     const newErrors = {};
@@ -59,6 +66,7 @@ export default function LogInForm() {
         // Update the user context with user data
         const userData = response.data; // Replace `response.data.user` with the actual user object from your API
         updateUser(userData);
+
 
         setTimeout(() => {
           dispatch(clearForm());
@@ -146,11 +154,12 @@ export default function LogInForm() {
         {/* Links */}
         <div className="mb-4 flex justify-between">
           <div className="text-left">
-            <Link to="/forgottenPassword">
-              <span className="text-sm text-slate-500 hover:text-slate-800">
-                Forgot your password
-              </span>
-            </Link>
+            <span
+              className="text-sm text-slate-500 hover:text-slate-800"
+              onClick={handleForgotPasswordClick} //open modal
+            >
+              Forgot your password
+            </span>
           </div>
           <div className="text-right">
             <Link to={"/signup"}>
@@ -170,6 +179,12 @@ export default function LogInForm() {
           />
         </div>
       </form>
+
+      {/* Import and use the ForgotPasswordInput*/}
+      <ForgotPasswordInput
+        isOpen={isForgotPasswordOpen}
+        onClose={() => setIsForgotPasswordOpen(false)}
+      />
     </div>
   );
 }
