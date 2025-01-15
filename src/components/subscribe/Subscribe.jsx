@@ -26,7 +26,7 @@ export default function Subscribe() {
   };
 
   // Handle form submission
-  const handleSubscribe = (e) => {
+  const handleSubscribe = async (e) => {
     e.preventDefault();
     if (!email) {
       setMessage("Please enter a valid email.");
@@ -34,7 +34,7 @@ export default function Subscribe() {
     }
 
     try{
-      const response = await axios.post("", {
+      const response = await axios.post("http://127.0.0.1:8000/api/subscribe", {
         email: email,
         ip_address: ipAddress,
       },
@@ -43,9 +43,10 @@ export default function Subscribe() {
       });
 
       if(response.status === 200){
-        setMessage("Subscription data stored successfully!");
+        setMessage(response.data.message);
         setTimeout(() => {
           setEmail(""); // Clear the input field
+          setMessage(""); // Clear the success message
         }, 2000)
       }
     }catch (error){
@@ -56,7 +57,7 @@ export default function Subscribe() {
       }
     }
     // Temporarily store email and IP (to send to backend later)
-    console.log({ email, ipAddress });
+    //console.log({ email, ipAddress });
 
     
     
