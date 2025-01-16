@@ -237,7 +237,7 @@ export default function SignUpForm() {
         <div className="mb-4 relative">
           <input
             className={`p-2 my-1 w-full border-2 rounded ${
-              state.errors.password ? "border-red-500" : "border-slate-900"
+              state.errors.passwordConfirmation ? "border-red-500" : "border-slate-900"
             }`}
             type={passwordConfirmationVisible ? "text" : "password"}
             name="passwordConfirmation"
