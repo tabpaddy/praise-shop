@@ -42,16 +42,18 @@ export default function ForgotPasswordInput({ isOpen, onClose }) {
     try {
       const response = await axios.post(
         "http://127.0.0.1:8000/api/forgot-password",
-        { email },
+        { email: email },
         {
           headers: {
             "Content-Type": "application/json",
           },
         }
       );
+      console.log(email);
 
       if (response.status === 200) {
         setMessage("Password reset link sent successfully.");
+
         setTimeout(() => {
           setEmail(""); // Clear the input field
           setMessage(""); // Clear the success message
@@ -82,8 +84,13 @@ export default function ForgotPasswordInput({ isOpen, onClose }) {
         className="absolute top-[5rem] left-1/2 transform -translate-x-1/2 w-full max-w-[90%] sm:max-w-[80%] md:max-w-[50%] lg:max-w-[40%] xl:max-w-[30%] px-4 sm:px-8"
         onClick={(e) => e.stopPropagation()} // Prevent closing the modal when clicking inside
       >
-        <form className="relative bg-white p-6 rounded-lg shadow-lg" onSubmit={handleSubmit}>
-          <h3 className="text-lg font-medium text-gray-700 mb-4">Forgot Password</h3>
+        <form
+          className="relative bg-white p-6 rounded-lg shadow-lg"
+          onSubmit={handleSubmit}
+        >
+          <h3 className="text-lg font-medium text-gray-700 mb-4">
+            Forgot Password
+          </h3>
 
           <input
             type="email"
