@@ -1,33 +1,14 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
-import Header from "./components/header/Header";
-import Home from "./components/home/Home";
-import Collection from "./components/collection/Collection";
-import About from "./components/about/About";
-import Contact from "./components/contact/Contact";
-import Footer from "./components/footer/Footer";
-import SignUp from "./components/auth/SignUp";
-import LogIn from "./components/auth/LogIn";
-
+import AdminApp from "./components/admin/AdminApp";
+import ClientApp from "./components/client/ClientApp";
 
 function App() {
   return (
-    <div className="xl:mx-20 lg:mx-16 md:mx-8 sm:mx-4 mx-2">
-    <>
-      <BrowserRouter>
-        <Header />
-        <Routes>
-          <Route path="/*" element={<Home />} />
-          <Route path="/collection" element={<Collection />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/login" element={<LogIn/>}/>
-          <Route path="/signup" element={<SignUp/>}/>
-        </Routes>
-        <Footer/>
-      </BrowserRouter>
-    </>
-    </div>
+    <Routes>
+      <Route path="/admin/*" element={<AdminApp />} />
+      <Route path="/*" element={<ClientApp />} />
+    </Routes>
   );
 }
 
