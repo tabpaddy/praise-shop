@@ -3,10 +3,12 @@ import { useContext, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import SearchModal from "./SearchModal";
 import { UserContext } from "../../../context/UserContext";
+import LogoutUserModal from "./LogoutUserModal";
 
 export default function Header() {
   const { user } = useContext(UserContext); // Access user state
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [logoutUserModal, setLogoutUserModal] = useState(false);
   const [cartCount] = useState(0);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,10 +21,16 @@ export default function Header() {
     setIsSearchOpen(true); // Open the search modal
   };
 
+  const logoutUserModalClick = () => {
+    setIsDropdownOpen(false); // Close the profile dropdown
+    setLogoutUserModal(true);
+  }
+
   const toggleProfileDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
     setIsSearchOpen(false); // Close the search modal
     setIsMenuOpen(false); // Close the menu
+    setLogoutUserModal(false);
   };
 
   const toggleProfileDropdownClose = () => {
@@ -38,7 +46,7 @@ export default function Header() {
   const handleMenuClose = () => {
     setIsMenuOpen(false);
   };
-
+// console.log(user)
   return (
     <nav className="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-10">
       <div className="flex justify-between items-center">
@@ -128,13 +136,13 @@ export default function Header() {
                         </Link>
                       </li>
                       <li>
-                        <Link
+                        <button
                           to="/logout"
                           className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
-                          onClick={toggleProfileDropdownClose}
+                          onClick={toggleProfileDropdownClose && logoutUserModalClick}
                         >
                           Logout
-                        </Link>
+                        </button>
                       </li>
                     </>
                   ) : (
@@ -216,6 +224,12 @@ export default function Header() {
       <SearchModal
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
+      />
+
+      {/* Import and use the LogoutUserModal */}
+      <LogoutUserModal 
+      modalOpen={logoutUserModal}
+      modalClose={() => setLogoutUserModal(false)}
       />
     </nav>
   );

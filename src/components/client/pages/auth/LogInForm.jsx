@@ -3,6 +3,7 @@ import {
   setEmail,
   setPassword,
   setError,
+  setSuccess,
   clearForm,
 } from "../../../redux/LoginSlice";
 import { useContext, useState } from "react";
@@ -17,7 +18,9 @@ export default function LogInForm() {
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
 
   const dispatch = useDispatch();
-  const { email, password, error } = useSelector((state) => state.login);
+  const { email, password, error, success } = useSelector(
+    (state) => state.login
+  );
 
   const [passwordVisible, setPasswordVisible] = useState(false); // Local state for password visibility
   const [errors, setErrors] = useState({}); // Local state for error messages
@@ -64,15 +67,22 @@ export default function LogInForm() {
 
       if (response.status === 200) {
         // Update the user context with user data
-        const userData = response.data; // Replace `response.data.user` with the actual user object from your API
+        const userData = response.data.user; // Replace `response.data.user` with the actual user object from your API
+        const userToken = response.data.token;
+
+        // console.log("User data:", userData);
+        // console.log("Token:", userToken);
+        // console.log("expiresIn:", response.data.expiresIn);
+        dispatch(setSuccess(response.data.message));
         const tokenExpiration = new Date(
           Date.now() + response.data.expiresIn * 2000
         ); // Example: expiresIn in seconds
-        updateUser({ ...userData, tokenExpiration }); // Save user to context and localStorage
+        updateUser({ ...userData, tokenExpiration, userToken }); // Save user to context and localStorage
         setTimeout(() => {
           dispatch(clearForm());
           window.location.href = "/";
-        }, 1000);
+        }, 1000)
+      //console.log("User data:", userData);
       }
     } catch (error) {
       if (error.response && error.response.status === 422) {
@@ -139,12 +149,13 @@ export default function LogInForm() {
           )}
         </div>
 
-        <div className="mb-4">
+        <div className="mb-4 justify-center flex">
           {/* General error message */}
           {error.message && (
             <span className="text-sm text-red-500">{error.message}</span>
           )}
-
+          {/* success message */}
+          {success && <span className="text-sm text-green-500">{success}</span>}
           {/* Field-specific error messages */}
           {error.email && (
             <span className="text-sm text-red-500">{error.email[0]}</span>

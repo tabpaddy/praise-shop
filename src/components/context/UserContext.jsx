@@ -1,6 +1,7 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useCallback, useEffect, useState } from "react";
 
 import CryptoJS from "crypto-js";
+import axios from "axios";
 
 export const UserContext = createContext();
 
@@ -27,25 +28,56 @@ export const UserProvider = ({ children }) => {
     localStorage.setItem("user", encryptedData); // Save encrypted data to localStorage
   };
 
-  const logoutUser = () => {
-    setUser(null); // Clear context state
-    localStorage.removeItem("user"); // Remove user data from localStorage
-  };
+  const logoutUser = useCallback(async () => {
+    try {
+      if (user && user.userToken) {
+        const response = await axios.post(
+          "http://127.0.0.1:8000/api/logout",
+          { userEmail: user.email }, // Send user email
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${user.userToken}`,
+            },
+          }
+        );
+  
+        if (response.status === 200) {
+          console.log("Logout successful");
+          setUser(null);
+          localStorage.removeItem("user");
+          setTimeout(() => {
+            window.location.href = "/";
+          }, 2000);
+        }
+      }
+    } catch (error) {
+      console.error("Logout failed:", error.response?.data || error.message);
+    }
+  }, [user]);
+  
+  
 
   // Check token expiration and auto-logout
   useEffect(() => {
     if (user && user.tokenExpiration) {
       const currentTime = Date.now();
       const tokenExpiryTime = new Date(user.tokenExpiration).getTime();
-
+  
+      console.log("Current Time:", currentTime);
+      console.log("Token Expiry Time:", tokenExpiryTime);
+  
       if (currentTime > tokenExpiryTime) {
-        logoutUser(); // Logout if token is expired
+        console.log("Token expired. Logging out...");
+        logoutUser();
       }
     }
-  }, [user]);
+  }, [user, logoutUser]);
+  
 
+  
   return (
-    <UserContext.Provider value={{ user, updateUser }}>
+    <UserContext.Provider value={{ user, updateUser, logoutUser }}>
       {children}
     </UserContext.Provider>
   );
