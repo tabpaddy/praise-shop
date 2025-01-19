@@ -6,6 +6,7 @@ const loginSlice = createSlice({
     email: "",
     password: "",
     error: {},
+    success: "",
   },
   reducers: {
     setEmail: (state, action) => {
@@ -17,14 +18,18 @@ const loginSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
     },
+    setSuccess: (state, action) => {
+      state.success = action.payload
+    },
     clearForm: (state) => {
       state.email = "";
       state.password = "";
       state.error = {};
+      state.success = "";
     },
   },
 });
 
-export const { setEmail, setPassword, setError, clearForm } = loginSlice.actions;
+export const { setEmail, setPassword, setError, setSuccess, clearForm } = loginSlice.actions;
 
 export default loginSlice.reducer;
