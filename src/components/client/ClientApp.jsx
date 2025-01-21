@@ -8,6 +8,7 @@ import Footer from "./pages/footer/Footer";
 import SignUp from "./pages/auth/SignUp";
 import LogIn from "./pages/auth/LogIn";
 import PasswordReset from "./pages/auth/PasswordReset";
+
 export default function ClientApp() {
   return (
     <div className="xl:mx-20 lg:mx-16 md:mx-8 sm:mx-4 mx-2">
