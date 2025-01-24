@@ -9,10 +9,14 @@ import {
 import Svg1 from "../../../client/pages/auth/Svg1";
 import Svg2 from "../../../client/pages/auth/Svg2";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AdminContext } from "../../../context/AdminContext";
+import axios from "axios";
 
 export default function AdminLoginForm() {
   const [passwordVisible, setPasswordVisible] = useState(false);
+
+  const { updateAdmin } = useContext(AdminContext);
 
   const dispatch = useDispatch();
   const { email, password, error, success } = useSelector(
@@ -30,14 +34,49 @@ export default function AdminLoginForm() {
       newErrors.password = "Password must be at least 8 characters.";
     }
 
-    setError(newErrors);
+    dispatch(setError(newErrors));
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
-      return;
+      return; // stop submission if validation fails
+    }
+
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/admin/login",
+        {
+          email: email,
+          password: password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        const adminData = response.data.admin;
+        const adminToken = response.data.token;
+        dispatch(setSuccess("Login successful"));
+        const tokenExpiration = new Date(Date.now() + 3600 * 1000); // 1 hour
+        updateAdmin({ ...adminData, adminToken, tokenExpiration }); // save admin to context and localStorage
+        setTimeout(() => {
+          dispatch(clearForm());
+          window.location.href = "/admin/dashboard";
+        }, 3000);
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 422) {
+        const validationErrors = error.response.data.errors;
+        dispatch(setError(validationErrors));
+        console.error("Validation errors:", validationErrors);
+      } else {
+        console.error("Submission failed:", error);
+      }
     }
   };
   return (
@@ -87,20 +126,21 @@ export default function AdminLoginForm() {
             className="absolute top-3 right-3 cursor-pointer "
             onClick={() => setPasswordVisible(!passwordVisible)}
           >
-            {passwordVisible ? <Svg1/> : <Svg2/>}
+            {passwordVisible ? <Svg1 /> : <Svg2 />}
           </span>
+          {error.password && (
+            <span className="text-sm text-red-500 ">{error.password}</span>
+          )}
         </div>
 
         <div className="mb-4 justify-center flex">
-            {/* general error message */}
-            {error.message && (
-                <span className="text-sm text-red-500">{error.message}</span>
-            )}
+          {/* general error message */}
+          {error.message && (
+            <span className="text-sm text-red-500">{error.message}</span>
+          )}
 
-            {/* success message */}
-            {success && (
-                <span className="text-sm text-green-500">{success}</span>
-            )}
+          {/* success message */}
+          {success && <span className="text-sm text-green-500">{success}</span>}
         </div>
 
         {/* submit button */}
