@@ -19,7 +19,7 @@ const AdminLoginSlice = createSlice({
       state.error = action.payload;
     },
     setSuccess: (state, action) => {
-      state.success = action.payload
+      state.success = action.payload;
     },
     clearForm: (state) => {
       state.email = "";
@@ -30,6 +30,7 @@ const AdminLoginSlice = createSlice({
   },
 });
 
-export const { setEmail, setPassword, setError, setSuccess, clearForm } = AdminLoginSlice.actions;
+export const { setEmail, setPassword, setError, setSuccess, clearForm } =
+  AdminLoginSlice.actions;
 
 export default AdminLoginSlice.reducer;

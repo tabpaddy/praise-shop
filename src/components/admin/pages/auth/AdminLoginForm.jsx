@@ -15,8 +15,9 @@ import axios from "axios";
 
 export default function AdminLoginForm() {
   const [passwordVisible, setPasswordVisible] = useState(false);
-
   const { updateAdmin } = useContext(AdminContext);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
   const { email, password, error, success } = useSelector(
@@ -40,8 +41,10 @@ export default function AdminLoginForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // Start loading indicator
     if (!validateForm()) {
-      return; // stop submission if validation fails
+      setIsLoading(false); // Stop loading if validation fails
+      return;
     }
 
     try {
@@ -63,22 +66,28 @@ export default function AdminLoginForm() {
         const adminToken = response.data.token;
         dispatch(setSuccess("Login successful"));
         const tokenExpiration = new Date(Date.now() + 3600 * 1000); // 1 hour
-        updateAdmin({ ...adminData, adminToken, tokenExpiration }); // save admin to context and localStorage
+        updateAdmin({ ...adminData, adminToken, tokenExpiration }); // Save admin to context and localStorage
         setTimeout(() => {
           dispatch(clearForm());
           window.location.href = "/admin/dashboard";
         }, 3000);
       }
     } catch (error) {
-      if (error.response && error.response.status === 422) {
+      if (error.response && error.response.status === 401) {
+        const errorMessage = error.response.data.message;
+        dispatch(setError({ error: errorMessage })); // Display the 401 error message
+      } else if (error.response && error.response.status === 422) {
         const validationErrors = error.response.data.errors;
-        dispatch(setError(validationErrors));
+        //dispatch(setError(validationErrors));
         console.error("Validation errors:", validationErrors);
       } else {
         console.error("Submission failed:", error);
       }
+    } finally {
+      setIsLoading(false); // Stop loading indicator
     }
   };
+
   return (
     <div className="my-10 px-4">
       <form
@@ -135,8 +144,8 @@ export default function AdminLoginForm() {
 
         <div className="mb-4 justify-center flex">
           {/* general error message */}
-          {error.message && (
-            <span className="text-sm text-red-500">{error.message}</span>
+          {error.error && (
+            <span className="text-sm text-red-500">{error.error}</span>
           )}
 
           {/* success message */}
@@ -147,7 +156,8 @@ export default function AdminLoginForm() {
         <div className="text-center">
           <input
             type="submit"
-            value={"Login"}
+            value={isLoading ? "Loading..." : "Submit"} // Change button text when loading
+            disabled={isLoading} // Disable button when loading
             className="text-sm font-outfit font-light text-white bg-black p-3 px-9 rounded hover:bg-gray-800 hover:text-slate-300"
           />
         </div>
