@@ -6,20 +6,82 @@ import AdminManageUser from "./pages/dashboard/AdminManageUser";
 import AdminAddProduct from "./pages/dashboard/AdminAddProduct";
 import AdminViewProduct from "./pages/dashboard/AdminViewProduct";
 import AdminAddAdmin from "./pages/dashboard/AdminAddAdmin";
+import AdminManageAdmin from "./pages/dashboard/AdminManageAdmin"
 import AdminOrders from "./pages/dashboard/AdminOrders";
+import ProtectedRoute from "../protectedRoutes/AdminProtectedRoutes";
 
 export default function AdminApp() {
   return (
     <div className="bg-white">
       <Routes>
-        <Route path="/" element={<AdminLogin />} />
-        <Route path="/dashboard/*" element={<AdminDashboard />} />
-        <Route path="/dashboard/add-user" element={<AdminAddUserDashboard />} />
-        <Route path="/dashboard/manage-users" element={<AdminManageUser />} />
-        <Route path="/dashboard/add-product" element={<AdminAddProduct />} />
-        <Route Path="/dashboard/view-products" element={<AdminViewProduct />} />
-        <Route path="/dashboard/add-admin" element={<AdminAddAdmin />}/>
-        <Route path="/dashboard/orders" element={<AdminOrders /> }/>
+        {/* Public Route */}
+        <Route path="/*" element={<AdminLogin />} />
+
+        {/* Protected Routes */}
+        <Route
+          path="/dashboard/*"
+          element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/add-user"
+          element={
+            <ProtectedRoute>
+              <AdminAddUserDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/manage-users"
+          element={
+            <ProtectedRoute>
+              <AdminManageUser />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/add-product"
+          element={
+            <ProtectedRoute>
+              <AdminAddProduct />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/view-products"
+          element={
+            <ProtectedRoute>
+              <AdminViewProduct />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/add-admin"
+          element={
+            <ProtectedRoute>
+              <AdminAddAdmin />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/manage-admin"
+          element={
+            <ProtectedRoute>
+              <AdminManageAdmin />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/orders"
+          element={
+            <ProtectedRoute>
+              <AdminOrders />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </div>
   );

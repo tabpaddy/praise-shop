@@ -1,9 +1,15 @@
+import { useContext } from "react";
+import { AdminContext } from "../../../../context/AdminContext";
+
 export default function MainBar() {
+  const {admin} = useContext(AdminContext);
+
+  const adminName = admin.name;
   return (
     <main className="flex-1 overflow-y-auto bg-slate-200 font-outfit p-4">
       {/* Welcome Section */}
       <div className="text-center my-6">
-        <h1 className="text-2xl lg:text-4xl font-bold">Welcome to the Admin Dashboard</h1>
+        <h1 className="text-2xl lg:text-4xl font-bold"> {adminName} Welcome to your Dashboard</h1>
         <p className="text-lg text-gray-600">
           Manage your platform efficiently with real-time updates and insights.
         </p>
