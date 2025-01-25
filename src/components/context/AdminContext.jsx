@@ -57,16 +57,16 @@ export const AdminProvider = ({ children }) => {
   }, [admin]);
 
   // check token expiration and auto-logout
-  // useEffect(() => {
-  //     if(admin && admin.tokenExpiration){
-  //         const expirationTime = new Date(admin.tokenExpiration).getTime();
-  //         const currentTime = new Date().getTime();
+  useEffect(() => {
+      if(admin && admin.tokenExpiration){
+          const expirationTime = new Date(admin.tokenExpiration).getTime();
+          const currentTime = new Date().getTime();
 
-  //         if(currentTime >= expirationTime){
-  //             logoutAdmin();
-  //         }
-  //     }
-  // }, [admin, logoutAdmin]);
+          if(currentTime >= expirationTime){
+              logoutAdmin();
+          }
+      }
+  }, [admin, logoutAdmin]);
 
   return (
     <AdminContext.Provider value={{ admin, updateAdmin, logoutAdmin }}>

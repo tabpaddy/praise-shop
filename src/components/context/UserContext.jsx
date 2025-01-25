@@ -43,7 +43,7 @@ export const UserProvider = ({ children }) => {
         );
   
         if (response.status === 200) {
-          console.log("Logout successful");
+          //console.log("Logout successful");
           setUser(null);
           localStorage.removeItem("user");
           setTimeout(() => {
