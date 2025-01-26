@@ -2,11 +2,12 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   setEmail,
   setPassword,
+  setIp_address,
   setError,
   setSuccess,
   clearForm,
 } from "../../../redux/LoginSlice";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Svg1 from "./Svg1";
 import Svg2 from "./Svg2";
@@ -18,7 +19,7 @@ export default function LogInForm() {
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
 
   const dispatch = useDispatch();
-  const { email, password, error, success } = useSelector(
+  const { email, password, ip_address, error, success } = useSelector(
     (state) => state.login
   );
 
@@ -26,6 +27,19 @@ export default function LogInForm() {
   const [errors, setErrors] = useState({}); // Local state for error messages
 
   const { updateUser } = useContext(UserContext); // Use the context
+
+  useEffect(() => {
+    const fetchIpAddress = async () => {
+      try {
+        const response = await axios.get("https://api.ipify.org?format=json"); // Use IPify API to get the user's IP
+        dispatch(setIp_address(response.data.ip)); // Dispatch an action to set the IP address
+      } catch (error) {
+        console.error("Error fetching IP address:", error);
+      }
+    };
+
+    fetchIpAddress();
+  }, [dispatch]);
 
   const handleForgotPasswordClick = () => {
     setIsForgotPasswordOpen(true);
@@ -57,6 +71,7 @@ export default function LogInForm() {
         {
           email: email,
           password: password,
+          ip_address: ip_address,
         },
         {
           headers: {
@@ -75,7 +90,7 @@ export default function LogInForm() {
         // console.log("expiresIn:", response.data.expiresIn);
         dispatch(setSuccess(response.data.message));
         const tokenExpiration = new Date(
-          Date.now() + response.data.expiresIn * 2000
+          Date.now() + response.data.expiresIn * 1000
         ); // Example: expiresIn in seconds
         updateUser({ ...userData, tokenExpiration, userToken }); // Save user to context and localStorage
         setTimeout(() => {
@@ -88,7 +103,7 @@ export default function LogInForm() {
       if (error.response && error.response.status === 422) {
         const validationErrors = error.response.data.errors;
         console.error("Validation errors:", validationErrors);
-        dispatch(setError(validationErrors));
+        dispatch(setError({ message: validationErrors.email || validationErrors.password }));
       } else {
         console.error("Submission failed:", error);
       }

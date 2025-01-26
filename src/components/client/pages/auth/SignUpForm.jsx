@@ -64,18 +64,18 @@ export default function SignUpForm() {
   const [passwordConfirmationVisible, setPasswordConfirmationVisible] =
     useState(false); // State to toggle password visibility
 
-  useEffect(() => {
-    const fetchIpAddress = async () => {
-      try {
-        const response = await axios.get("https://api.ipify.org?format=json"); // Use IPify API to get the user's IP
-        dispatch({ type: "setIpAddress", payload: response.data.ip }); // Dispatch an action to set the IP address
-      } catch (error) {
-        console.error("Error fetching IP address:", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchIpAddress = async () => {
+  //     try {
+  //       const response = await axios.get("https://api.ipify.org?format=json"); // Use IPify API to get the user's IP
+  //       dispatch({ type: "setIpAddress", payload: response.data.ip }); // Dispatch an action to set the IP address
+  //     } catch (error) {
+  //       console.error("Error fetching IP address:", error);
+  //     }
+  //   };
 
-    fetchIpAddress();
-  }, []);
+  //   fetchIpAddress();
+  // }, []);
 
   const checkPasswordStrength = (password) => {
     let strength = "weak";
@@ -106,8 +106,9 @@ export default function SignUpForm() {
     if (!state.password) errors.password = "Password is required.";
     else if (state.password.length < 8)
       errors.password = "Password must be at least 8 characters.";
-    if (state.password !== state.passwordConfirmation)
+    if (state.password !== state.passwordConfirmation) {
       errors.passwordConfirmation = "Passwords do not match.";
+    }
 
     if (Object.keys(errors).length > 0) {
       dispatch({ type: "setError", payload: errors });
@@ -122,7 +123,7 @@ export default function SignUpForm() {
           email: state.email,
           password: state.password,
           password_confirmation: state.passwordConfirmation, // Include this
-          ip_address: state.ip_address,
+          //ip_address: state.ip_address,
         },
         {
           headers: { "Content-Type": "application/json" },
@@ -237,7 +238,9 @@ export default function SignUpForm() {
         <div className="mb-4 relative">
           <input
             className={`p-2 my-1 w-full border-2 rounded ${
-              state.errors.passwordConfirmation ? "border-red-500" : "border-slate-900"
+              state.errors.passwordConfirmation
+                ? "border-red-500"
+                : "border-slate-900"
             }`}
             type={passwordConfirmationVisible ? "text" : "password"}
             name="passwordConfirmation"
