@@ -24,8 +24,8 @@ export default function UserBar() {
   const [passwordConfirmationVisible, setPasswordConfirmationVisible] =
     useState(false);
 
-    const {admin} = useContext(AdminContext);
-    
+  const { admin } = useContext(AdminContext);
+  console.log(admin.adminToken);
   const checkPasswordStrength = (password) => {
     let strength = "weak";
     const regaxes = {
@@ -51,16 +51,16 @@ export default function UserBar() {
     }
     if (!email.trim()) {
       newErrors.email = "Email is required.";
-    }else if (!/\S+@\S+\.\S+/.test(email)){
-        newErrors.email = "Email is invalid."
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = "Email is invalid.";
     }
     if (!password.trim()) {
       newErrors.password = "Password is required.";
     } else if (password.length < 8) {
       newErrors.password = "Password must be at 8 characters.";
     }
-    if(!confirmPassword.trim()){
-      newErrors.confirmPassword = "Confirm Password is required"
+    if (!confirmPassword.trim()) {
+      newErrors.confirmPassword = "Confirm Password is required";
     }
     if (password !== confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match.";
@@ -78,36 +78,37 @@ export default function UserBar() {
     }
 
     try {
-        const response = await axios.post(
-            "http://127.0.0.1:8000/api/register",
-            {
-                name:name,
-                email:email,
-                password:password,
-                password_confirmation: confirmPassword,
-                ip_address: null,
-            },
-            {
-                headers: {"Content-Type": "application/json"},
-                Authorization: `Bearer ${admin.email}`,
-            }
-        );
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/add-user",
+        {
+          name: name,
+          email: email,
+          password: password,
+          password_confirmation: confirmPassword,
+        },
+        {
+          headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${admin.adminToken}`,
+          },
+      }
+      );
 
-        if (response.status === 200){
-            dispatch(setSuccess("Registration successful!"));
-            setTimeout(() => {
-            dispatch(clearForm());
-            }, 3000);
-        }
-    }catch (error){
-        if (error.response && error.response.status === 422){
-            console.error("Validation errors:", error.response.data);
-            dispatch(setError(error.response.data.errors));
-        }else{
-            console.error("submission failed:", error);
-        }
-    }finally{
-        setIsLoading(false);
+      if (response.status === 200) {
+        dispatch(setSuccess("Registration successful!"));
+        setTimeout(() => {
+          dispatch(clearForm());
+        }, 3000);
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 422) {
+        console.error("Validation errors:", error.response.data);
+        dispatch(setError(error.response.data.errors));
+      } else {
+        console.error("submission failed:", error);
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -162,7 +163,7 @@ export default function UserBar() {
               <span className="text-sm text-red-500">{error.email}</span>
             )}
           </div>
-          <div className="mb-4">
+          <div className="mb-4 relative">
             <input
               type={passwordVisible ? "text" : "password"}
               className={`p-2 my-1 w-full border-2 rounded ${
@@ -186,21 +187,22 @@ export default function UserBar() {
             {error.password && (
               <span className="text-sm text-red-500">{error.password}</span>
             )}
+            {/* Password Strength */}
             {passwordStrength && (
               <span
                 className={`text-sm ${
-                  passwordStrength.includes("strong")
-                    ? "text-green-500"
-                    : passwordStrength.includes("Medium")
-                    ? "text-yellow-500"
-                    : "text-red-500"
+                  passwordStrength.includes("Strong")
+                  ? "text-green-500"
+                  : passwordStrength.includes("Medium")
+                  ? "text-yellow-500"
+                  : "text-red-500"
                 }`}
               >
                 {passwordStrength}
               </span>
             )}
           </div>
-          <div className="mb-4">
+          <div className="mb-4 relative">
             <input
               type={passwordConfirmationVisible ? "text" : "password"}
               className={`p-2 my-1 w-full border-2 rounded  ${
