@@ -9,11 +9,13 @@ const ENCRYPTION_KEY = "admin-encryption-key"; // Use an environment variable in
 
 export const AdminProvider = ({ children }) => {
   const [admin, setAdmin] = useState(() => {
-    // Decrypt admin data from localStorage on initialization
     const savedAdmin = localStorage.getItem("admin");
     if (savedAdmin) {
+      console.log("Encrypted data from localStorage:", savedAdmin);
       const bytes = CryptoJS.AES.decrypt(savedAdmin, ENCRYPTION_KEY);
+      console.log("Decrypted bytes:", bytes);
       const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+      console.log("Decrypted data:", decryptedData);
       return JSON.parse(decryptedData);
     }
     return null;
@@ -58,14 +60,14 @@ export const AdminProvider = ({ children }) => {
 
   // check token expiration and auto-logout
   useEffect(() => {
-      if(admin && admin.tokenExpiration){
-          const expirationTime = new Date(admin.tokenExpiration).getTime();
-          const currentTime = new Date().getTime();
+    if (admin && admin.tokenExpiration) {
+      const expirationTime = new Date(admin.tokenExpiration).getTime();
+      const currentTime = new Date().getTime();
 
-          if(currentTime >= expirationTime){
-              logoutAdmin();
-          }
+      if (currentTime >= expirationTime) {
+        logoutAdmin();
       }
+    }
   }, [admin, logoutAdmin]);
 
   return (
