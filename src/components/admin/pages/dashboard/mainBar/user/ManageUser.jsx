@@ -12,11 +12,6 @@ export default function ManageUser() {
 
   const { admin } = useContext(AdminContext);
 
-  if (!admin || !admin.adminToken) {
-    console.error("Admin token is missing or invalid");
-    return;
-  }
-
 
   // Sample data for demonstration
   // const users = [
@@ -43,29 +38,34 @@ export default function ManageUser() {
   //   },
   // ];
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/admin/manage-user",
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${admin?.adminToken}`, // Ensure adminToken exists
-            },
-          }
-        );
-        setManageUser(response.data.users); // Assuming users is an array
-      } catch (error) {
-        console.error(
-          "Error fetching users:",
-          error.response?.data || error.message
-        );
-      }
-    };
+  const fetchUserData = async () => {
+    try {
+      const response = await axios.get(
+        "http://127.0.0.1:8000/api/admin/manage-user",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${admin?.adminToken}`, // Ensure adminToken exists
+          },
+        }
+      );
+      setManageUser(response.data.users); // Assuming users is an array
+    } catch (error) {
+      console.error(
+        "Error fetching users:",
+        error.response?.data || error.message
+      );
+    }
+  };
 
+  useEffect(() => {
     fetchUserData();
   }, [admin?.adminToken]); // Dependency array
+
+  if (!admin || !admin.adminToken) {
+    console.error("Admin token is missing or invalid");
+    return;
+  }
 
   const deleteUserModelClick = (id) => {
     setSelectedUserId(id[0]); // Set the selected user ID
@@ -126,7 +126,9 @@ export default function ManageUser() {
                     <td className="px-6 py-4 text-sm text-center">
                       <button
                         className="text-red-600 hover:text-red-800"
-                        onClick={() => deleteUserModelClick([user.id, user.name])}
+                        onClick={() =>
+                          deleteUserModelClick([user.id, user.name])
+                        }
                       >
                         Delete
                       </button>
@@ -150,6 +152,7 @@ export default function ManageUser() {
         modalClose={() => setDeleteModal(false)}
         userId={selectedUserId}
         userName={selectedUserName}
+        refreshUsers={fetchUserData()}
       />
     </div>
   );
