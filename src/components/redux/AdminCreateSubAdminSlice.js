@@ -7,7 +7,6 @@ const AdminCreateSubAdminSlice = createSlice({
     email: "",
     password: "",
     confirmPassword: "",
-    subAdmin: false,
     error: {},
     success: "",
   },
@@ -24,9 +23,6 @@ const AdminCreateSubAdminSlice = createSlice({
     setConfirmPassword: (state, action) => {
       state.confirmPassword = action.payload;
     },
-    setSubAdmin: (state, action) => {
-      state.subAdmin = action.payload;
-    },
     setError: (state, action) => {
       state.error = action.payload;
     },
@@ -38,7 +34,6 @@ const AdminCreateSubAdminSlice = createSlice({
       state.email = "";
       state.password = "";
       state.confirmPassword = "";
-      state.subAdmin = false;
       state.error = {};
       state.success = "";
     },
@@ -50,7 +45,6 @@ export const {
   setEmail,
   setPassword,
   setConfirmPassword,
-  setSubAdmin,
   setError,
   setSuccess,
   clearForm,
