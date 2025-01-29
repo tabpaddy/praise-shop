@@ -25,7 +25,7 @@ export default function UserBar() {
     useState(false);
 
   const { admin } = useContext(AdminContext);
-  console.log(admin.adminToken);
+  //console.log(admin.adminToken);
   const checkPasswordStrength = (password) => {
     let strength = "weak";
     const regaxes = {

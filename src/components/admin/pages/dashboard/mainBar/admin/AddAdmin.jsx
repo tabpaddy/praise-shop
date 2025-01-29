@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   clearForm,
@@ -12,6 +12,7 @@ import {
 import axios from "axios";
 import Svg1 from "../../../../../client/pages/auth/Svg1";
 import Svg2 from "../../../../../client/pages/auth/Svg2";
+import { AdminContext } from "../../../../../context/AdminContext";
 
 export default function AddAdmin() {
   const dispatch = useDispatch();
@@ -23,11 +24,13 @@ export default function AddAdmin() {
   const [passwordConfirmationVisible, setPasswordConfirmationVisible] =
     useState(false);
 
+  const { admin } = useContext(AdminContext);
+
   const checkPasswordStrength = (password) => {
     let strength = "weak";
     const regaxes = {
       strong: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/,
-      medium: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d){8,}$/,
+      medium: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
     };
 
     if (regaxes.strong.test(password)) {
@@ -59,7 +62,7 @@ export default function AddAdmin() {
     if (!confirmPassword.trim()) {
       newErrors.confirmPassword = "Confirm Password is required.";
     } else if (password !== confirmPassword) {
-      newErrors.confirmPassword = "Password fo not match";
+      newErrors.confirmPassword = "Password do not match";
     }
     dispatch(setError(newErrors));
     return Object.keys(newErrors).length === 0;
@@ -75,7 +78,7 @@ export default function AddAdmin() {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/admin/create-sub-admin",
+        "http://127.0.0.1:8000/api/admin/create-subadmin",
         {
           name: name,
           email: email,
@@ -85,6 +88,7 @@ export default function AddAdmin() {
         {
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${admin.adminToken}`,
           },
         }
       );
@@ -92,7 +96,7 @@ export default function AddAdmin() {
         dispatch(setSuccess(response.data.message));
         setTimeout(() => {
           dispatch(clearForm());
-        }, 3000);
+        }, 4000);
       }
     } catch (error) {
       if (error.response && error.response.status === 422) {
@@ -103,7 +107,8 @@ export default function AddAdmin() {
             message:
               validationErrors.name ||
               validationErrors.email ||
-              validationErrors.password,
+              validationErrors.password ||
+              validationErrors,
           })
         );
       } else {

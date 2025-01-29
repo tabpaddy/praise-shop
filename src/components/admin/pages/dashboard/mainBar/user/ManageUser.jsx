@@ -12,7 +12,6 @@ export default function ManageUser() {
 
   const { admin } = useContext(AdminContext);
 
-
   // Sample data for demonstration
   // const users = [
   //   {
