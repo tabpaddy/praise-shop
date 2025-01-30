@@ -96,6 +96,7 @@ export default function AddAdmin() {
         dispatch(setSuccess(response.data.message));
         setTimeout(() => {
           dispatch(clearForm());
+          window.location.href = '/admin/dashboard/manage-admin'
         }, 4000);
       }
     } catch (error) {
