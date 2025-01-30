@@ -52,7 +52,7 @@ export default function DeleteUserModal({
       // Handle success response
       if (response.status === 200) {
         setSuccess(response.data.message);
-        refreshUsers(); // Refresh the user list
+        refreshUsers; // Refresh the user list
         setTimeout(() => {
           modalClose();
         }, 2000);

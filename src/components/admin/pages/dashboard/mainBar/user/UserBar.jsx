@@ -30,7 +30,7 @@ export default function UserBar() {
     let strength = "weak";
     const regaxes = {
       strong: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/,
-      medium: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d){8,}$/,
+      medium: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/,
     };
 
     if (regaxes.strong.test(password)) {
@@ -98,6 +98,7 @@ export default function UserBar() {
         dispatch(setSuccess("Registration successful!"));
         setTimeout(() => {
           dispatch(clearForm());
+          window.location.href = '/admin/dashboard/manage-users'
         }, 3000);
       }
     } catch (error) {
