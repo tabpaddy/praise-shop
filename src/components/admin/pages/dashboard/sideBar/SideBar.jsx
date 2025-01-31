@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   FaTimes,
   FaBars,
@@ -7,8 +7,10 @@ import {
   FaProductHunt,
   FaChevronDown,
   FaSignOutAlt,
+  FaListAlt,
 } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
+import { AdminContext } from "../../../../context/AdminContext";
 
 export default function SideBar() {
   const [isOpen, setIsOpen] = useState(false); // Sidebar toggle for mobile
@@ -20,6 +22,12 @@ export default function SideBar() {
   const toggleDropdown = (dropdownName) => {
     // Toggle the dropdown, close if the same one is clicked
     setActiveDropdown((prev) => (prev === dropdownName ? "" : dropdownName));
+  };
+
+  const { logoutAdmin } = useContext(AdminContext);
+
+  const logoutAdminSubmit = () => {
+    logoutAdmin();
   };
 
   return (
@@ -53,6 +61,86 @@ export default function SideBar() {
               <FaHome />
               <span>Dashboard</span>
             </Link>
+
+            {/* category dropdown */}
+            <div>
+              <button
+                onClick={() => toggleDropdown("category")}
+                className="flex items-center gap-3 w-full text-left hover:text-gray-300"
+              >
+                <FaListAlt />
+                <span>Category</span>
+                <FaChevronDown
+                  className={`ml-auto transition-transform ${
+                    activeDropdown === "category" ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+              {activeDropdown === "category" && (
+                <div className="ml-8 mt-2 space-y-2">
+                  <Link
+                    to={"/admin/dashboard/add-category"}
+                    className={`block hover:text-gray-300 hover:bg-slate-800 py-2 px-1 ${
+                      isActive("/admin/dashboard/add-category")
+                        ? "bg-slate-800"
+                        : ""
+                    }`}
+                  >
+                    Add Category
+                  </Link>
+                  <Link
+                    to={`/admin/dashboard/manage-category`}
+                    className={`block hover:text-gray-300 hover:bg-slate-800 py-2 px-1 ${
+                      isActive("/admin/dashboard/manage-category")
+                        ? "bg-slate-800"
+                        : ""
+                    }`}
+                  >
+                    Manage Category
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* sub category */}
+            <div>
+              <button
+                onClick={() => toggleDropdown("sub-category")}
+                className="flex items-center gap-3 w-full text-left hover:text-gray-300"
+              >
+                <FaProductHunt />
+                <span>Sub Category</span>
+                <FaChevronDown
+                  className={`ml-auto transition-transform ${
+                    activeDropdown === "sub-category" ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+              {activeDropdown === "sub-category" && (
+                <div className="ml-8 mt-2 space-y-2">
+                  <Link
+                    to="/admin/dashboard/add-sub-category"
+                    className={`block hover:text-gray-300 hover:bg-slate-800 py-2 px-1 ${
+                      isActive("/admin/dashboard/add-sub-category")
+                        ? "bg-slate-800"
+                        : ""
+                    }`}
+                  >
+                    Add Sub Category
+                  </Link>
+                  <Link
+                    to={"/admin/dashboard/manage-sub-category"}
+                    className={`block py-2 px-1 hover:text-gray-300 hover:bg-slate-800 ${
+                      isActive("/admin/dashboard/manage-sub-category")
+                        ? "bg-slate-800"
+                        : ""
+                    }`}
+                  >
+                    Manage Sub Category
+                  </Link>
+                </div>
+              )}
+            </div>
 
             {/* Products Dropdown */}
             <div>
@@ -188,7 +276,10 @@ export default function SideBar() {
 
         {/* Logout Button */}
         <div className="p-4">
-          <button className="flex items-center gap-3 w-full bg-red-500 text-white py-2 rounded hover:bg-red-600">
+          <button
+            onClick={logoutAdminSubmit}
+            className="flex items-center gap-3 w-full bg-red-500 text-white py-2 rounded hover:bg-red-600"
+          >
             <FaSignOutAlt />
             <span>Logout</span>
           </button>

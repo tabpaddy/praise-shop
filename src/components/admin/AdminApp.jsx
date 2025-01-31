@@ -6,9 +6,13 @@ import AdminManageUser from "./pages/dashboard/AdminManageUser";
 import AdminAddProduct from "./pages/dashboard/AdminAddProduct";
 import AdminViewProduct from "./pages/dashboard/AdminViewProduct";
 import AdminAddAdmin from "./pages/dashboard/AdminAddAdmin";
-import AdminManageAdmin from "./pages/dashboard/AdminManageAdmin"
+import AdminManageAdmin from "./pages/dashboard/AdminManageAdmin";
 import AdminOrders from "./pages/dashboard/AdminOrders";
 import ProtectedRoute from "../protectedRoutes/AdminProtectedRoutes";
+import AdminAddCategory from "./pages/dashboard/AdminAddCategory";
+import AdminManageCategory from "./pages/dashboard/AdminManageCategory";
+import AdminAddSubCategory from "./pages/dashboard/AdminAddSubCategory";
+import AdminManageSubCategory from "./pages/dashboard/AdminManageSubCategory";
 
 export default function AdminApp() {
   return (
@@ -23,6 +27,38 @@ export default function AdminApp() {
           element={
             <ProtectedRoute>
               <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/add-category"
+          element={
+            <ProtectedRoute>
+              <AdminAddCategory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/manage-category"
+          element={
+            <ProtectedRoute>
+              <AdminManageCategory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/add-sub-category"
+          element={
+            <ProtectedRoute>
+              <AdminAddSubCategory />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/manage-sub-category"
+          element={
+            <ProtectedRoute>
+              <AdminManageSubCategory />
             </ProtectedRoute>
           }
         />
