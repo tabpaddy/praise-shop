@@ -50,6 +50,7 @@ export default function AddCategory() {
         dispatch(setSuccess(response.data.message));
         setTimeout(() => {
           dispatch(clearForm());
+          window.location.href = '/admin/dashboard/manage-category'
         }, 3000);
       }
     } catch (error) {
@@ -57,7 +58,7 @@ export default function AddCategory() {
         console.error("validation errors:", error.response.data);
         const validationErrors = error.response.data.errors;
         dispatch(
-          setError({ message: validationErrors.category || validationErrors })
+          setError({message: validationErrors.category_title[0] })
         );
       } else {
         console.error("submission failed:", error);
