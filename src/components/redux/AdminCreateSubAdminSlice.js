@@ -27,7 +27,7 @@ const AdminCreateSubAdminSlice = createSlice({
       state.error = action.payload;
     },
     setSuccess: (state, action) => {
-      state.error = action.payload;
+      state.success = action.payload;
     },
     clearForm: (state) => {
       state.name = "";
