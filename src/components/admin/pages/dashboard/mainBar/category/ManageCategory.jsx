@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { AdminContext } from "../../../../../context/AdminContext";
 import axios from "axios";
 import DeleteCategoryModal from "./DeleteCategoryModal";
+import EditCategory from "./EditCategory";
 
 export default function ManageCategory() {
   const [manageCategory, setManageCategory] = useState([]);
@@ -28,10 +29,14 @@ export default function ManageCategory() {
       //console.log(response.data.categories);
       setManageCategory(response.data.categories); // get all the categories
     } catch (error) {
-      console.error(
-        "Error fetching categories:",
-        error.response.data || error.message
-      );
+      if (error.response && error.response.status === 422) {
+        console.error(
+          "Error fetching categories:",
+          error.response.data || error.message
+        );
+      } else {
+        console.error("getting category failed:", error);
+      }
     }
   };
 
@@ -47,6 +52,7 @@ export default function ManageCategory() {
   const editCategoryModelClick = (id) => {
     setSelectedCategoryId(id[0]);
     setSelectedCategoryTitle(id[1]);
+    setEditModal(true);
   };
 
   const deleteCategoryModelClick = (id) => {
@@ -130,6 +136,14 @@ export default function ManageCategory() {
       </div>
       <DeleteCategoryModal
         modalOpen={deleteModal}
+        modalClose={() => setDeleteModal(false)}
+        categoryId={selectedCategoryId}
+        categoryName={selectedCategoryTitle}
+        refreshCategory={fetchCategoryData()}
+      />
+
+      <EditCategory
+        modalOpen={editModal}
         modalClose={() => setDeleteModal(false)}
         categoryId={selectedCategoryId}
         categoryName={selectedCategoryTitle}
