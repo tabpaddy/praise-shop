@@ -144,7 +144,7 @@ export default function ManageCategory() {
 
       <EditCategory
         modalOpen={editModal}
-        modalClose={() => setDeleteModal(false)}
+        modalClose={() => setEditModal(false)}
         categoryId={selectedCategoryId}
         categoryName={selectedCategoryTitle}
         refreshCategory={fetchCategoryData()}

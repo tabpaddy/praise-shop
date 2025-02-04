@@ -115,7 +115,7 @@ export default function AddCategory() {
             <input
               type="submit"
               className={`text-sm font-outfit font-light text-white bg-black p-3 px-9 rounded hover:bg-gray-800 hover:text-slate-300 ${
-                isLoading ? "opacity-50 cursor-auto-allowed" : ""
+                isLoading ? "opacity-50 cursor-not-allowed" : ""
               }`}
               value={isLoading ? "Loading..." : "Submit"}
               disabled={isLoading}
