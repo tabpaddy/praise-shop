@@ -27,26 +27,32 @@ export default function EditCategory({
 
   useEffect(() => {
     const handleKeydown = (event) => {
-      if (event.Key === "Escape") {
+      if (event.key === "Escape") {
         modalClose();
       }
     };
 
     if (modalOpen) {
-      document.addEventListener("Keydown", handleKeydown);
+      document.addEventListener("keydown", handleKeydown);
     }
 
     return () => {
-      document.removeEventListener("Keydown", handleKeydown);
+      document.removeEventListener("keydown", handleKeydown);
     };
   }, [modalOpen, modalClose]);
+
+  useEffect(() => {
+    if (categoryName) {
+      dispatch(setInput(categoryName)); // Populate input with categoryName
+    }
+  }, [categoryName, dispatch]);
 
   if (!modalOpen) return null;
 
   const validateForm = () => {
     const newErrors = {};
-    if (!input.trim()) {
-      newErrors.input = "Category is Required.";
+    if (!input || !input.trim()) {
+      newErrors.input = "Category is required.";
     }
     dispatch(setError(newErrors));
     return Object.keys(newErrors).length === 0;
@@ -74,7 +80,7 @@ export default function EditCategory({
       );
       if (response.status === 200) {
         dispatch(setSuccess(response.data.message));
-        refreshCategory;
+        refreshCategory; // Call refreshCategory correctly
         setTimeout(() => {
           dispatch(clearForm());
           modalClose();
@@ -85,15 +91,13 @@ export default function EditCategory({
         const status = error.response.status;
 
         if (status === 422) {
-          console.error("validation errors:", error.response.data.data);
-          dispatch(
-            setError({ message: error.response.data.errors.category_title[0] })
-          );
+          const validationError = error.response.data.errors.category_title[0];
+          dispatch(setError({ input: validationError }));
         } else if (status === 403) {
           dispatch(
             setError({
               message:
-                "Unauthorized. you do not have permissions to perform this action",
+                "Unauthorized. You do not have permissions to perform this action.",
             })
           );
         } else if (status === 404) {
@@ -113,6 +117,7 @@ export default function EditCategory({
       setIsLoading(false);
     }
   };
+
   return (
     <div className="fixed inset-0 z-50 backdrop-blur-md bg-black/30">
       <div
@@ -129,40 +134,37 @@ export default function EditCategory({
                 type="text"
                 className={`p-2 my-1 w-full border-2 rounded`}
                 placeholder="Enter Category"
-                value={categoryName}
+                value={input}
                 onChange={(e) => {
-                    dispatch(setInput(e.target.value));
-                    dispatch(setError({ ...error, input: "" }));  
+                  dispatch(setInput(e.target.value));
+                  dispatch(setError({ ...error, input: "" }));
                 }}
               />
               {error.input && (
-              <span className="text-sm text-red-500">{error.input}</span>
-            )}
+                <span className="text-sm text-red-500">{error.input}</span>
+              )}
             </div>
             <div className="mb-4 text-center">
               {error.message && (
                 <span className="text-sm text-red-500">{error.message}</span>
-              )}
-              {error.error && (
-                <span className="text-sm text-red-500">{error.error}</span>
               )}
               {success && (
                 <span className="text-sm text-green-500">{success}</span>
               )}
             </div>
             <div className="flex justify-center gap-10 mb-4">
-            <button
-              className="px-4 py-2 bg-gray-200 rounded-md hover:bg-slate-900 hover:text-slate-300"
-              onClick={modalClose}
-            >
-              Cancel
-            </button> 
+              <button
+                className="px-4 py-2 bg-gray-200 rounded-md hover:bg-slate-900 hover:text-slate-300"
+                onClick={modalClose}
+              >
+                Cancel
+              </button>
               <input
                 type="submit"
                 className={`text-sm font-outfit font-light text-white bg-black p-3 px-9 rounded hover:bg-gray-800 hover:text-slate-300 ${
-                  isLoading ? "opacity-50 cursor-auto-allowed" : ""
+                  isLoading ? "opacity-50 cursor-not-allowed" : ""
                 }`}
-                value={isLoading ? "Loading..." : "submit"}
+                value={isLoading ? "Loading..." : "Submit"}
                 disabled={isLoading}
               />
             </div>
