@@ -37,7 +37,7 @@ export default function AddSubCategory(){
         const response = await axios.post(
           "http://127.0.0.1:8000/api/admin/add-sub-category",
           {
-            category_title: input,
+            sub_category_title: input,
           },
           {
             headers: {

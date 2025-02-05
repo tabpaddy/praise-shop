@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { AdminContext } from "../../../../../context/AdminContext";
 import axios from "axios";
 import DeleteSubCategoryModal from "./DeleteSubCategory";
+import EditSubCategory from "./EditSubCategory";
 
 export default function ManageSubCategory() {
   const [manageSubCategory, setManageSubCategory] = useState([]);
@@ -26,8 +27,9 @@ export default function ManageSubCategory() {
           },
         }
       );
-      //console.log(response.data.categories);
-      setManageSubCategory(response.data.categories); // get all the categories
+
+      //console.log(response.data.sub_categories);
+      setManageSubCategory(response.data.sub_categories); // get all the categories
     } catch (error) {
       if (error.response && error.response.status === 422) {
         console.error(
@@ -135,20 +137,20 @@ export default function ManageSubCategory() {
         </div>
       </div>
       <DeleteSubCategoryModal
-                modalOpen={deleteModal}
-                modalClose={() => setDeleteModal(false)}
-                categoryId={selectedSubCategoryId}
-                categoryName={selectedSubCategoryTitle}
-                refreshCategory={fetchSubCategoryData()}
-              />
+        modalOpen={deleteModal}
+        modalClose={() => setDeleteModal(false)}
+        categoryId={selectedSubCategoryId}
+        categoryName={selectedSubCategoryTitle}
+        refreshCategory={fetchSubCategoryData()}
+      />
 
-      {/* <EditCategory
-                modalOpen={editModal}
-                modalClose={() => setEditModal(false)}
-                categoryId={selectedCategoryId}
-                categoryName={selectedCategoryTitle}
-                refreshCategory={fetchCategoryData()}
-              /> */}
+      <EditSubCategory
+        modalOpen={editModal}
+        modalClose={() => setEditModal(false)}
+        categoryId={selectedSubCategoryId}
+        categoryName={selectedSubCategoryTitle}
+        refreshCategory={fetchSubCategoryData()}
+      />
     </div>
   );
 }
