@@ -87,7 +87,7 @@ export default function DeleteCategoryModal({
         className="absolute top-[5rem] left-1/2 transform -translate-x-1/2 w-full"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="bg-white p-6 rounded-md shadow-md text-center mt-8 mx-80">
+        <div className="bg-white p-6 rounded-md shadow-md text-center mt-8 xl:mx-80 mx-10">
           <h2 className="text-lg font-semibold mb-4">
             Are you sure you want to delete this Category (category_title:{" "}
             {categoryName})

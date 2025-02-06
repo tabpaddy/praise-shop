@@ -123,7 +123,7 @@ export default function EditSubCategory({
         className="absolute top-[5rem] left-1/2 transform -translate-x-1/2 w-full"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="bg-white p-6 rounded-md shadow-md text-center m-8 mx-80">
+        <div className="bg-white p-6 rounded-md shadow-md text-center m-8 lg:mx-80 mx-10">
           <form
             onSubmit={editSubCategorySubmit}
             className="w-full max-w-md mx-auto font-outfit"
@@ -132,7 +132,7 @@ export default function EditSubCategory({
               <input
                 type="text"
                 className={`p-2 my-1 w-full border-2 rounded`}
-                placeholder="Enter Category"
+                placeholder="Enter Sub Category"
                 value={input}
                 onChange={(e) => {
                   dispatch(setInput(e.target.value));

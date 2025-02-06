@@ -42,7 +42,7 @@ export default function ManageCategory() {
 
   useEffect(() => {
     fetchCategoryData();
-  });
+  }, []);
 
   if (!admin || !admin.adminToken) {
     console.error("admin token is missing");

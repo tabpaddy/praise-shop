@@ -124,7 +124,7 @@ export default function EditCategory({
         className="absolute top-[5rem] left-1/2 transform -translate-x-1/2 w-full"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="bg-white p-6 rounded-md shadow-md text-center m-8 mx-80">
+        <div className="bg-white p-6 rounded-md shadow-md text-center m-8 lg:mx-80 mx-10">
           <form
             onSubmit={editCategorySubmit}
             className="w-full max-w-md mx-auto font-outfit"

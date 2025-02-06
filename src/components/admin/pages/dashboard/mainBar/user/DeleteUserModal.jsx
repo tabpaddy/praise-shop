@@ -91,7 +91,7 @@ export default function DeleteUserModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div>
-          <div className="bg-white p-6 rounded-md shadow-md text-center m-8 mx-80">
+          <div className="bg-white p-6 rounded-md shadow-md text-center m-8 mx-10 xl:mx-80">
             <h2 className="text-lg font-semibold mb-4">
               Are you sure you want to delete this user (Name: {userName})?
             </h2>

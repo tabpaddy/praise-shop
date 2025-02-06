@@ -44,7 +44,7 @@ export default function ManageSubCategory() {
 
   useEffect(() => {
     fetchSubCategoryData();
-  });
+  }, []);
 
   if (!admin || !admin.adminToken) {
     console.error("admin token is missing");
@@ -139,16 +139,16 @@ export default function ManageSubCategory() {
       <DeleteSubCategoryModal
         modalOpen={deleteModal}
         modalClose={() => setDeleteModal(false)}
-        categoryId={selectedSubCategoryId}
-        categoryName={selectedSubCategoryTitle}
+        subCategoryId={selectedSubCategoryId}
+        subCategoryName={selectedSubCategoryTitle}
         refreshCategory={fetchSubCategoryData()}
       />
 
       <EditSubCategory
         modalOpen={editModal}
         modalClose={() => setEditModal(false)}
-        categoryId={selectedSubCategoryId}
-        categoryName={selectedSubCategoryTitle}
+        subCategoryId={selectedSubCategoryId}
+        subCategoryName={selectedSubCategoryTitle}
         refreshCategory={fetchSubCategoryData()}
       />
     </div>
