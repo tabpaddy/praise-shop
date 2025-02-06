@@ -11,6 +11,7 @@ import {
 } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import { AdminContext } from "../../../../context/AdminContext";
+import { MdCategory } from "react-icons/md";
 
 export default function SideBar() {
   const [isOpen, setIsOpen] = useState(false); // Sidebar toggle for mobile
@@ -108,7 +109,7 @@ export default function SideBar() {
                 onClick={() => toggleDropdown("sub-category")}
                 className="flex items-center gap-3 w-full text-left hover:text-gray-300"
               >
-                <FaProductHunt />
+                <MdCategory />
                 <span>Sub Category</span>
                 <FaChevronDown
                   className={`ml-auto transition-transform ${
