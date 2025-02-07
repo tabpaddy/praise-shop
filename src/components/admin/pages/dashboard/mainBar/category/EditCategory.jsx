@@ -80,7 +80,7 @@ export default function EditCategory({
       );
       if (response.status === 200) {
         dispatch(setSuccess(response.data.message));
-        refreshCategory; // Call refreshCategory correctly
+        refreshCategory(); // Call refreshCategory correctly
         setTimeout(() => {
           dispatch(clearForm());
           modalClose();

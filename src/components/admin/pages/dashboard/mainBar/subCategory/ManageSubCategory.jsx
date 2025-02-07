@@ -44,7 +44,7 @@ export default function ManageSubCategory() {
 
   useEffect(() => {
     fetchSubCategoryData();
-  }, []);
+  }, [admin.adminToken]);
 
   if (!admin || !admin.adminToken) {
     console.error("admin token is missing");
@@ -69,71 +69,76 @@ export default function ManageSubCategory() {
           Manage SubCategories
         </h1>
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <table className="min-w-full">
-            <thead className="bg-slate-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  S/N
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  SubCategory
-                </th>
-                <th className="px-6 py-3 text-center text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  Operations
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {Array.isArray(manageSubCategory) &&
-              manageSubCategory.length > 0 ? (
-                manageSubCategory.map((subCategory, index) => {
-                  return (
-                    <tr
-                      key={subCategory.id}
-                      className="hover:bg-slate-50 transition-colors"
-                    >
-                      <td className="px-6 py-4 text-sm text-slate-700">
-                        {index + 1}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-slate-700">
-                        {subCategory.sub_category_title}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-slate-700 flex gap-10 justify-center">
-                        <button
-                          className="text-blue-500 hover:text-blue-800"
-                          onClick={() =>
-                            editSubCategoryModelClick([
-                              subCategory.id,
-                              subCategory.sub_category_title,
-                            ])
-                          }
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="text-red-500 hover:text-red-800"
-                          onClick={() =>
-                            deleteSubCategoryModelClick([
-                              subCategory.id,
-                              subCategory.sub_category_title,
-                            ])
-                          }
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full">
+              <thead className="bg-slate-50">
                 <tr>
-                  <td colSpan={"6"} className="text-center py-4 text-slate-600">
-                    No subCategories available
-                  </td>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    S/N
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    SubCategory
+                  </th>
+                  <th className="px-6 py-3 text-center text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    Operations
+                  </th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {Array.isArray(manageSubCategory) &&
+                manageSubCategory.length > 0 ? (
+                  manageSubCategory.map((subCategory, index) => {
+                    return (
+                      <tr
+                        key={subCategory.id}
+                        className="hover:bg-slate-50 transition-colors"
+                      >
+                        <td className="px-6 py-4 text-sm text-slate-700">
+                          {index + 1}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-slate-700">
+                          {subCategory.sub_category_title}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-slate-700 flex gap-10 justify-center">
+                          <button
+                            className="text-blue-500 hover:text-blue-800"
+                            onClick={() =>
+                              editSubCategoryModelClick([
+                                subCategory.id,
+                                subCategory.sub_category_title,
+                              ])
+                            }
+                          >
+                            Edit
+                          </button>
+                          <button
+                            className="text-red-500 hover:text-red-800"
+                            onClick={() =>
+                              deleteSubCategoryModelClick([
+                                subCategory.id,
+                                subCategory.sub_category_title,
+                              ])
+                            }
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={"6"}
+                      className="text-center py-4 text-slate-600"
+                    >
+                      No subCategories available
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
       <DeleteSubCategoryModal
@@ -141,7 +146,7 @@ export default function ManageSubCategory() {
         modalClose={() => setDeleteModal(false)}
         subCategoryId={selectedSubCategoryId}
         subCategoryName={selectedSubCategoryTitle}
-        refreshCategory={fetchSubCategoryData()}
+        refreshSubCategory={fetchSubCategoryData}
       />
 
       <EditSubCategory
@@ -149,7 +154,7 @@ export default function ManageSubCategory() {
         modalClose={() => setEditModal(false)}
         subCategoryId={selectedSubCategoryId}
         subCategoryName={selectedSubCategoryTitle}
-        refreshCategory={fetchSubCategoryData()}
+        refreshSubCategory={fetchSubCategoryData}
       />
     </div>
   );

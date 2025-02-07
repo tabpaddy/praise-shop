@@ -42,7 +42,7 @@ export default function ManageCategory() {
 
   useEffect(() => {
     fetchCategoryData();
-  }, []);
+  }, [admin.adminToken]);
 
   if (!admin || !admin.adminToken) {
     console.error("admin token is missing");
@@ -68,6 +68,7 @@ export default function ManageCategory() {
           Manage Categories
         </h1>
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <div className="overflow-x-auto">
           <table className="min-w-full">
             <thead className="bg-slate-50">
               <tr>
@@ -132,6 +133,7 @@ export default function ManageCategory() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
       <DeleteCategoryModal
@@ -139,7 +141,7 @@ export default function ManageCategory() {
         modalClose={() => setDeleteModal(false)}
         categoryId={selectedCategoryId}
         categoryName={selectedCategoryTitle}
-        refreshCategory={fetchCategoryData()}
+        refreshCategory={fetchCategoryData}
       />
 
       <EditCategory
@@ -147,7 +149,7 @@ export default function ManageCategory() {
         modalClose={() => setEditModal(false)}
         categoryId={selectedCategoryId}
         categoryName={selectedCategoryTitle}
-        refreshCategory={fetchCategoryData()}
+        refreshCategory={fetchCategoryData}
       />
     </div>
   );

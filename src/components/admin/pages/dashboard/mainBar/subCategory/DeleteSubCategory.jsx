@@ -54,7 +54,7 @@ export default function DeleteSubCategoryModal({
       // handle success response
       if (response.status === 200) {
         setSuccess(response.data.message);
-        refreshSubCategory;
+        refreshSubCategory();
         setTimeout(() => {
           modalClose();
         }, 2000);

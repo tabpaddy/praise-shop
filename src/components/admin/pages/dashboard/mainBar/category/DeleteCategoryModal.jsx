@@ -52,7 +52,7 @@ export default function DeleteCategoryModal({
       // handle success response
       if (response.status === 200) {
         setSuccess(response.data.message);
-        refreshCategory;
+        refreshCategory();
         setTimeout(() => {
           modalClose();
         }, 2000);

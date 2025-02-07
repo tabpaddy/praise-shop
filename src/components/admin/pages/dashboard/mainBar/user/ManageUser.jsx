@@ -77,6 +77,7 @@ export default function ManageUser() {
       <div className="max-w-6xl mx-auto">
         <h1 className="text-2xl font-bold text-slate-800 mb-8">Manage Users</h1>
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <div className="overflow-x-auto">
           <table className="min-w-full">
             <thead className="bg-slate-50">
               <tr>
@@ -143,6 +144,7 @@ export default function ManageUser() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
       {/* import and use the DeleteUserModal */}
