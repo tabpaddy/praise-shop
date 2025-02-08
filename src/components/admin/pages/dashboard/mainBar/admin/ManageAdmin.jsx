@@ -35,7 +35,7 @@ export default function ManageAdmin() {
 
   useEffect(() => {
     fetchAdminData();
-  }); // Dependancy array
+  }, [admin.adminToken]); // Dependancy array
 
   if (!admin || !admin.adminToken) {
     console.error("Admin token is missing or invalid");
@@ -52,6 +52,7 @@ export default function ManageAdmin() {
       <div className="max-w-6xl mx-auto">
         <h1 className="text-2xl font-bold text-slate-800 mb-8">Manage Admin</h1>
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <div className="overflow-x-auto">
           <table className="min-w-full">
             <thead className="bg-slate-50">
               <tr>
@@ -108,6 +109,7 @@ export default function ManageAdmin() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
       <DeleteAdminModel

@@ -72,7 +72,7 @@ export default function AddSubCategory(){
       <div className="text-center my-2 mt-10">
         <h3 className="text-slate-700 relative font-prata font-normal text-2xl sm:text-3xl">
           Create{" "}
-          <span className="relative after:content-[''] after:absolute after:w-[50px] after:pt-1 after:h-[o.5] after:bg-black after:left-full after:top-1/2 after:ml-2">
+          <span className="relative after:content-[''] after:absolute after:w-[50px] after:pt-1 after:h-[0.5] after:bg-black after:left-full after:top-1/2 after:ml-2">
             SubCategory
           </span>
         </h3>

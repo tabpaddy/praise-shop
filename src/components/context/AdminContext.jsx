@@ -2,6 +2,7 @@ import { createContext, useCallback, useEffect, useState } from "react";
 
 import CryptoJS from "crypto-js";
 import axios from "axios";
+import { useIdleTimer } from "react-idle-timer";
 
 export const AdminContext = createContext();
 
@@ -57,6 +58,18 @@ export const AdminProvider = ({ children }) => {
       console.error("Logout failed:", error.response?.data || error.message);
     }
   }, [admin]);
+
+  // Use the react-idle-timer hook
+  const handleOnIdle = () => {
+    console.log("User is idle. Logging out.");
+    logoutAdmin();
+  };
+
+  useIdleTimer({
+    timeout: 1800000, // 30 minutes (1,800,000 milliseconds)
+    onIdle: handleOnIdle,
+    debounce: 500,   // Optional: Debounce idle detection by 500ms
+  });
 
   // check token expiration and auto-logout
   useEffect(() => {
