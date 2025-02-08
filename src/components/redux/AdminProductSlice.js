@@ -15,7 +15,7 @@ const AdminProductSlice = createSlice({
     category: "",
     subCategory: "",
     sizes: [],
-    bestSeller: {},
+    bestSeller: false,
     error: { message: null },
     success: "",
   },
@@ -53,7 +53,7 @@ const AdminProductSlice = createSlice({
     setSubCategory: (state, action) => {
       state.subCategory = action.payload;
     },
-    setSizes: (action, state) => {
+    setSizes: (state, action) => {
       state.sizes = action.payload;
     },
     setBestSeller: (state, action) => {
@@ -78,7 +78,7 @@ const AdminProductSlice = createSlice({
       state.category = "";
       state.subCategory = "";
       state.sizes = [];
-      state.bestSeller = {};
+      state.bestSeller = false;
       state.error = { message: null };
       state.success = "";
     },
