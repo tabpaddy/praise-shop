@@ -6,6 +6,7 @@ import AdminCreateUserReducer from "./AdminCreateUserSlice";
 import AdminCreateSubAdminReducer from "./AdminCreateSubAdminSlice";
 import AdminCategoryAndSubCategoryReducer from "./AdminCategoryAndSubCategorySlice";
 import AdminSubCategoryReducer from "./AdminSubCategorySlice";
+import AdminProductReducer from "./AdminProductSlice";
 
 export const store = configureStore({
   reducer: {
@@ -16,5 +17,6 @@ export const store = configureStore({
     adminCreateSubAdmin: AdminCreateSubAdminReducer,
     adminCategoryAndSubCategory: AdminCategoryAndSubCategoryReducer,
     adminSubCategory: AdminSubCategoryReducer,
+    adminProduct: AdminProductReducer,
   },
 });
