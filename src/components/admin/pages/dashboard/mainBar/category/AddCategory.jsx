@@ -41,7 +41,7 @@ export default function AddCategory() {
         },
         {
           headers: {
-            "Content-TYpe": "application/json",
+            "Content-Type": "application/json",
             Authorization: `Bearer ${admin.adminToken}`,
           },
         }

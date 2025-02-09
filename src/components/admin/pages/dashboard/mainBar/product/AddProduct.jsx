@@ -155,24 +155,52 @@ export default function AddProduct() {
       return;
     }
 
-     // Create a FormData object to handle file uploads.
-     const formData = new FormData();
-     formData.append("name", name);
-     formData.append("description", description);
-     formData.append("keyword", keyword);
-     formData.append("price", price);
-     formData.append("category", category);
-     formData.append("subCategory", subCategory);
-     // Append sizes as a JSON string (or handle on backend as you wish)
-     formData.append("sizes", JSON.stringify(sizes));
-     formData.append("bestSeller", bestSeller);
-     // Append file objects (image1 - image5) from file inputs.
-     formData.append("image1", image1);
-     formData.append("image2", image2);
-     formData.append("image3", image3);
-     formData.append("image4", image4);
-     formData.append("image5", image5);
-     
+    // Create a FormData object to handle file uploads.
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("description", description);
+    formData.append("keyword", keyword);
+    formData.append("price", price);
+    formData.append("category", category);
+    formData.append("subCategory", subCategory);
+    // Append sizes as a JSON string (or handle on backend as you wish)
+    formData.append("sizes", JSON.stringify(sizes));
+    formData.append("bestSeller", bestSeller);
+    formData.append("image1", image1);
+    formData.append("image2", image2);
+    formData.append("image3", image3);
+    formData.append("image4", image4);
+    formData.append("image5", image5);
+
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/admin/add-product",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${admin.adminToken}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        dispatch(setSuccess(response.data.message));
+        setTimeout(() => {
+          dispatch(clearForm());
+          // window.location.href = '/admin/dashboard/manage-product'
+        }, 3000);
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 422) {
+        console.error("validation errors:", error.response.data.errors);
+        const validationErrors = error.response.data.errors;
+        dispatch(setError({ message: validationErrors }));
+      } else {
+        console.error("submission failed:", error);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <div className="overflow-y-auto bg-slate-200 font-outfit p-4">
@@ -447,6 +475,18 @@ export default function AddProduct() {
               />
               Mark as Bestseller
             </label>
+          </div>
+          {/* success and error */}
+          <div className="mb-4 flex justify-center">
+            {error.message && (
+                <span className="text-sm text-red-500">{error.message}</span>
+            )}
+            {error.error && (
+                <span className="text-sm text-red-500">{error.error}</span>
+            )}
+            {success && (
+                <span className="text-sm text-green-500">{success}</span>
+            )}
           </div>
           <div className="text-center">
             <input
