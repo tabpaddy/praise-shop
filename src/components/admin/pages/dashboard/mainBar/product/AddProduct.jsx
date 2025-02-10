@@ -7,11 +7,6 @@ import {
   setDescription,
   setKeyword,
   setPrice,
-  setImage1,
-  setImage2,
-  setImage3,
-  setImage4,
-  setImage5,
   setCategory,
   setSubCategory,
   setSizes,
@@ -30,11 +25,6 @@ export default function AddProduct() {
     description,
     keyword,
     price,
-    image1,
-    image2,
-    image3,
-    image4,
-    image5,
     category,
     subCategory,
     sizes,
@@ -44,6 +34,12 @@ export default function AddProduct() {
   } = useSelector((state) => state.adminProduct);
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
+
+  const [image1File, setImage1File] = useState(null);
+  const [image2File, setImage2File] = useState(null);
+  const [image3File, setImage3File] = useState(null);
+  const [image4File, setImage4File] = useState(null);
+  const [image5File, setImage5File] = useState(null);
 
   const { admin } = useContext(AdminContext);
 
@@ -119,20 +115,20 @@ export default function AddProduct() {
     if (!price.trim()) {
       newErrors.price = "Product Price is Required";
     }
-    if (!image1) {
-      newErrors.image1 = "Image1 is Required";
+    if (!image1File) {
+      newErrors.image1File = "Image1 is Required";
     }
-    if (!image2) {
-      newErrors.image2 = "Image2 is Required";
+    if (!image2File) {
+      newErrors.image2File = "Image2 is Required";
     }
-    if (!image3) {
-      newErrors.image3 = "Image3 is required";
+    if (!image3File) {
+      newErrors.image3File = "Image3 is required";
     }
-    if (!image4) {
-      newErrors.image4 = "Image4 is required";
+    if (!image4File) {
+      newErrors.image4File = "Image4 is required";
     }
-    if (!image5) {
-      newErrors.image5 = "Image5 is required";
+    if (!image5File) {
+      newErrors.image5File = "Image5 is required";
     }
     if (!category.trim()) {
       newErrors.category = "Select a Category";
@@ -164,13 +160,15 @@ export default function AddProduct() {
     formData.append("category", category);
     formData.append("subCategory", subCategory);
     // Append sizes as a JSON string (or handle on backend as you wish)
-    formData.append("sizes", JSON.stringify(sizes));
-    formData.append("bestSeller", bestSeller);
-    formData.append("image1", image1);
-    formData.append("image2", image2);
-    formData.append("image3", image3);
-    formData.append("image4", image4);
-    formData.append("image5", image5);
+    sizes.forEach((size) => {
+        formData.append("sizes[]", size);
+      });
+    formData.append("bestseller", bestSeller ? 0 : 1);
+    formData.append("image1", image1File);
+    formData.append("image2", image2File);
+    formData.append("image3", image3File);
+    formData.append("image4", image4File);
+    formData.append("image5", image5File);
 
     try {
       const response = await axios.post(
@@ -187,6 +185,15 @@ export default function AddProduct() {
         dispatch(setSuccess(response.data.message));
         setTimeout(() => {
           dispatch(clearForm());
+          setImage1File(null);
+          setImage2File(null);
+          setImage3File(null);
+          setImage4File(null);
+          setImage5File(null);
+          // Clear file inputs
+          document
+            .querySelectorAll('input[type="file"]')
+            .forEach((input) => (input.value = ""));
           // window.location.href = '/admin/dashboard/manage-product'
         }, 3000);
       }
@@ -273,7 +280,7 @@ export default function AddProduct() {
           </div>
           <div className="mb-4">
             <input
-              type="text"
+              type="number"
               className={`p-2 my-1 w-full border-2 rounded ${
                 error.price ? "border-red-500" : "border-slate-900"
               }`}
@@ -283,6 +290,7 @@ export default function AddProduct() {
                 dispatch(setError({ ...error, price: "" }));
               }}
               placeholder="Product Price"
+              step={"0.01"}
             />
             {error.price && (
               <span className="text-sm text-red-500">{error.price}</span>
@@ -302,12 +310,12 @@ export default function AddProduct() {
                 error.image1 ? "border-red-500" : "border-slate-900"
               } p-2 my-1 w-full border-2 rounded`}
               onChange={(e) => {
-                dispatch(setImage1(e.target.files[0]));
-                dispatch(setError({ ...error, image1: "" }));
+                setImage1File(e.target.files[0]);
+                dispatch(setError({ ...error, image1File: "" }));
               }}
             />
-            {error.image1 && (
-              <span className="text-sm text-red-500">{error.image1}</span>
+            {error.image1File && (
+              <span className="text-sm text-red-500">{error.image1File}</span>
             )}
           </div>
           <div className="mb-4">
@@ -321,12 +329,12 @@ export default function AddProduct() {
                 error.image2 ? "border-red-500" : "border-slate-900"
               } p-2 my-1 w-full border-2 rounded`}
               onChange={(e) => {
-                dispatch(setImage2(e.target.files[0]));
-                dispatch(setError({ ...error, image2: "" }));
+                setImage2File(e.target.files[0]);
+                dispatch(setError({ ...error, image2File: "" }));
               }}
             />
-            {error.image2 && (
-              <span className="text-sm text-red-500">{error.image2}</span>
+            {error.image2File && (
+              <span className="text-sm text-red-500">{error.image2File}</span>
             )}
           </div>
           <div className="mb-4">
@@ -340,12 +348,12 @@ export default function AddProduct() {
                 error.image3 ? "border-red-500" : "border-slate-900"
               } p-2 my-1 w-full border-2 rounded`}
               onChange={(e) => {
-                dispatch(setImage3(e.target.files[0]));
-                dispatch(setError({ ...error, image3: "" }));
+                setImage3File(e.target.files[0]);
+                dispatch(setError({ ...error, image3File: "" }));
               }}
             />
-            {error.image3 && (
-              <span className="text-sm text-red-500">{error.image3}</span>
+            {error.image3File && (
+              <span className="text-sm text-red-500">{error.image3File}</span>
             )}
           </div>
           <div className="mb-4">
@@ -358,12 +366,12 @@ export default function AddProduct() {
                 error.image4 ? "border-red-500" : "border-slate-900"
               } p-2 my-1 w-full border-2 rounded`}
               onChange={(e) => {
-                dispatch(setImage4(e.target.files[0]));
-                dispatch(setError({ ...error, image4: "" }));
+                setImage4File(e.target.files[0]);
+                dispatch(setError({ ...error, image4File: "" }));
               }}
             />
-            {error.image4 && (
-              <span className="text-sm text-red-500">{error.image4}</span>
+            {error.image4File && (
+              <span className="text-sm text-red-500">{error.image4File}</span>
             )}
           </div>
           <div className="mb-4">
@@ -376,12 +384,12 @@ export default function AddProduct() {
                 error.image5 ? "border-red-500" : "border-slate-900"
               } p-2 my-1 w-full border-2 rounded`}
               onChange={(e) => {
-                dispatch(setImage5(e.target.files[0]));
-                dispatch(setError({ ...error, image5: "" }));
+                setImage5File(e.target.files[0]);
+                dispatch(setError({ ...error, image5File: "" }));
               }}
             />
-            {error.image5 && (
-              <span className="text-sm text-red-500">{error.image5}</span>
+            {error.image5File && (
+              <span className="text-sm text-red-500">{error.image5File}</span>
             )}
           </div>
           <div className="mb-4">
@@ -478,14 +486,20 @@ export default function AddProduct() {
           </div>
           {/* success and error */}
           <div className="mb-4 flex justify-center">
-            {error.message && (
-                <span className="text-sm text-red-500">{error.message}</span>
+            {error.message && typeof error.message === "object" ? (
+              Object.values(error.message).map((err, index) => (
+                <span key={index} className="text-sm text-red-500 block">
+                  {err}
+                </span>
+              ))
+            ) : (
+              <span className="text-sm text-red-500">{error.message}</span>
             )}
             {error.error && (
-                <span className="text-sm text-red-500">{error.error}</span>
+              <span className="text-sm text-red-500">{error.error}</span>
             )}
             {success && (
-                <span className="text-sm text-green-500">{success}</span>
+              <span className="text-sm text-green-500">{success}</span>
             )}
           </div>
           <div className="text-center">

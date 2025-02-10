@@ -7,11 +7,6 @@ const AdminProductSlice = createSlice({
     description: "",
     keyword: "",
     price: "",
-    image1: "",
-    image2: "",
-    image3: "",
-    image4: "",
-    image5: "",
     category: "",
     subCategory: "",
     sizes: [],
@@ -31,21 +26,6 @@ const AdminProductSlice = createSlice({
     },
     setPrice: (state, action) => {
       state.price = action.payload;
-    },
-    setImage1: (state, action) => {
-      state.image1 = action.payload;
-    },
-    setImage2: (state, action) => {
-      state.image2 = action.payload;
-    },
-    setImage3: (state, action) => {
-      state.image3 = action.payload;
-    },
-    setImage4: (state, action) => {
-      state.image4 = action.payload;
-    },
-    setImage5: (state, action) => {
-      state.image5 = action.payload;
     },
     setCategory: (state, action) => {
       state.category = action.payload;
@@ -70,11 +50,6 @@ const AdminProductSlice = createSlice({
       state.description = "";
       state.keyword = "";
       state.price = "";
-      state.image1 = "";
-      state.image2 = "";
-      state.image3 = "";
-      state.image4 = "";
-      state.image5 = "";
       state.category = "";
       state.subCategory = "";
       state.sizes = [];
@@ -90,11 +65,6 @@ export const {
   setDescription,
   setKeyword,
   setPrice,
-  setImage1,
-  setImage2,
-  setImage3,
-  setImage4,
-  setImage5,
   setCategory,
   setSubCategory,
   setSizes,
