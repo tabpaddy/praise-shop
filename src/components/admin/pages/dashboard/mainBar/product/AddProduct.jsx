@@ -163,7 +163,7 @@ export default function AddProduct() {
     sizes.forEach((size) => {
         formData.append("sizes[]", size);
       });
-    formData.append("bestseller", bestSeller ? 0 : 1);
+    formData.append("bestseller", bestSeller ? 1 : 0);
     formData.append("image1", image1File);
     formData.append("image2", image2File);
     formData.append("image3", image3File);
@@ -194,7 +194,7 @@ export default function AddProduct() {
           document
             .querySelectorAll('input[type="file"]')
             .forEach((input) => (input.value = ""));
-          // window.location.href = '/admin/dashboard/manage-product'
+          window.location.href = '/admin/dashboard/view-products'
         }, 3000);
       }
     } catch (error) {
