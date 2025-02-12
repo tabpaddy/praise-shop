@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { AdminContext } from "../../../../../context/AdminContext";
 import axios from "axios";
 import DeleteProduct from "./DeleteProduct";
+import { Link } from "react-router-dom";
 
 export default function ViewProduct() {
   const [manageProduct, setManageProduct] = useState([]);
@@ -10,7 +11,6 @@ export default function ViewProduct() {
 
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [selectedProductName, setSelectedProductName] = useState(null);
-
 
   const { admin } = useContext(AdminContext);
 
@@ -25,7 +25,7 @@ export default function ViewProduct() {
           },
         }
       );
-      console.log(response.data.product);
+      //console.log(response.data.product);
       setManageProduct(response.data.product);
     } catch (error) {
       if (error.response && error.response.status === 422) {
@@ -47,7 +47,7 @@ export default function ViewProduct() {
     setSelectedProductId(id[0]);
     setSelectedProductName(id[1]);
     setDeleteModal(true);
-  }
+  };
 
   return (
     <div className="overflow-y-auto bg-slate-200 font-outfit p-6 min-h-screen">
@@ -142,26 +142,29 @@ export default function ViewProduct() {
                         <td className="px-6 py-4 text-sm text-slate-700">
                           {product.bestseller ? "True" : "False"}
                         </td>
-                        <td className="px-4 py-2 text-sm text-slate-700 w-full object-cover">
-                          <img src={product.image1_url} alt={product.name} />
+                        <td className="px-4 py-2 text-sm text-slate-700">
+                          <img className="object-contain shadow-md rounded-md w-full" src={product.image1_url} alt={product.name} />
                         </td>
-                        <td className="px-4 py-2 text-sm text-slate-700 w-full object-cover">
-                          <img src={product.image2_url} alt={product.name} />
+                        <td className="px-4 py-2 text-sm text-slate-700">
+                          <img className="object-contain shadow-md rounded-md w-full" src={product.image2_url} alt={product.name} />
                         </td>
-                        <td className="px-4 py-2 text-sm text-slate-700 w-full object-cover">
-                          <img src={product.image3_url} alt={product.name} />
+                        <td className="px-4 py-2 text-sm text-slate-700">
+                          <img className="object-contain shadow-md rounded-md w-full" src={product.image3_url} alt={product.name} />
                         </td>
-                        <td className="px-4 py-2 text-sm text-slate-700 w-full object-cover">
-                          <img src={product.image4_url} alt={product.name} />
+                        <td className="px-4 py-2 text-sm text-slate-700">
+                          <img className="object-contain shadow-md rounded-md w-full" src={product.image4_url} alt={product.name} />
                         </td>
-                        <td className="px-4 py-2 text-sm text-slate-700 w-full object-cover">
-                          <img src={product.image5_url} alt={product.name} />
+                        <td className="px-4 py-2 text-sm text-slate-700">
+                          <img className="object-contain shadow-md rounded-md w-full" src={product.image5_url} alt={product.name} />
                         </td>
                         <td className="px-6 py-4 text-sm text-slate-700">
                           <div className="flex gap-10 justify-center">
-                            <button className="text-blue-500 hover:text-blue-800">
+                            <Link
+                              to={`edit-product/${product.id}`}
+                              className="text-blue-500 hover:text-blue-800"
+                            >
                               Edit
-                            </button>
+                            </Link>
                             <button
                               className="text-red-500 hover:text-red-800"
                               onClick={() =>
@@ -195,11 +198,11 @@ export default function ViewProduct() {
       </div>
 
       <DeleteProduct
-      modalOpen={deleteModal}
-      modalClose={() => setDeleteModal(false)}
-      productId={selectedProductId}
-      productName={selectedProductName}
-      refreshProduct={fetchProductData}
+        modalOpen={deleteModal}
+        modalClose={() => setDeleteModal(false)}
+        productId={selectedProductId}
+        productName={selectedProductName}
+        refreshProduct={fetchProductData}
       />
     </div>
   );

@@ -13,6 +13,7 @@ import AdminAddCategory from "./pages/dashboard/AdminAddCategory";
 import AdminManageCategory from "./pages/dashboard/AdminManageCategory";
 import AdminAddSubCategory from "./pages/dashboard/AdminAddSubCategory";
 import AdminManageSubCategory from "./pages/dashboard/AdminManageSubCategory";
+import AdminEditProduct from "./pages/dashboard/AdminEditProduct";
 
 export default function AdminApp() {
   return (
@@ -91,6 +92,14 @@ export default function AdminApp() {
           element={
             <ProtectedRoute>
               <AdminViewProduct />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/view-products/edit-product/:id"
+          element={
+            <ProtectedRoute>
+              <AdminEditProduct />
             </ProtectedRoute>
           }
         />
