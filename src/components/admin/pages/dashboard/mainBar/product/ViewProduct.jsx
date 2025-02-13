@@ -137,7 +137,7 @@ export default function ViewProduct() {
                           {product.sub_category.sub_category_title}
                         </td>
                         <td className="px-6 py-4 text-sm text-slate-700">
-                          {product.price}
+                          {product.sizes}
                         </td>
                         <td className="px-6 py-4 text-sm text-slate-700">
                           {product.bestseller ? "True" : "False"}
