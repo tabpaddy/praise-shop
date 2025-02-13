@@ -55,7 +55,7 @@ export default function ViewProduct() {
         <h1 className="text-2xl font-bold text-slate-800 mb-8">
           Manage Products
         </h1>
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="bg-white rounded-lg shadow-md overflow-hidden mt-3 mb-16">
           <div className="overflow-x-auto">
             <table className="min-w-full">
               <thead className="bg-slate-50">

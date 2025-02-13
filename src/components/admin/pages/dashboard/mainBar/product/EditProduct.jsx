@@ -290,7 +290,7 @@ export default function EditProduct() {
         dispatch(setSuccess(response.data.message));
         setTimeout(() => {
           dispatch(clearForm());
-          navigate("/admin/dashboard/manage-product");
+          navigate("/admin/dashboard/view-products");
         }, 3000);
       }
     } catch (error) {
