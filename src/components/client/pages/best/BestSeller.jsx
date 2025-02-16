@@ -1,8 +1,11 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { FaNairaSign } from "react-icons/fa6";
+
 
 export default function BestSeller() {
   const [bestSeller, setBestSeller] = useState([]);
+  const [screenSize, setScreenSize] = useState(window.innerWidth);
 
   const fetchBestSeller = async () => {
     try {
@@ -28,6 +31,13 @@ export default function BestSeller() {
     }
   };
 
+   // Track Window Resize
+   useEffect(() => {
+    const handleResize = () => setScreenSize(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       await fetchBestSeller();
@@ -35,33 +45,51 @@ export default function BestSeller() {
 
     fetchData();
   }, []);
+
+  // Determine Items to Display Based on Screen Size
+  const displayedItems =
+    screenSize < 640 ? bestSeller.slice(0, 4) : bestSeller;
+
   return (
-    <div className="">
-      <div className="text-center my-2 mt-10">
+    <div className="my-20">
+      {/* Title Section */}
+      <div className="text-center my-10">
         <h3 className="text-slate-700 relative font-outfit font-normal text-2xl sm:text-3xl">
           BEST{" "}
-          <span className="text-black relative font-semibold after:content-[''] after:absolute after:w-[50px] after:pt-1 after:h-[1px] after:bg-black after:ml-2 after:top-1/2 after:left-full">
+          <span className="text-black relative font-semibold after:content-[''] after:absolute after:w-[40px] after:pt-1 after:h-[1px] after:bg-black after:ml-2 after:top-1/2 after:left-full">
             SELLER
           </span>
         </h3>
         <p className="font-outfit font-normal text-stone-400 text-base sm:text-lg my-2">
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the.
+          Discover our top-selling products, loved by customers for their
+          **exceptional quality** and **great value**.
         </p>
       </div>
 
-      {/* bestseller image */}
-      <div className="flex justify-center items-center my-4 flex-col flex-1 md:flex-row gap-3 lg:gap-6">
-        {bestSeller.map((bestSeller) => {
-            return (
-              <div key={bestSeller.id} className="block font-outfit font-medium text-sm leading-2">
-                <img className={`object-contain shadow-sm sm:w-full w-1/2`} src={bestSeller.image1_url} alt={bestSeller.name} />
-                <p className="text-xs my-1">{bestSeller.name}</p>
-                <p>{bestSeller.price}</p>
-              </div>
-            );
-          })
-        }
+      {/* Bestseller Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-4">
+        {displayedItems.map((item) => (
+          <div
+            key={item.id}
+            className="block font-outfit font-medium text-sm leading-2 text-left"
+          >
+            {/* Product Image */}
+            <img
+              className="object-contain shadow-sm w-full rounded-md"
+              src={item.image1_url}
+              alt={item.name}
+            />
+
+            {/* Product Name */}
+            <p className="text-xs my-1">{item.name}</p>
+
+            {/* Price Section */}
+            <div className="flex items-center justify-left gap-1 text-lg font-semibold text-slate-800">
+              <FaNairaSign className="text-base" />
+              <p>{item.price}</p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

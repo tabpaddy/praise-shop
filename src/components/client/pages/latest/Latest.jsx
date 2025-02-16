@@ -1,43 +1,49 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { FaNairaSign } from "react-icons/fa6";
 
 export default function Latest() {
-    const [latest, setLatest] = useState([]);
+  const [latest, setLatest] = useState([]);
+  const [screenSize, setScreenSize] = useState(window.innerWidth);
 
-    const fetchLatest = async () => {
-      try {
-        const response = await axios.get(
-          "http://127.0.0.1:8000/api/get_latest_collection",
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        console.log(response.data.home);
-        setLatest(response.data.home);
-      } catch (error) {
-        if (error.response && error.response.status === 422) {
-          console.error(
-            "Error fetching latest:",
-            error.response.data || error.message
-          );
-        } else {
-          console.error("getting latest failed:", error);
+  const fetchLatest = async () => {
+    try {
+      const response = await axios.get(
+        "http://127.0.0.1:8000/api/get_latest_collection",
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      }
-    };
-  
-    useEffect(() => {
-      const fetchData = async () => {
-        await fetchLatest();
-      };
-  
-      fetchData();
-    }, []);
+      );
+      console.log(response.data.home);
+      setLatest(response.data.home);
+    } catch (error) {
+      console.error(
+        "Error fetching latest:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  // Track Window Resize
+  useEffect(() => {
+    const handleResize = () => setScreenSize(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    fetchLatest();
+  }, []);
+
+  // Determine Items to Display Based on Screen Size
+  const displayedItems = screenSize < 640 ? latest.slice(0, 6) : latest;
+
   return (
-    <div>
-      <div className="text-center my-2 mt-10">
+    <div className="my-20">
+      {/* Title Section */}
+      <div className="text-center my-10">
         <h3 className="text-slate-700 relative font-outfit font-normal text-2xl sm:text-3xl">
           Latest{" "}
           <span className="text-black relative font-semibold after:content-[''] after:absolute after:w-[50px] after:pt-1 after:h-[1px] after:bg-black after:ml-2 after:top-1/2 after:left-full">
@@ -45,23 +51,35 @@ export default function Latest() {
           </span>
         </h3>
         <p className="font-outfit font-normal text-stone-400 text-base sm:text-lg my-2">
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the.
+          Explore the **newest arrivals**, featuring the latest styles and
+          trends designed to **elevate your fashion**.
         </p>
       </div>
 
-      {/* Latest image */}
-      <div className="flex justify-center items-center my-4 flex-col flex-1 md:flex-row gap-3 lg:gap-6">
-        {latest.map((latest) => {
-            return (
-              <div key={latest.id} className="block font-outfit font-medium text-sm leading-2">
-                <img className={`object-contain shadow-sm sm:w-full w-1/2`} src={latest.image1_url} alt={latest.name} />
-                <p className="text-xs my-1">{latest.name}</p>
-                <p>{latest.price}</p>
-              </div>
-            );
-          })
-        }
+      {/* Latest Collection Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-4">
+        {displayedItems.map((item) => (
+          <div
+            key={item.id}
+            className="block font-outfit font-medium text-sm leading-2 text-left"
+          >
+            {/* Product Image */}
+            <img
+              className="object-contain shadow-sm w-full rounded-md"
+              src={item.image1_url}
+              alt={item.name}
+            />
+
+            {/* Product Name */}
+            <p className="text-xs my-1">{item.name}</p>
+
+            {/* Price Section */}
+            <div className="flex items-center justify-left gap-1 text-lg font-semibold text-slate-800">
+              <FaNairaSign className="text-base" />
+              <p>{item.price}</p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
