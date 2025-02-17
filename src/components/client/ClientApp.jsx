@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import Header from "./pages/header/Header";
 import Home from "./pages/home/Home";
 import Collection from "./pages/collection/Collection";
+import Product from "./pages/productPage/product";
 import About from "./pages/about/About";
 import Contact from "./pages/contact/Contact";
 import Footer from "./pages/footer/Footer";
@@ -17,6 +18,7 @@ export default function ClientApp() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/collection" element={<Collection />} />
+          <Route path="/product/:id" element={<Product />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<LogIn />} />
