@@ -1,6 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaNairaSign } from "react-icons/fa6";
+import { Link } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
 
 export default function Collection() {
   const [collection, setCollection] = useState([]);
@@ -10,6 +12,29 @@ export default function Collection() {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedSubCategories, setSelectedSubCategories] = useState([]);
   const [sortOption, setSortOption] = useState("");
+  const [visibleItems, setVisibleItems] = useState(0); // Number of items to display
+  const [increment, setIncrement] = useState(0); // How many items to add per scroll
+  const [loading, setLoading] = useState(false);
+
+  // Initial Load Based on Screen Size
+  useEffect(() => {
+    const updateItemsPerView = () => {
+      if (window.innerWidth >= 1024) {
+        setVisibleItems(20);
+        setIncrement(10);
+      } else if (window.innerWidth >= 768) {
+        setVisibleItems(15);
+        setIncrement(6);
+      } else {
+        setVisibleItems(12);
+        setIncrement(6);
+      }
+    };
+
+    updateItemsPerView();
+    window.addEventListener("resize", updateItemsPerView);
+    return () => window.removeEventListener("resize", updateItemsPerView);
+  }, []);
 
   const fetchCollection = async () => {
     try {
@@ -64,7 +89,7 @@ export default function Collection() {
           },
         }
       );
-      console.log(response.data.subCategory);
+      //console.log(response.data.subCategory);
       setSubCategory(response.data.subCategory);
     } catch (error) {
       if (error.response && error.response.status === 422) {
@@ -123,16 +148,52 @@ export default function Collection() {
       );
     }
 
-    if (sortOption === "price-high") {
-      filtered.sort((a, b) => b.price - a.price);
-    } else if (sortOption === "price-low") {
-      filtered.sort((a, b) => a.price - b.price);
-    } else if (sortOption === "bestseller") {
-      filtered.sort((a, b) => b.sold_count - a.sold_count);
+    // Sorting Logic
+    switch (sortOption) {
+      case "price-high":
+        filtered.sort((a, b) => b.price - a.price);
+        break;
+      case "price-low":
+        filtered.sort((a, b) => a.price - b.price);
+        break;
+      case "bestseller":
+        filtered.sort((a, b) => b.sold_count - a.sold_count);
+        break;
+      case "newest":
+        filtered.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+        break;
+      default:
+        break;
     }
 
     setFilteredCollection(filtered);
   }, [selectedCategories, selectedSubCategories, sortOption, collection]);
+
+  // Infinite Scroll Handler
+  const handleScroll = () => {
+    if (loading) return;
+
+    const scrollHeight = document.documentElement.scrollHeight;
+    const scrollTop = document.documentElement.scrollTop;
+    const clientHeight = window.innerHeight;
+
+    if (scrollTop + clientHeight >= scrollHeight - 10) {
+      setLoading(true);
+      setTimeout(() => {
+        setVisibleItems((prev) =>
+          Math.min(prev + increment, filteredCollection.length)
+        );
+        setLoading(false);
+      }, 1000); // Simulate network delay
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [filteredCollection, loading]);
 
   return (
     <div className="flex flex-col md:flex-row gap-10 justify-center mt-10 px-4 md:px-10">
@@ -191,35 +252,47 @@ export default function Collection() {
               </span>
             </h3>
           </div>
-          <div className="border border-slate-200 p-2 rounded-md shadow-sm">
+          <div className="relative">
             <select
               onChange={handleSortChange}
-              className="outline-none bg-transparent text-slate-800"
+              className="block w-full px-4 py-2 pr-8 rounded-md border border-gray-300 bg-white text-gray-800 shadow-sm focus:outline-none focus:ring focus:ring-gray-300 appearance-none"
             >
-              <option value="" className="text-slate-400">
-                <span>Sort by: </span>Price: High to Low
+              <option value="" disabled selected>
+                Sort by
               </option>
-              <option value="price-high">
-                <span>Sort by: </span>Price: High to Low
-              </option>
-              <option value="price-low">
-                <span>Sort by: </span>Price: Low to High
-              </option>
-              <option value="bestseller">
-                <span>Sort by: </span>Best Seller
-              </option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="bestseller">Best Seller</option>
+              <option value="newest">Newest First</option>
             </select>
+            {/* Custom dropdown arrow */}
+            <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+              <svg
+                className="w-4 h-4 text-gray-600"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
           </div>
         </div>
 
         {/*collection grid  */}
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5 px-4 mb-32 mt-3">
           {filteredCollection.length > 0 ? (
-            filteredCollection.map((item) => (
+            filteredCollection.slice(0, visibleItems).map((item) => (
               <div
                 key={item.id}
                 className="block font-outfit font-medium text-sm leading-2 text-left"
               >
+                <Link
+            to={`/product/${item.id}`}
+            >
                 {/* Product Image */}
                 <img
                   className="object-contain shadow-sm w-full rounded-md"
@@ -235,6 +308,7 @@ export default function Collection() {
                   <FaNairaSign className="text-base" />
                   <p>{item.price}</p>
                 </div>
+                </Link>
               </div>
             ))
           ) : (
@@ -243,6 +317,19 @@ export default function Collection() {
             </p>
           )}
         </div>
+        {/* Show loader only when loading and there are more items to load */}
+        {loading && visibleItems < filteredCollection.length && (
+          <div className="flex justify-center mt-4">
+            <ClipLoader color="#000" size={35} />
+          </div>
+        )}
+
+        {/* Show "No more items to load" when all items are loaded */}
+        {!loading && visibleItems >= filteredCollection.length && (
+          <p className="text-center text-gray-500 mt-4">
+            No more items to load
+          </p>
+        )}
       </div>
     </div>
   );

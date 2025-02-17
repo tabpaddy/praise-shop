@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaNairaSign } from "react-icons/fa6";
-
+import { Link } from "react-router-dom";
 
 export default function BestSeller() {
   const [bestSeller, setBestSeller] = useState([]);
@@ -31,8 +31,8 @@ export default function BestSeller() {
     }
   };
 
-   // Track Window Resize
-   useEffect(() => {
+  // Track Window Resize
+  useEffect(() => {
     const handleResize = () => setScreenSize(window.innerWidth);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -47,8 +47,7 @@ export default function BestSeller() {
   }, []);
 
   // Determine Items to Display Based on Screen Size
-  const displayedItems =
-    screenSize < 640 ? bestSeller.slice(0, 4) : bestSeller;
+  const displayedItems = screenSize < 640 ? bestSeller.slice(0, 4) : bestSeller;
 
   return (
     <div className="my-20">
@@ -73,21 +72,23 @@ export default function BestSeller() {
             key={item.id}
             className="block font-outfit font-medium text-sm leading-2 text-left"
           >
-            {/* Product Image */}
-            <img
-              className="object-contain shadow-sm w-full rounded-md"
-              src={item.image1_url}
-              alt={item.name}
-            />
+            <Link to={`/product/${item.id}`}>
+              {/* Product Image */}
+              <img
+                className="object-contain shadow-sm w-full rounded-md"
+                src={item.image1_url}
+                alt={item.name}
+              />
 
-            {/* Product Name */}
-            <p className="text-xs my-1">{item.name}</p>
+              {/* Product Name */}
+              <p className="text-xs my-1">{item.name}</p>
 
-            {/* Price Section */}
-            <div className="flex items-center justify-left gap-1 text-lg font-semibold text-slate-800">
-              <FaNairaSign className="text-base" />
-              <p>{item.price}</p>
-            </div>
+              {/* Price Section */}
+              <div className="flex items-center justify-left gap-1 text-lg font-semibold text-slate-800">
+                <FaNairaSign className="text-base" />
+                <p>{item.price}</p>
+              </div>
+            </Link>
           </div>
         ))}
       </div>

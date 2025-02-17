@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaNairaSign } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 
 export default function Latest() {
   const [latest, setLatest] = useState([]);
@@ -63,6 +64,9 @@ export default function Latest() {
             key={item.id}
             className="block font-outfit font-medium text-sm leading-2 text-left"
           >
+            <Link
+            to={`/product/${item.id}`}
+            >
             {/* Product Image */}
             <img
               className="object-contain shadow-sm w-full rounded-md"
@@ -78,6 +82,7 @@ export default function Latest() {
               <FaNairaSign className="text-base" />
               <p>{item.price}</p>
             </div>
+            </Link>
           </div>
         ))}
       </div>
