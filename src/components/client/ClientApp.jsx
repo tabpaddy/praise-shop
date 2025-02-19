@@ -9,6 +9,7 @@ import SignUp from "./pages/auth/SignUp";
 import LogIn from "./pages/auth/LogIn";
 import PasswordReset from "./pages/auth/PasswordReset";
 import Product from "./pages/productPage/Product";
+import Cart from "./pages/cartPage/Cart";
 
 export default function ClientApp() {
   return (
@@ -23,6 +24,7 @@ export default function ClientApp() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<LogIn />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/cart" element={<Cart />} />
           <Route path={`/reset-password`} element={<PasswordReset />} />
         </Routes>
         <Footer />

@@ -12,11 +12,11 @@ export const AdminProvider = ({ children }) => {
   const [admin, setAdmin] = useState(() => {
     const savedAdmin = localStorage.getItem("admin");
     if (savedAdmin) {
-      console.log("Encrypted data from localStorage:", savedAdmin);
+      //console.log("Encrypted data from localStorage:", savedAdmin);
       const bytes = CryptoJS.AES.decrypt(savedAdmin, ENCRYPTION_KEY);
-      console.log("Decrypted bytes:", bytes);
+      //console.log("Decrypted bytes:", bytes);
       const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
-      console.log("Decrypted data:", decryptedData);
+      //console.log("Decrypted data:", decryptedData);
       return JSON.parse(decryptedData);
     }
     return null;
