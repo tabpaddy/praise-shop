@@ -10,11 +10,21 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     addItem: (state, action) => {
-      state.cart.push(action.payload);
-      localStorage.setItem("cart", JSON.stringify(state.cart)); // Save guest cart
+      const exists = state.cart.find(
+        (item) =>
+          item.id === action.payload.id && item.size === action.payload.size
+      );
+
+      if (!exists) {
+        state.cart.push(action.payload);
+        localStorage.setItem("cart", JSON.stringify(state.cart)); // Save guest cart
+      }
     },
     removeItem: (state, action) => {
-      state.cart = state.cart.filter((item) => item.id !== action.payload);
+      state.cart = state.cart.filter(
+        (item) =>
+          !(item.id === action.payload.id && item.size === action.payload.size)
+      );
       localStorage.setItem("cart", JSON.stringify(state.cart));
     },
     setCart: (state, action) => {
