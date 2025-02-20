@@ -103,7 +103,7 @@ export default function LogInForm() {
       if (error.response && error.response.status === 422) {
         const validationErrors = error.response.data.errors;
         console.error("Validation errors:", validationErrors);
-        dispatch(setError({ message: validationErrors.email || validationErrors.password }));
+        dispatch(setError({ message: validationErrors.email || validationErrors.password || validationErrors.ip_address }));
       } else {
         console.error("Submission failed:", error);
       }

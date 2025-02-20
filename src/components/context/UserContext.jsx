@@ -13,8 +13,11 @@ export const UserProvider = ({ children }) => {
     // Decrypt user data from localStorage on initialization
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
+      console.log("Encrypted data from localStorage:", savedUser);
       const bytes = CryptoJS.AES.decrypt(savedUser, ENCRYPTION_KEY);
+      console.log("Decrypted bytes:", bytes);
       const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
+      console.log("Decrypted data:", decryptedData);
       return JSON.parse(decryptedData);
     }
     return null;
