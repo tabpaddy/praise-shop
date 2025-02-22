@@ -1,8 +1,9 @@
 import { createContext, useCallback, useEffect, useState } from "react";
 
 import CryptoJS from "crypto-js";
-import axios from "axios";
+
 import { useIdleTimer } from "react-idle-timer";
+import api from "../axiosInstance/api";
 
 export const UserContext = createContext();
 
@@ -35,8 +36,8 @@ export const UserProvider = ({ children }) => {
   const logoutUser = useCallback(async () => {
     try {
       if (user && user.userToken) {
-        const response = await axios.post(
-          "http://127.0.0.1:8000/api/logout",
+        const response = await api.post(
+          "/api/logout",
           { userEmail: user.email }, // Send user email
           {
             headers: {
@@ -45,7 +46,7 @@ export const UserProvider = ({ children }) => {
             },
           }
         );
-  
+
         if (response.status === 200) {
           //console.log("Logout successful");
           setUser(null);
@@ -65,32 +66,29 @@ export const UserProvider = ({ children }) => {
     console.log("User is idle");
     logoutUser();
   };
-  
+
   useIdleTimer({
     timeout: 1000 * 60 * 30, // 30 minutes
     onIdle: handleOnIdle,
     debounce: 500,
   });
-  
 
   // Check token expiration and auto-logout
   useEffect(() => {
     if (user && user.tokenExpiration) {
       const currentTime = Date.now();
       const tokenExpiryTime = new Date(user.tokenExpiration).getTime();
-  
-      console.log("Current Time:", currentTime);
-      console.log("Token Expiry Time:", tokenExpiryTime);
-  
+
+      // console.log("Current Time:", currentTime);
+      // console.log("Token Expiry Time:", tokenExpiryTime);
+
       if (currentTime > tokenExpiryTime) {
         console.log("Token expired. Logging out...");
         logoutUser();
       }
     }
   }, [user, logoutUser]);
-  
 
-  
   return (
     <UserContext.Provider value={{ user, updateUser, logoutUser }}>
       {children}
