@@ -1,11 +1,9 @@
-import React from "react";
 import Subscribe from "../subscribe/Subscribe";
 import BestSeller from "../best/BestSeller";
 import Latest from "../latest/Latest";
 import hero_img from "../../../../assets/hero_img.png";
 import { FaExchangeAlt } from "react-icons/fa";
 import { MdSupportAgent, MdHighQuality } from "react-icons/md";
-
 
 const Home = () => {
   return (
@@ -49,39 +47,45 @@ const Home = () => {
       <Latest />
       <BestSeller />
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-14 text-center font-outfit my-40 px-6">
-      {/* Easy Exchange Policy */}
-      <div className="flex flex-col items-center">
-        <div className="text-4xl text-slate-800 mb-2">
-          <FaExchangeAlt />
+        {/* Easy Exchange Policy */}
+        <div className="flex flex-col items-center">
+          <div className="text-4xl text-slate-800 mb-2">
+            <FaExchangeAlt />
+          </div>
+          <p className="font-semibold text-lg text-slate-800">
+            Easy Exchange Policy
+          </p>
+          <p className="font-normal text-lg text-stone-500">
+            We offer hassle-free exchange policy.
+          </p>
         </div>
-        <p className="font-semibold text-lg text-slate-800">Easy Exchange Policy</p>
-        <p className="font-normal text-lg text-stone-500">
-          We offer hassle-free exchange policy.
-        </p>
-      </div>
 
-      {/* 7 Days Return Policy */}
-      <div className="flex flex-col items-center">
-        <div className="text-4xl text-slate-800 mb-2">
-          <MdSupportAgent />
+        {/* 7 Days Return Policy */}
+        <div className="flex flex-col items-center">
+          <div className="text-4xl text-slate-800 mb-2">
+            <MdSupportAgent />
+          </div>
+          <p className="font-semibold text-lg text-slate-800">
+            7 Days Return Policy
+          </p>
+          <p className="font-normal text-lg text-stone-500">
+            We provide 7 days free return policy.
+          </p>
         </div>
-        <p className="font-semibold text-lg text-slate-800">7 Days Return Policy</p>
-        <p className="font-normal text-lg text-stone-500">
-          We provide 7 days free return policy.
-        </p>
-      </div>
 
-      {/* Best Customer Support */}
-      <div className="flex flex-col items-center">
-        <div className="text-4xl text-slate-800 mb-2">
-          <MdHighQuality />
+        {/* Best Customer Support */}
+        <div className="flex flex-col items-center">
+          <div className="text-4xl text-slate-800 mb-2">
+            <MdHighQuality />
+          </div>
+          <p className="font-semibold text-lg text-slate-800">
+            Best Customer Support
+          </p>
+          <p className="font-normal text-lg text-stone-500">
+            We provide 24/7 customer support.
+          </p>
         </div>
-        <p className="font-semibold text-lg text-slate-800">Best Customer Support</p>
-        <p className="font-normal text-lg text-stone-500">
-          We provide 24/7 customer support.
-        </p>
       </div>
-    </div>
       <Subscribe />
     </div>
   );

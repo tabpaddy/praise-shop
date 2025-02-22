@@ -1,8 +1,8 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaNairaSign } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
+import api from "../../../axiosInstance/api";
 
 export default function Collection() {
   const [collection, setCollection] = useState([]);
@@ -38,7 +38,7 @@ export default function Collection() {
 
   const fetchCollection = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/collection", {
+      const response = await api.get("/api/collection", {
         headers: {
           "Content-Type": "application/json",
         },
@@ -60,7 +60,7 @@ export default function Collection() {
 
   const fetchCategory = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/category", {
+      const response = await api.get("/api/category", {
         headers: {
           "Content-Type": "application/json",
         },
@@ -81,14 +81,11 @@ export default function Collection() {
 
   const fetchSubCategory = async () => {
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/sub_category",
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await api.get("/api/sub_category", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       //console.log(response.data.subCategory);
       setSubCategory(response.data.subCategory);
     } catch (error) {
@@ -290,24 +287,22 @@ export default function Collection() {
                 key={item.id}
                 className="block font-outfit font-medium text-sm leading-2 text-left"
               >
-                <Link
-            to={`/product/${item.id}`}
-            >
-                {/* Product Image */}
-                <img
-                  className="object-contain shadow-sm w-full rounded-md"
-                  src={item.image1_url}
-                  alt={item.name}
-                />
+                <Link to={`/product/${item.id}`}>
+                  {/* Product Image */}
+                  <img
+                    className="object-contain shadow-sm w-full rounded-md"
+                    src={item.image1_url}
+                    alt={item.name}
+                  />
 
-                {/* Product Name */}
-                <p className="text-xs my-1">{item.name}</p>
+                  {/* Product Name */}
+                  <p className="text-xs my-1">{item.name}</p>
 
-                {/* Price Section */}
-                <div className="flex items-center justify-left gap-1 text-lg font-semibold text-slate-800">
-                  <FaNairaSign className="text-base" />
-                  <p>{item.price}</p>
-                </div>
+                  {/* Price Section */}
+                  <div className="flex items-center justify-left gap-1 text-lg font-semibold text-slate-800">
+                    <FaNairaSign className="text-base" />
+                    <p>{item.price}</p>
+                  </div>
                 </Link>
               </div>
             ))

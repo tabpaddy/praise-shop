@@ -1,8 +1,8 @@
-import axios from "axios";
 import { useEffect, useReducer, useState } from "react";
 import { Link } from "react-router-dom";
 import Svg1 from "./Svg1";
 import Svg2 from "./Svg2";
+import api from "../../../axiosInstance/api";
 
 export default function SignUpForm() {
   const reducer = (state, action) => {
@@ -116,8 +116,8 @@ export default function SignUpForm() {
     }
 
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/register",
+      const response = await api.post(
+        "/api/register",
         {
           name: state.name,
           email: state.email,

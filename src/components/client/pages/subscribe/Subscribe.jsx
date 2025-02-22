@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import api from "../../../axiosInstance/api";
 
 export default function Subscribe() {
   const [email, setEmail] = useState(""); // To store user's email
@@ -33,34 +34,34 @@ export default function Subscribe() {
       return;
     }
 
-    try{
-      const response = await axios.post("http://127.0.0.1:8000/api/subscribe", {
-        email: email,
-        ip_address: ipAddress,
-      },
-      {
-        headers: {"content-Type": "application/json"},
-      });
+    try {
+      const response = await api.post(
+        "/api/subscribe",
+        {
+          email: email,
+          ip_address: ipAddress,
+        },
+        {
+          headers: { "content-Type": "application/json" },
+        }
+      );
 
-      if(response.status === 200){
+      if (response.status === 200) {
         setMessage(response.data.message);
         setTimeout(() => {
           setEmail(""); // Clear the input field
           setMessage(""); // Clear the success message
-        }, 2000)
+        }, 2000);
       }
-    }catch (error){
-      if (error.response && error.response.status === 422){
-        console.error("validation errors:", error.response.data)
-      }else{
-        console.error("Submission failed:", error)
+    } catch (error) {
+      if (error.response && error.response.status === 422) {
+        console.error("validation errors:", error.response.data);
+      } else {
+        console.error("Submission failed:", error);
       }
     }
     // Temporarily store email and IP (to send to backend later)
     //console.log({ email, ipAddress });
-
-    
-    
   };
 
   return (

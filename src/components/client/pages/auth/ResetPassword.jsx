@@ -11,8 +11,8 @@ import {
 import Svg1 from "./Svg1";
 import Svg2 from "./Svg2";
 import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
 import { useLocation } from "react-router-dom";
+import api from "../../../axiosInstance/api";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -77,8 +77,8 @@ export default function ResetPassword() {
 
     setIsLoading(true); // Set loading state to true
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/reset-password",
+      const response = await api.post(
+        "/api/reset-password",
         {
           email: email,
           token: token,
@@ -196,9 +196,7 @@ export default function ResetPassword() {
           {error.error && (
             <span className="text-sm text-red-500">{error.error}</span>
           )}
-          {success && (
-            <span className="text-sm text-green-500">{success}</span>
-          )}
+          {success && <span className="text-sm text-green-500">{success}</span>}
         </div>
 
         <div className="text-center">

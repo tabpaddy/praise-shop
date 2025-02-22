@@ -1,20 +1,51 @@
 import { FiSearch, FiUser, FiBell } from "react-icons/fi";
-import { useContext, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import SearchModal from "./SearchModal";
 import { UserContext } from "../../../context/UserContext";
 import LogoutUserModal from "./LogoutUserModal";
+import { useSelector } from "react-redux";
+import api from "../../../axiosInstance/api";
 
 export default function Header() {
   const { user } = useContext(UserContext); // Access user state
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [logoutUserModal, setLogoutUserModal] = useState(false);
-  const [cartCount] = useState(0);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
   const location = useLocation();
 
-  const isActive = (path) => location.pathname === path;
+  // Access Redux cart for guest users
+  const { cart } = useSelector((state) => state.cart);
+
+  //const cartCount = cart.length; // Get count dynamically
+  if (user) {
+    const fetchUser = async () => {
+      try {
+        await api.get("/sanctum/csrf-cookie"); // Ensure CSRF token is fetched first
+
+        const response = await api.get("/api/user", {
+          headers: {
+            Authorization: `Bearer ${user?.userToken}`, // Ensure userToken is set
+           
+          },
+          withCredentials: true,
+        });
+
+        console.log(response.data);
+      } catch (error) {
+        console.error("Fetch User Error:", error.response);
+      }
+    };
+
+    fetchUser();
+  }
+
+  const isActive = useCallback(
+    (path) => location.pathname === path,
+    [location.pathname]
+  );
 
   const handleSearchClick = () => {
     setIsDropdownOpen(false); // Close the profile dropdown
@@ -24,7 +55,7 @@ export default function Header() {
   const logoutUserModalClick = () => {
     setIsDropdownOpen(false); // Close the profile dropdown
     setLogoutUserModal(true);
-  }
+  };
 
   const toggleProfileDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -46,7 +77,52 @@ export default function Header() {
   const handleMenuClose = () => {
     setIsMenuOpen(false);
   };
-// console.log(user)
+
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Fetch CSRF token before sending requests
+  const fetchCsrfToken = async () => {
+    await api.get("/sanctum/csrf-cookie");
+  };
+
+  // Fetch cart count for logged-in users
+  useEffect(() => {
+    const fetchCartCount = async () => {
+      if (user?.userToken) {
+        try {
+          await fetchCsrfToken(); // Fetch CSRF token first
+
+          const response = await api.get("/api/count-cart", {
+            headers: {
+              Authorization: `Bearer ${user.userToken}`,
+              
+            },
+          });
+          console.log(response.data.count);
+          setCartCount(response.data.count);
+        } catch (error) {
+          console.error("Error fetching cart count:", error);
+        }
+      } else {
+        setCartCount(cart.length); // Use Redux cart count for guests
+      }
+    };
+
+    fetchCartCount();
+  }, [user, cart]);
+
+  // console.log(user)
   return (
     <nav className="bg-white border-b border-gray-200 px-4 py-3 sticky top-0 z-10">
       <div className="flex justify-between items-center">
@@ -112,71 +188,78 @@ export default function Header() {
               className="cursor-pointer"
               onClick={toggleProfileDropdown}
             />
-            {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 bg-white border rounded-md shadow-md w-40">
-                <ul className="py-2">
-                  {user ? (
-                    <>
-                      <li>
-                        <Link
-                          to="/profile"
-                          className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
-                          onClick={toggleProfileDropdownClose}
-                        >
-                          Profile
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          to="/orders"
-                          className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
-                          onClick={toggleProfileDropdownClose}
-                        >
-                          Orders
-                        </Link>
-                      </li>
-                      <li>
-                        <button
-                          to="/logout"
-                          className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
-                          onClick={toggleProfileDropdownClose && logoutUserModalClick}
-                        >
-                          Logout
-                        </button>
-                      </li>
-                    </>
-                  ) : (
-                    <>
-                      <li>
-                        <Link
-                          to="/login"
-                          className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
-                          onClick={toggleProfileDropdownClose}
-                        >
-                          Login
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          to="/signup"
-                          className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
-                          onClick={toggleProfileDropdownClose}
-                        >
-                          Signup
-                        </Link>
-                      </li>
-                    </>
-                  )}
-                </ul>
-              </div>
-            )}
+            <div ref={dropdownRef}>
+              {" "}
+              {isDropdownOpen && (
+                <div className="absolute right-0 mt-2 bg-white border rounded-md shadow-md w-40">
+                  <ul className="py-2">
+                    {user ? (
+                      <>
+                        <li>
+                          <Link
+                            to="/profile"
+                            className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
+                            onClick={toggleProfileDropdownClose}
+                          >
+                            Profile
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            to="/orders"
+                            className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
+                            onClick={toggleProfileDropdownClose}
+                          >
+                            Orders
+                          </Link>
+                        </li>
+                        <li>
+                          <button
+                            to="/logout"
+                            className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
+                            onClick={
+                              toggleProfileDropdownClose && logoutUserModalClick
+                            }
+                          >
+                            Logout
+                          </button>
+                        </li>
+                      </>
+                    ) : (
+                      <>
+                        <li>
+                          <Link
+                            to="/login"
+                            className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
+                            onClick={toggleProfileDropdownClose}
+                          >
+                            Login
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
+                            to="/signup"
+                            className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
+                            onClick={toggleProfileDropdownClose}
+                          >
+                            Signup
+                          </Link>
+                        </li>
+                      </>
+                    )}
+                  </ul>
+                </div>
+              )}{" "}
+            </div>
           </div>
 
           <div className="relative cursor-pointer">
-            <FiBell size={20} />
-            <span className="absolute top-[+2px] right-[-8px] bg-red-500 text-white text-xs rounded-full px-1">
-              {cartCount}
-            </span>
+            <Link to={"/cart"}>
+              <FiBell size={20} />
+              <span className="absolute top-[+2px] right-[-8px] bg-stone-900 text-white text-xs rounded-full px-1">
+                {cartCount}
+              </span>
+            </Link>
           </div>
 
           <button className="block md:hidden" onClick={handleMenuToggle}>
@@ -227,9 +310,9 @@ export default function Header() {
       />
 
       {/* Import and use the LogoutUserModal */}
-      <LogoutUserModal 
-      modalOpen={logoutUserModal}
-      modalClose={() => setLogoutUserModal(false)}
+      <LogoutUserModal
+        modalOpen={logoutUserModal}
+        modalClose={() => setLogoutUserModal(false)}
       />
     </nav>
   );

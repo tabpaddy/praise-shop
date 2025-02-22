@@ -1,7 +1,7 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaNairaSign } from "react-icons/fa6";
 import { Link } from "react-router-dom";
+import api from "../../../axiosInstance/api";
 
 export default function Latest() {
   const [latest, setLatest] = useState([]);
@@ -9,15 +9,12 @@ export default function Latest() {
 
   const fetchLatest = async () => {
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/get_latest_collection",
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log(response.data.home);
+      const response = await api.get("/api/get_latest_collection", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      //console.log(response.data.home);
       setLatest(response.data.home);
     } catch (error) {
       console.error(
@@ -64,24 +61,22 @@ export default function Latest() {
             key={item.id}
             className="block font-outfit font-medium text-sm leading-2 text-left"
           >
-            <Link
-            to={`/product/${item.id}`}
-            >
-            {/* Product Image */}
-            <img
-              className="object-contain shadow-sm w-full rounded-md"
-              src={item.image1_url}
-              alt={item.name}
-            />
+            <Link to={`/product/${item.id}`}>
+              {/* Product Image */}
+              <img
+                className="object-contain shadow-sm w-full rounded-md"
+                src={item.image1_url}
+                alt={item.name}
+              />
 
-            {/* Product Name */}
-            <p className="text-xs my-1">{item.name}</p>
+              {/* Product Name */}
+              <p className="text-xs my-1">{item.name}</p>
 
-            {/* Price Section */}
-            <div className="flex items-center justify-left gap-1 text-lg font-semibold text-slate-800">
-              <FaNairaSign className="text-base" />
-              <p>{item.price}</p>
-            </div>
+              {/* Price Section */}
+              <div className="flex items-center justify-left gap-1 text-lg font-semibold text-slate-800">
+                <FaNairaSign className="text-base" />
+                <p>{item.price}</p>
+              </div>
             </Link>
           </div>
         ))}

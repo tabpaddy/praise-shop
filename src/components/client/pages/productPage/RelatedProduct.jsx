@@ -1,7 +1,7 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaNairaSign } from "react-icons/fa6";
 import { Link, useParams } from "react-router-dom";
+import api from "../../../axiosInstance/api";
 
 export default function RelatedProduct(){
     const { id } = useParams();
@@ -10,8 +10,8 @@ export default function RelatedProduct(){
 
   const fetchRelatedProduct = async () => {
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:8000/api/liked-product/${id}`,
+      const response = await api.get(
+        `/api/liked-product/${id}`,
         {
           headers: {
             "Content-Type": "application/json",

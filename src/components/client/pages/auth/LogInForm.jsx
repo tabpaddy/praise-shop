@@ -14,9 +14,11 @@ import Svg2 from "./Svg2";
 import axios from "axios";
 import { UserContext } from "../../../context/UserContext";
 import ForgotPasswordInput from "./ForgotPasswordInput";
+import api from "../../../axiosInstance/api";
 
 export default function LogInForm() {
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
   const { email, password, ip_address, error, success } = useSelector(
@@ -59,54 +61,75 @@ export default function LogInForm() {
     return Object.keys(newErrors).length === 0; // Return true if no errors
   };
 
+  const fetchCsrfToken = async () => {
+    try {
+      // Add timestamp to bypass browser cache
+      await api.get(`/sanctum/csrf-cookie?t=${Date.now()}`);
+      console.log('CSRF Cookies:', document.cookie);
+    } catch (error) {
+      console.error("CSRF Error:", error);
+    }
+  };
+
+
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     if (!validateForm()) {
+      setLoading(false);
       return; // Stop submission if validation fails
     }
-
+    console.log(ip_address);
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/login",
-        {
-          email: email,
-          password: password,
-          ip_address: ip_address,
-        },
-        {
-          headers: {
-            "content-type": "application/json",
-          },
+      await fetchCsrfToken();
+      console.log("CSRF Cookie:", document.cookie);
+
+      const response = await api.post("/api/login", {
+        email: email,
+        password: password,
+        ip_address: ip_address,
+      }, {
+        headers: {
+          "Content-Type": "application/json",
         }
-      );
+      });
 
       if (response.status === 200) {
         // Update the user context with user data
         const userData = response.data.user; // Replace `response.data.user` with the actual user object from your API
         const userToken = response.data.token;
+        const userDataId = response.data.userId;
 
         // console.log("User data:", userData);
         // console.log("Token:", userToken);
         // console.log("expiresIn:", response.data.expiresIn);
         dispatch(setSuccess(response.data.message));
-        const tokenExpiration = new Date(
-          Date.now() + response.data.expiresIn * 1000
-        ); // Example: expiresIn in seconds
-        updateUser({ ...userData, tokenExpiration, userToken }); // Save user to context and localStorage
+        const tokenExpiration = new Date(Date.now() + response.data.expiresIn * 1000); // Example: expiresIn in seconds
+        updateUser({ ...userData, tokenExpiration, userToken, userDataId }); // Save user to context and localStorage
         setTimeout(() => {
           dispatch(clearForm());
           window.location.href = "/";
-        }, 1000)
-      //console.log("User data:", userData);
+        }, 1000);
+        //console.log("User data:", userData);
       }
     } catch (error) {
       if (error.response && error.response.status === 422) {
         const validationErrors = error.response.data.errors;
         console.error("Validation errors:", validationErrors);
-        dispatch(setError({ message: validationErrors.email || validationErrors.password || validationErrors.ip_address }));
+        dispatch(
+          setError({
+            message:
+              validationErrors.email ||
+              validationErrors.password ||
+              validationErrors.ip_address,
+          })
+        );
       } else {
         console.error("Submission failed:", error);
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -204,7 +227,7 @@ export default function LogInForm() {
           <input
             className="text-sm font-outfit font-light text-white bg-black p-3 px-9 rounded hover:bg-gray-800 hover:text-slate-300"
             type="submit"
-            value={"Sign in"}
+            value={loading ? "Loading..." : "Sign in"}
           />
         </div>
       </form>

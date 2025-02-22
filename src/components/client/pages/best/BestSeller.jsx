@@ -1,7 +1,7 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaNairaSign } from "react-icons/fa6";
 import { Link } from "react-router-dom";
+import api from "../../../axiosInstance/api";
 
 export default function BestSeller() {
   const [bestSeller, setBestSeller] = useState([]);
@@ -9,15 +9,12 @@ export default function BestSeller() {
 
   const fetchBestSeller = async () => {
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/get_bestseller",
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log(response.data.bestSellers);
+      const response = await api.get("/api/get_bestseller", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      //console.log(response.data.bestSellers);
       setBestSeller(response.data.bestSellers);
     } catch (error) {
       if (error.response && error.response.status === 422) {

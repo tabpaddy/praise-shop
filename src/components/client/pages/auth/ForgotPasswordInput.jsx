@@ -1,5 +1,5 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
+import api from "../../../axiosInstance/api";
 
 export default function ForgotPasswordInput({ isOpen, onClose }) {
   const [error, setError] = useState(null);
@@ -40,8 +40,8 @@ export default function ForgotPasswordInput({ isOpen, onClose }) {
     }
 
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/forgot-password",
+      const response = await api.post(
+        "/api/forgot-password",
         { email: email },
         {
           headers: {
