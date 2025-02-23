@@ -7,7 +7,7 @@ const api = axios.create({
   xsrfHeaderName: 'X-XSRF-TOKEN',  // Add this
   headers: {
     "Content-Type": "application/json",
-    Accept: "application/json",
+    'Accept': "application/json",
   },
 });
 

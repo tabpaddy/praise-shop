@@ -61,18 +61,16 @@ export default function LogInForm() {
     return Object.keys(newErrors).length === 0; // Return true if no errors
   };
 
-  const fetchCsrfToken = async () => {
-    try {
-      // Add timestamp to bypass browser cache
-      await api.get(`/sanctum/csrf-cookie?t=${Date.now()}`);
-      console.log('CSRF Cookies:', document.cookie);
-    } catch (error) {
-      console.error("CSRF Error:", error);
-    }
-  };
+  // const fetchCsrfToken = async () => {
+  //   try {
+  //     // Add timestamp to bypass browser cache
+  //     await api.get(`/sanctum/csrf-cookie?t=${Date.now()}`);
+  //     console.log('CSRF Cookies:', document.cookie);
+  //   } catch (error) {
+  //     console.error("CSRF Error:", error);
+  //   }
+  // };
 
-
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -82,18 +80,22 @@ export default function LogInForm() {
     }
     console.log(ip_address);
     try {
-      await fetchCsrfToken();
-      console.log("CSRF Cookie:", document.cookie);
+      // await fetchCsrfToken();
+      // console.log("CSRF Cookie:", document.cookie);
 
-      const response = await api.post("/api/login", {
-        email: email,
-        password: password,
-        ip_address: ip_address,
-      }, {
-        headers: {
-          "Content-Type": "application/json",
+      const response = await api.post(
+        "/api/login",
+        {
+          email: email,
+          password: password,
+          ip_address: ip_address,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
-      });
+      );
 
       if (response.status === 200) {
         // Update the user context with user data
@@ -105,8 +107,28 @@ export default function LogInForm() {
         // console.log("Token:", userToken);
         // console.log("expiresIn:", response.data.expiresIn);
         dispatch(setSuccess(response.data.message));
-        const tokenExpiration = new Date(Date.now() + response.data.expiresIn * 1000); // Example: expiresIn in seconds
+        const tokenExpiration = new Date(
+          Date.now() + response.data.expiresIn * 1000
+        ); // Example: expiresIn in seconds
         updateUser({ ...userData, tokenExpiration, userToken, userDataId }); // Save user to context and localStorage
+
+        // Merge guest cart
+        let cartId = localStorage.getItem("cart_id");
+        if (cartId) {
+          await api.post(
+            "/api/merge-cart",
+            { cart_id: cartId },
+            {
+              headers: {
+                Authorization: `Bearer ${response.data.user.userToken}`,
+              },
+              withCredentials: true,
+            }
+          );
+          // Optionally clear cart_id after merging
+          localStorage.removeItem("cart_id");
+        }
+        
         setTimeout(() => {
           dispatch(clearForm());
           window.location.href = "/";

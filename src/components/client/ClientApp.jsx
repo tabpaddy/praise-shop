@@ -10,8 +10,24 @@ import LogIn from "./pages/auth/LogIn";
 import PasswordReset from "./pages/auth/PasswordReset";
 import Product from "./pages/productPage/Product";
 import Cart from "./pages/cartPage/Cart";
+// import api from "../axiosInstance/api";
+// import { useEffect } from "react";
 
 export default function ClientApp() {
+  // const fetchCsrfToken = async () => {
+  //   try {
+  //     await api.get("/sanctum/csrf-cookie");
+  //     await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+  //     console.log("CSRF cookie fetched");
+  //   } catch (error) {
+  //     console.error("Error fetching CSRF token:", error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchCsrfToken();
+  // }, []);
+
   return (
     <div className="2xl:mx-52 3xl:mx-80 xl:mx-28 lg:mx-16 md:mx-8 sm:mx-4 mx-2">
       <>

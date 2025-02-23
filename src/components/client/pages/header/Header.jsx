@@ -20,27 +20,27 @@ export default function Header() {
   const { cart } = useSelector((state) => state.cart);
 
   //const cartCount = cart.length; // Get count dynamically
-  if (user) {
-    const fetchUser = async () => {
-      try {
-        await api.get("/sanctum/csrf-cookie"); // Ensure CSRF token is fetched first
+  // if (user) {
+  //   const fetchUser = async () => {
+  //     try {
+  //       await api.get("/sanctum/csrf-cookie"); // Ensure CSRF token is fetched first
 
-        const response = await api.get("/api/user", {
-          headers: {
-            Authorization: `Bearer ${user?.userToken}`, // Ensure userToken is set
+  //       const response = await api.get("/api/user", {
+  //         headers: {
+  //           Authorization: `Bearer ${user?.userToken}`, // Ensure userToken is set
            
-          },
-          withCredentials: true,
-        });
+  //         },
+  //         withCredentials: true,
+  //       });
 
-        console.log(response.data);
-      } catch (error) {
-        console.error("Fetch User Error:", error.response);
-      }
-    };
+  //       console.log(response.data);
+  //     } catch (error) {
+  //       console.error("Fetch User Error:", error.response);
+  //     }
+  //   };
 
-    fetchUser();
-  }
+  //   fetchUser();
+  // }
 
   const isActive = useCallback(
     (path) => location.pathname === path,
@@ -92,16 +92,16 @@ export default function Header() {
   }, []);
 
   // Fetch CSRF token before sending requests
-  const fetchCsrfToken = async () => {
-    await api.get("/sanctum/csrf-cookie");
-  };
+  // const fetchCsrfToken = async () => {
+  //   await api.get("/sanctum/csrf-cookie");
+  // };
 
   // Fetch cart count for logged-in users
   useEffect(() => {
     const fetchCartCount = async () => {
       if (user?.userToken) {
         try {
-          await fetchCsrfToken(); // Fetch CSRF token first
+         // await fetchCsrfToken(); // Fetch CSRF token first
 
           const response = await api.get("/api/count-cart", {
             headers: {
