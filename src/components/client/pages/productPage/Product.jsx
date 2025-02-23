@@ -5,11 +5,12 @@ import RelatedProduct from "./RelatedProduct";
 import { HiArrowsRightLeft, HiShieldCheck, HiTruck } from "react-icons/hi2";
 import ProductReview from "./ProductReview";
 import { useDispatch, useSelector } from "react-redux";
-import { addItem } from "../../../redux/CartSlice";
+import { addItem, setCartId } from "../../../redux/CartSlice";
 import AlertModal from "./alertModal";
 import { UserContext } from "../../../context/UserContext";
 import api from "../../../axiosInstance/api"; // import api instance
 import axios from "axios";
+import { v4 as uuidv4 } from 'uuid';
 
 export default function Product() {
   const { id } = useParams();
@@ -52,15 +53,23 @@ export default function Product() {
   };
 
   // Fetch CSRF token before sending requests
-  const fetchCsrfToken = async () => {
-    try {
-      // Add fresh: true to force new CSRF token
-      await api.get("/sanctum/csrf-cookie");
-      console.log("CSRF cookies:", document.cookie);
-    } catch (error) {
-      console.error("Error fetching CSRF token:", error);
-    }
-  };
+  // const fetchCsrfToken = async () => {
+  //   try {
+  //     await api.get("/sanctum/csrf-cookie", { withCredentials: true });
+  //     const xsrfToken = document.cookie
+  //       .split("; ")
+  //       .find((row) => row.startsWith("XSRF-TOKEN="))
+  //       ?.split("=")[1];
+  //     console.log(
+  //       "XSRF-TOKEN after fetch:",
+  //       decodeURIComponent(xsrfToken || "Not found")
+  //     );
+  //     return xsrfToken;
+  //   } catch (error) {
+  //     console.error("Error fetching CSRF token:", error);
+  //     return null;
+  //   }
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -79,40 +88,49 @@ export default function Product() {
       return;
     }
 
-    // Add to Redux & Local Storage for guest users
-    dispatch(
-      addItem({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        size: selectedSize,
-        image: product.image1_url,
-      })
-    );
-
-    // API call only if user is logged in
+    // Get cart_id from Redux state
+    let cartId = cart.cart_id;
+    if (!cartId) {
+      cartId = uuidv4();
+      dispatch(setCartId(cartId)); // Set cart_id in Redux state
+    }
 
     try {
-      await fetchCsrfToken(); // Fetch CSRF token before making the API request
-      console.log("CSRF Cookie:", document.cookie);
+      // Optionally fetch CSRF token for authenticated users
+      if (user) {
+        await api.get("/sanctum/csrf-cookie", { withCredentials: true });
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
 
       const response = await api.post(
         "/api/add-to-cart",
-        { product_id: product.id, size: selectedSize },
+        { product_id: product.id, size: selectedSize, cart_id: cartId },
         {
           headers: {
             Authorization: user ? `Bearer ${user?.userToken}` : "",
           },
+          withCredentials: true, // Ensure this is explicitly set to send cookies
         }
       );
 
-      if (response.status === 200) console.log(response.data);
+      if (response.status === 200) {
+        dispatch(
+          addItem({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            size: selectedSize,
+            image: product.image1_url,
+          })
+        );
+      }
+      console.log(response.data);
     } catch (error) {
-      console.error("Error details:", {
+      console.error("Error adding to cart:", {
         status: error.response?.status,
-        headers: error.response?.headers,
         data: error.response?.data,
-        cookies: document.cookie,
+        headers: error.response?.headers,
+        request: error.config,
       });
     }
   };
