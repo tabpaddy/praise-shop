@@ -17,7 +17,7 @@ export default function Header() {
   const location = useLocation();
 
   // Access Redux cart for guest users
-  const { cart } = useSelector((state) => state.cart);
+  const { cart, cart_id } = useSelector((state) => state.cart);
 
   //const cartCount = cart.length; // Get count dynamically
   // if (user) {
@@ -28,7 +28,7 @@ export default function Header() {
   //       const response = await api.get("/api/user", {
   //         headers: {
   //           Authorization: `Bearer ${user?.userToken}`, // Ensure userToken is set
-           
+
   //         },
   //         withCredentials: true,
   //       });
@@ -99,28 +99,25 @@ export default function Header() {
   // Fetch cart count for logged-in users
   useEffect(() => {
     const fetchCartCount = async () => {
-      if (user?.userToken) {
-        try {
-         // await fetchCsrfToken(); // Fetch CSRF token first
-
-          const response = await api.get("/api/count-cart", {
+      try {
+        const response = await api.post(
+          `/api/count-cart`,
+          { cart_id: cart_id },
+          {
             headers: {
-              Authorization: `Bearer ${user.userToken}`,
-              
+              Authorization: user ? `Bearer ${user.userToken}` : "",
             },
-          });
-          console.log(response.data.count);
-          setCartCount(response.data.count);
-        } catch (error) {
-          console.error("Error fetching cart count:", error);
-        }
-      } else {
-        setCartCount(cart.length); // Use Redux cart count for guests
+          }
+        );
+        console.log(response.data.count);
+        setCartCount(response.data.count);
+      } catch (error) {
+        console.error("Error fetching cart count:", error);
       }
     };
 
     fetchCartCount();
-  }, [user, cart]);
+  }, [user, cart_id, cart]);
 
   // console.log(user)
   return (
@@ -256,7 +253,7 @@ export default function Header() {
           <div className="relative cursor-pointer">
             <Link to={"/cart"}>
               <FiBell size={20} />
-              <span className="absolute top-[+2px] right-[-8px] bg-stone-900 text-white text-xs rounded-full px-1">
+              <span className="absolute top-[+3px] right-[-5px] bg-stone-900 text-white text-xs rounded-full px-1">
                 {cartCount}
               </span>
             </Link>

@@ -29,6 +29,7 @@ export default function LogInForm() {
   const [errors, setErrors] = useState({}); // Local state for error messages
 
   const { updateUser } = useContext(UserContext); // Use the context
+  const { cart_id } = useSelector((state) => state.cart);
 
   useEffect(() => {
     const fetchIpAddress = async () => {
@@ -113,20 +114,20 @@ export default function LogInForm() {
         updateUser({ ...userData, tokenExpiration, userToken, userDataId }); // Save user to context and localStorage
 
         // Merge guest cart
-        let cartId = localStorage.getItem("cart_id");
-        if (cartId) {
+        
+        if (cart_id) {
           await api.post(
             "/api/merge-cart",
-            { cart_id: cartId },
+            { cart_id: cart_id },
             {
               headers: {
-                Authorization: `Bearer ${response.data.user.userToken}`,
+                Authorization: `Bearer ${response.data.token}`,
               },
               withCredentials: true,
             }
           );
-          // Optionally clear cart_id after merging
-          localStorage.removeItem("cart_id");
+          // // Optionally clear cart_id after merging
+          // localStorage.removeItem("cart_id");
         }
         
         setTimeout(() => {

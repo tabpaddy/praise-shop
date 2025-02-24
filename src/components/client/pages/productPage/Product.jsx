@@ -5,7 +5,7 @@ import RelatedProduct from "./RelatedProduct";
 import { HiArrowsRightLeft, HiShieldCheck, HiTruck } from "react-icons/hi2";
 import ProductReview from "./ProductReview";
 import { useDispatch, useSelector } from "react-redux";
-import { addItem, setCartId } from "../../../redux/CartSlice";
+import { addItem, setCartId, setUserCart } from "../../../redux/CartSlice";
 import AlertModal from "./alertModal";
 import { UserContext } from "../../../context/UserContext";
 import api from "../../../axiosInstance/api"; // import api instance
@@ -17,7 +17,7 @@ export default function Product() {
   const [product, setProduct] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const navigate = useNavigate();
-  const { cart } = useSelector((state) => state.cart);
+  const { cart, cart_id } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
   const [alertModal, setAlertModal] = useState(false);
   const [message, setMessage] = useState("");
@@ -73,13 +73,13 @@ export default function Product() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!selectedSize) {
       setAlertModal(true);
       setMessage("Please select a size before adding to cart.");
       return;
     }
-
+  
     if (
       cart?.some((item) => item.id === product.id && item.size === selectedSize)
     ) {
@@ -87,32 +87,34 @@ export default function Product() {
       setMessage("Product already in cart");
       return;
     }
-
-    // Get cart_id from Redux state
-    let cartId = cart.cart_id;
-    if (!cartId) {
+  
+    // Get cart_id from Redux state or local storage
+    let cartId = cart_id || localStorage.getItem("cart_id");
+    if (!cartId && !user) { // Only generate if guest and no cart_id exists
       cartId = uuidv4();
-      dispatch(setCartId(cartId)); // Set cart_id in Redux state
+      dispatch(setCartId(cartId));
     }
-
+  
     try {
-      // Optionally fetch CSRF token for authenticated users
+      console.log("User context:", user);
       if (user) {
         await api.get("/sanctum/csrf-cookie", { withCredentials: true });
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
-
+  
+      const headers = {
+        Authorization: user ? `Bearer ${user?.userToken}` : "",
+      };
+      console.log("Request headers:", headers);
       const response = await api.post(
         "/api/add-to-cart",
         { product_id: product.id, size: selectedSize, cart_id: cartId },
         {
-          headers: {
-            Authorization: user ? `Bearer ${user?.userToken}` : "",
-          },
-          withCredentials: true, // Ensure this is explicitly set to send cookies
+          headers,
+          withCredentials: true,
         }
       );
-
+  
       if (response.status === 200) {
         dispatch(
           addItem({
@@ -121,8 +123,14 @@ export default function Product() {
             price: product.price,
             size: selectedSize,
             image: product.image1_url,
+            userId: user?.id, // Pass userId to reducer
           })
         );
+        // if (user) {
+        //   // Fetch and sync cart for authenticated user
+        //   const cartResponse = await api.get(`/api/cart/${cartId || user.id}`, { headers });
+        //   dispatch(setUserCart(cartResponse.data));
+        // }
       }
       console.log(response.data);
     } catch (error) {
