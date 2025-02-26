@@ -4,8 +4,9 @@ import { Link, useLocation } from "react-router-dom";
 import SearchModal from "./SearchModal";
 import { UserContext } from "../../../context/UserContext";
 import LogoutUserModal from "./LogoutUserModal";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import api from "../../../axiosInstance/api";
+import { setUserCart } from "../../../redux/CartSlice";
 
 export default function Header() {
   const { user } = useContext(UserContext); // Access user state
@@ -15,6 +16,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const location = useLocation();
+  const dispatch = useDispatch();
 
   // Access Redux cart for guest users
   const { cart, cart_id } = useSelector((state) => state.cart);
@@ -100,24 +102,46 @@ export default function Header() {
   useEffect(() => {
     const fetchCartCount = async () => {
       try {
-        const response = await api.post(
-          `/api/count-cart`,
-          { cart_id: cart_id },
-          {
-            headers: {
-              Authorization: user ? `Bearer ${user.userToken}` : "",
-            },
-          }
-        );
+        const headers = {
+          Authorization: user ? `Bearer ${user.userToken}` : "",
+        };
+
+        // Merge guest cart if user logs in with a cart_id
+        if (user && cart_id) {
+          await api.post(
+            "/api/merge-cart",
+            { cart_id: cart_id },
+            { headers, withCredentials: true }
+          );
+          const cartResponse = await api.get(`/api/cart/${user.id}`, {
+            headers,
+            withCredentials: true,
+          });
+          dispatch(setUserCart(cartResponse.data));
+        }
+
+         // Fetch cart count
+         const endpoint = user ? `/api/count-cart` : `/api/count-cart`;
+         const response = await api.post(
+           endpoint,
+           { cart_id: cart_id },
+           { headers, withCredentials: true }
+         );
         console.log(response.data.count);
         setCartCount(response.data.count);
       } catch (error) {
         console.error("Error fetching cart count:", error);
+        setCartCount(cart.length); // Fallback to localStorage count
       }
     };
 
-    fetchCartCount();
-  }, [user, cart_id, cart]);
+   
+    if (cart_id || user) {
+      fetchCartCount();
+    } else {
+      setCartCount(cart.length); // Use local count if no cart_id or user
+    }
+  }, [user, cart_id, dispatch]);
 
   // console.log(user)
   return (

@@ -42,12 +42,10 @@ const cartSlice = createSlice({
     },
     setCart: (state, action) => {
       state.cart = action.payload.items || [];
-      state.cart_id = action.payload.cart_id || null;
+      state.cart_id = action.payload.cart_id || state.cart_id;
       localStorage.setItem("cart", JSON.stringify(state.cart));
       if (state.cart_id) {
         localStorage.setItem("cart_id", state.cart_id);
-      } else {
-        localStorage.removeItem("cart_id");
       }
     },
     clearCart: (state) => {
@@ -64,7 +62,7 @@ const cartSlice = createSlice({
       state.cart = action.payload; // Merge or set cart items from backend
       //state.cart_id = null; // Clear cart_id for authenticated users
       localStorage.setItem("cart", JSON.stringify(state.cart));
-      localStorage.removeItem("cart_id");
+      // localStorage.removeItem("cart_id");
     },
   },
 });
