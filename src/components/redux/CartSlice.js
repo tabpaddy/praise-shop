@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 const initialState = {
   cart: JSON.parse(localStorage.getItem("cart")) || [], // Load guest cart
   cart_id: localStorage.getItem("cart_id") || null, // Load cart_id
+  quantities: {}, // Object to store quantities keyed by item ID
   loading: false,
 };
 
@@ -19,6 +20,11 @@ const cartSlice = createSlice({
 
       if (!exists) {
         state.cart.push(action.payload);
+        // Initialize quantities to 1 for each item
+        state.quantities = {};
+        action.payload.forEach((item) => {
+          state.quantities[item.id] = 1;
+        });
         localStorage.setItem("cart", JSON.stringify(state.cart));
       }
 
@@ -33,12 +39,23 @@ const cartSlice = createSlice({
       //   localStorage.removeItem("cart_id");
       // }
     },
+    setQuantity: (state, action) => {
+      const { id, quantity } = action.payload;
+      state.quantities[id] = quantity;
+    },
     removeItem: (state, action) => {
       state.cart = state.cart.filter(
         (item) =>
           !(item.id === action.payload.id && item.size === action.payload.size)
-      );
+      ); // Remove item from cart
+      
+      const { id } = action.payload;
+      delete state.quantities[id]; // Remove quantity when item is deleted
       localStorage.setItem("cart", JSON.stringify(state.cart));
+      if (state.cart.length === 0) {
+        state.cart_id = null;
+        localStorage.removeItem("cart_id");
+      }
     },
     setCart: (state, action) => {
       state.cart = action.payload.items || [];
@@ -67,6 +84,12 @@ const cartSlice = createSlice({
   },
 });
 
-export const { addItem, removeItem, setCart, clearCart, setCartId, setUserCart } =
-  cartSlice.actions;
+export const {
+  addItem,
+  removeItem,
+  setCart,
+  clearCart,
+  setCartId,
+  setUserCart,
+} = cartSlice.actions;
 export default cartSlice.reducer;
