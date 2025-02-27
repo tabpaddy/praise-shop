@@ -8,6 +8,7 @@ import AdminCategoryAndSubCategoryReducer from "./AdminCategoryAndSubCategorySli
 import AdminSubCategoryReducer from "./AdminSubCategorySlice";
 import AdminProductReducer from "./AdminProductSlice";
 import CartSlice from "./CartSlice";
+import DeliveryInformationSlice from "./DeliveryInformationSlice";
 
 export const store = configureStore({
   reducer: {
@@ -20,5 +21,6 @@ export const store = configureStore({
     adminSubCategory: AdminSubCategoryReducer,
     adminProduct: AdminProductReducer,
     cart: CartSlice,
+    deliveryInformation: DeliveryInformationSlice,
   },
 });
