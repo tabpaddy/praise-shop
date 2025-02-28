@@ -77,6 +77,7 @@ export const {
   setPhone,
   setError,
   setSuccess,
+  clearForm,
 } = DeliveryInformationSlice.actions;
 
 export default DeliveryInformationSlice.reducer;

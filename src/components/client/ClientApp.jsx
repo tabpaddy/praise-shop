@@ -10,6 +10,9 @@ import LogIn from "./pages/auth/LogIn";
 import PasswordReset from "./pages/auth/PasswordReset";
 import Product from "./pages/productPage/Product";
 import Cart from "./pages/cartPage/Cart";
+import PADP from "./pages/paymentAndDeliveryPage/PADP";
+import ProtectedRoute from "../protectedRoutes/UserProtectedRoutes";
+import ProtectedRouteUser from "../protectedRoutes/UserProtectedRoutes";
 // import api from "../axiosInstance/api";
 // import { useEffect } from "react";
 
@@ -42,6 +45,14 @@ export default function ClientApp() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/cart" element={<Cart />} />
           <Route path={`/reset-password`} element={<PasswordReset />} />
+          <Route
+            path="/padp"
+            element={
+              <ProtectedRouteUser>
+                <PADP />
+              </ProtectedRouteUser>
+            }
+          />
         </Routes>
         <Footer />
       </>
