@@ -6,6 +6,9 @@ const initialState = {
   cart_id: localStorage.getItem("cart_id") || null, // Load cart_id
   quantities: JSON.parse(localStorage.getItem("quantities")) || {}, // Object to store quantities keyed by item ID
   loading: false,
+  subTotal: localStorage.getItem("subTotal") || "",
+  shippingFee: localStorage.getItem("shippingFee") || "",
+  total: localStorage.getItem("total") || "",
 };
 
 const cartSlice = createSlice({
@@ -67,13 +70,31 @@ const cartSlice = createSlice({
         localStorage.setItem("cart_id", state.cart_id);
       }
     },
+    setSubTotal: (state, action) => {
+      state.subTotal = action.payload;
+      localStorage.setItem("subTotal", state.subTotal);
+    },
+    setShippingFee: (state, action) => {
+      state.shippingFee = action.payload;
+      localStorage.setItem("shippingFee", state.shippingFee);
+    },
+    setTotal: (state, action) => {
+      state.total = action.payload;
+      localStorage.setItem("total", state.total);
+    },
     clearCart: (state) => {
       state.cart = [];
       state.cart_id = null;
       state.quantities = {};
+      state.shippingFee = "";
+      state.subTotal = "";
+      state.total = "";
       localStorage.removeItem("cart");
       localStorage.removeItem("cart_id");
       localStorage.removeItem("quantities");
+      localStorage.removeItem("subTotal");
+      localStorage.removeItem("shippingFee");
+      localStorage.removeItem("total");
     },
     setCartId: (state, action) => {
       state.cart_id = action.payload;
@@ -103,5 +124,8 @@ export const {
   clearCart,
   setCartId,
   setUserCart,
+  setShippingFee,
+  setSubTotal,
+  setTotal,
 } = cartSlice.actions;
 export default cartSlice.reducer;

@@ -1,10 +1,18 @@
 import { useDispatch, useSelector } from "react-redux";
-import { removeItem, setUserCart, setQuantity } from "../../../redux/CartSlice";
+import {
+  removeItem,
+  setUserCart,
+  setQuantity,
+  setSubTotal,
+  setShippingFee,
+  setTotal,
+} from "../../../redux/CartSlice";
 import api from "../../../axiosInstance/api";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../../context/UserContext";
 import { AiFillDelete } from "react-icons/ai";
 import { FaMinus, FaNairaSign, FaPlus } from "react-icons/fa6";
+import { Link } from "react-router-dom";
 
 export default function Cart() {
   const { cart, cart_id, quantities } = useSelector((state) => state.cart);
@@ -68,16 +76,19 @@ export default function Cart() {
   const calculateShippingFee = () => {
     return cart.reduce((sum, item) => sum + calculateItemTotal(item) * 0.1, 0); // 10% of subtotal
   };
+  dispatch(setShippingFee(calculateShippingFee()));
 
   // Calculate subtotal for all items
   const calculateSubtotal = () => {
     return cart.reduce((sum, item) => sum + calculateItemTotal(item), 0);
   };
+  dispatch(setSubTotal(calculateSubtotal()));
 
   // calculate total
   const calculateTotal = () => {
     return calculateSubtotal() + calculateShippingFee();
   };
+  dispatch(setTotal(calculateTotal()));
 
   const handleDeleteButton = async (id, size) => {
     try {
@@ -179,7 +190,9 @@ export default function Cart() {
                     min="1"
                     max="10"
                     value={quantities[item.id] || 1}
-                    onChange={(e) => handleQuantityChange(item.id, e.target.value)}
+                    onChange={(e) =>
+                      handleQuantityChange(item.id, e.target.value)
+                    }
                     className="w-full text-center outline-none bg-transparent appearance:textfield [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                     style={{ MozAppearance: "textfield" }}
                   />
@@ -221,7 +234,7 @@ export default function Cart() {
                     </div>
                   </div>
                   <div className="flex border-y-2 border-slate-200 justify-between font-medium font-outfit text-base text-stone-700 py-3">
-                    <p className="">Shipping Free</p>
+                    <p className="">Shipping Fee</p>
                     <div className="flex items-center font-outfit font-light">
                       <FaNairaSign />
                       <p>
@@ -233,17 +246,16 @@ export default function Cart() {
                     <p className="">Total</p>
                     <div className="flex items-center font-outfit text-base font-light">
                       <FaNairaSign />
-                      <p>
-                        {new Intl.NumberFormat().format(calculateTotal())}
-                      </p>
+                      <p>{new Intl.NumberFormat().format(calculateTotal())}</p>
                     </div>
                   </div>
-                  <button
+                  <Link
+                    to={"/padp"}
                     type="submit"
                     className="px-6 py-3 font-outfit font-medium text-lg bg-black text-white hover:text-slate-300"
                   >
                     Proceed to checkout
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
