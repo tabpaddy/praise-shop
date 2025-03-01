@@ -16,6 +16,7 @@ import {
   clearForm,
 } from "../../../../../redux/AdminProductSlice";
 import { useDispatch, useSelector } from "react-redux";
+import api from "../../../../../axiosInstance/api";
 
 export default function EditProduct() {
   const {
@@ -61,8 +62,8 @@ export default function EditProduct() {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await axios.get(
-          `http://127.0.0.1:8000/api/admin/manage-product/${id}`,
+        const response = await api.get(
+          `/api/admin/manage-product/${id}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -85,8 +86,8 @@ export default function EditProduct() {
 
   const fetchCategoryData = async () => {
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/admin/manage-category",
+      const response = await api.get(
+        "/api/admin/manage-category",
         {
           headers: {
             "Content-Type": "application/json",
@@ -109,8 +110,8 @@ export default function EditProduct() {
 
   const fetchSubCategoryData = async () => {
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/admin/manage-sub-category",
+      const response = await api.get(
+        "/api/admin/manage-sub-category",
         {
           headers: {
             "Content-Type": "application/json",
@@ -277,7 +278,7 @@ export default function EditProduct() {
     try {
       console.log(formData);
       const response = await axios.post(
-        `http://127.0.0.1:8000/api/admin/update-product/${id}`,
+        `http://localhost:8000/api/admin/update-product/${id}`,
         formData,
         {
           headers: {

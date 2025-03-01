@@ -1,4 +1,3 @@
-import axios from "axios";
 import {
   clearForm,
   setError,
@@ -8,6 +7,7 @@ import {
 import { useContext, useEffect, useState } from "react";
 import { AdminContext } from "../../../../../context/AdminContext";
 import { useDispatch, useSelector } from "react-redux";
+import api from "../../../../../axiosInstance/api";
 
 export default function EditSubCategory({
   modalOpen,
@@ -66,8 +66,8 @@ export default function EditSubCategory({
       return;
     }
     try {
-      const response = await axios.put(
-        `http://127.0.0.1:8000/api/admin/edit-sub-category/${subCategoryId}`,
+      const response = await api.put(
+        `/api/admin/edit-sub-category/${subCategoryId}`,
         {
           sub_category_title: input,
         },

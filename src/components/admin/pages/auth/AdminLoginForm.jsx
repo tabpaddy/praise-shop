@@ -11,7 +11,7 @@ import Svg2 from "../../../client/pages/auth/Svg2";
 
 import { useContext, useState } from "react";
 import { AdminContext } from "../../../context/AdminContext";
-import axios from "axios";
+import api from "../../../axiosInstance/api";
 
 export default function AdminLoginForm() {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -48,8 +48,8 @@ export default function AdminLoginForm() {
     }
 
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/admin/login",
+      const response = await api.post(
+        "/api/admin/login",
         {
           email: email,
           password: password,

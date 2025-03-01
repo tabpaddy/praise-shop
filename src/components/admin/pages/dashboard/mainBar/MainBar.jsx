@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AdminContext } from "../../../../context/AdminContext";
-import axios from "axios";
+import api from "../../../../axiosInstance/api";
 
 export default function MainBar() {
   const { admin } = useContext(AdminContext);
@@ -12,15 +12,12 @@ export default function MainBar() {
 
   const fetchUserNumber = async () => {
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/admin/manage-user-count",
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${admin.adminToken}`,
-          },
-        }
-      );
+      const response = await api.get("/api/admin/manage-user-count", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${admin.adminToken}`,
+        },
+      });
       setUserNum(response.data.user);
       //console.log(response.data.user)
     } catch (error) {
@@ -33,19 +30,16 @@ export default function MainBar() {
         console.error("getting user number failed:", error);
       }
     }
-  }
+  };
 
   const fetchProductNumber = async () => {
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/admin/manage-product-count",
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${admin.adminToken}`,
-          },
-        }
-      );
+      const response = await api.get("/api/admin/manage-product-count", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${admin.adminToken}`,
+        },
+      });
       setProductNum(response.data.product);
       //console.log(response.data.product)
     } catch (error) {
@@ -92,7 +86,9 @@ export default function MainBar() {
         </div>
         <div className="flex flex-col items-center justify-center p-6 bg-white shadow-sm rounded-md hover:shadow-lg transition-shadow">
           <p className="text-xl font-bold">Products</p>
-          <span className="text-lg font-medium text-gray-700">{productNum}</span>
+          <span className="text-lg font-medium text-gray-700">
+            {productNum}
+          </span>
         </div>
         <div className="flex flex-col items-center justify-center p-6 bg-white shadow-sm rounded-md hover:shadow-lg transition-shadow">
           <p className="text-xl font-bold">Orders</p>

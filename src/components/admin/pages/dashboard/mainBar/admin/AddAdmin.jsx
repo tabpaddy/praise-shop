@@ -9,10 +9,10 @@ import {
   setPassword,
   setSuccess,
 } from "../../../../../redux/AdminCreateSubAdminSlice";
-import axios from "axios";
 import Svg1 from "../../../../../client/pages/auth/Svg1";
 import Svg2 from "../../../../../client/pages/auth/Svg2";
 import { AdminContext } from "../../../../../context/AdminContext";
+import api from "../../../../../axiosInstance/api";
 
 export default function AddAdmin() {
   const dispatch = useDispatch();
@@ -77,8 +77,8 @@ export default function AddAdmin() {
     }
 
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/admin/create-subadmin",
+      const response = await api.post(
+        "/api/admin/create-subadmin",
         {
           name: name,
           email: email,
@@ -96,7 +96,7 @@ export default function AddAdmin() {
         dispatch(setSuccess(response.data.message));
         setTimeout(() => {
           dispatch(clearForm());
-          window.location.href = '/admin/dashboard/manage-admin'
+          window.location.href = "/admin/dashboard/manage-admin";
         }, 4000);
       }
     } catch (error) {

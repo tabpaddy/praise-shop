@@ -13,6 +13,7 @@ import Svg1 from "../../../../../client/pages/auth/Svg1";
 import Svg2 from "../../../../../client/pages/auth/Svg2";
 import axios from "axios";
 import { AdminContext } from "../../../../../context/AdminContext";
+import api from "../../../../../axiosInstance/api";
 
 export default function UserBar() {
   const dispatch = useDispatch();
@@ -78,8 +79,8 @@ export default function UserBar() {
     }
 
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/add-user",
+      const response = await api.post(
+        "/api/add-user",
         {
           name: name,
           email: email,

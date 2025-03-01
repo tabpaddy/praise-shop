@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AdminContext } from "../../../../../context/AdminContext";
-import axios from "axios";
+import api from "../../../../../axiosInstance/api";
 
 export default function DeleteUserModal({
   modalOpen,
@@ -39,15 +39,12 @@ export default function DeleteUserModal({
 
   const deleteUserSubmit = async () => {
     try {
-      const response = await axios.delete(
-        `http://127.0.0.1:8000/api/admin/manage-user/${userId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${admin?.adminToken}`, // Ensure adminToken exists
-          },
-        }
-      );
+      const response = await api.delete(`/api/admin/manage-user/${userId}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${admin?.adminToken}`, // Ensure adminToken exists
+        },
+      });
 
       // Handle success response
       if (response.status === 200) {

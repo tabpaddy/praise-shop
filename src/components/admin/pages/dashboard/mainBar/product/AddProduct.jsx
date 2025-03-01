@@ -15,6 +15,7 @@ import {
   setSuccess,
   clearForm,
 } from "../../../../../redux/AdminProductSlice";
+import api from "../../../../../axiosInstance/api";
 
 export default function AddProduct() {
   const [manageCategory, setManageCategory] = useState([]);
@@ -45,8 +46,8 @@ export default function AddProduct() {
 
   const fetchCategoryData = async () => {
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/admin/manage-category",
+      const response = await api.get(
+        "/api/admin/manage-category",
         {
           headers: {
             "Content-Type": "application/json",
@@ -69,8 +70,8 @@ export default function AddProduct() {
 
   const fetchSubCategoryData = async () => {
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/admin/manage-sub-category",
+      const response = await api.get(
+        "/api/admin/manage-sub-category",
         {
           headers: {
             "Content-Type": "application/json",
@@ -172,7 +173,7 @@ export default function AddProduct() {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/api/admin/add-product",
+        "http://localhost:8000/api/admin/add-product",
         formData,
         {
           headers: {

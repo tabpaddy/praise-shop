@@ -7,7 +7,7 @@ import {
   clearForm,
   setInput,
 } from "../../../../../redux/AdminCategoryAndSubCategorySlice";
-import axios from "axios";
+import api from "../../../../../axiosInstance/api";
 
 export default function AddCategory() {
   const dispatch = useDispatch();
@@ -34,8 +34,8 @@ export default function AddCategory() {
       return;
     }
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/admin/add-category",
+      const response = await api.post(
+        "/api/admin/add-category",
         {
           category_title: input,
         },

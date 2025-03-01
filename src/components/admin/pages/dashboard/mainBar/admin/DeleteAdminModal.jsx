@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AdminContext } from "../../../../../context/AdminContext";
-import axios from "axios";
+import api from "../../../../../axiosInstance/api";
 
 export default function DeleteAdminModel({
   modalOpen,
@@ -39,7 +39,7 @@ export default function DeleteAdminModel({
 
   const deleteAdminSubmit = async () => {
     try {
-        const response = await axios.delete(`http://127.0.0.1:8000/api/admin/sub-admin/${adminId}`,{
+        const response = await api.delete(`/api/admin/sub-admin/${adminId}`,{
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${admin.adminToken}`, // adminToken

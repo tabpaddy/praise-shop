@@ -7,68 +7,66 @@ import {
   clearForm,
   setInput,
 } from "../../../../../redux/AdminSubCategorySlice";
-import axios from "axios";
+import api from "../../../../../axiosInstance/api";
 
-export default function AddSubCategory(){
-    const dispatch = useDispatch();
-    const [isLoading, setIsLoading] = useState(false);
-    const { input, error, success } = useSelector(
-      (state) => state.adminSubCategory
-    );
-    const { admin } = useContext(AdminContext);
-  
-    const validateForm = () => {
-      const newErrors = {};
-      if (!input.trim()) {
-        newErrors.input = "SubCategory is Required.";
-      }
-      dispatch(setError(newErrors));
-      return Object.keys(newErrors).length === 0;
-    };
-  
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      setIsLoading(true);
-      if (!validateForm()) {
-        setIsLoading(false);
-        return;
-      }
-      try {
-        const response = await axios.post(
-          "http://127.0.0.1:8000/api/admin/add-sub-category",
-          {
-            sub_category_title: input,
+export default function AddSubCategory() {
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+  const { input, error, success } = useSelector(
+    (state) => state.adminSubCategory
+  );
+  const { admin } = useContext(AdminContext);
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!input.trim()) {
+      newErrors.input = "SubCategory is Required.";
+    }
+    dispatch(setError(newErrors));
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    if (!validateForm()) {
+      setIsLoading(false);
+      return;
+    }
+    try {
+      const response = await api.post(
+        "/api/admin/add-sub-category",
+        {
+          sub_category_title: input,
+        },
+        {
+          headers: {
+            "Content-TYpe": "application/json",
+            Authorization: `Bearer ${admin.adminToken}`,
           },
-          {
-            headers: {
-              "Content-TYpe": "application/json",
-              Authorization: `Bearer ${admin.adminToken}`,
-            },
-          }
-        );
-        if (response.status === 200) {
-          dispatch(setSuccess(response.data.message));
-          setTimeout(() => {
-            dispatch(clearForm());
-            window.location.href = '/admin/dashboard/manage-sub-category'
-          }, 3000);
         }
-      } catch (error) {
-        if (error.response && error.response.status === 422) {
-          console.error("validation errors:", error.response.data);
-          const validationErrors = error.response.data.errors;
-          dispatch(
-            setError({message: validationErrors.category_title[0] })
-          );
-        } else {
-          console.error("submission failed:", error);
-        }
-      } finally {
-        setIsLoading(false);
+      );
+      if (response.status === 200) {
+        dispatch(setSuccess(response.data.message));
+        setTimeout(() => {
+          dispatch(clearForm());
+          window.location.href = "/admin/dashboard/manage-sub-category";
+        }, 3000);
       }
-    };
-    return(
-        <div className="overflow-y-auto bg-slate-200 font-outfit p-4">
+    } catch (error) {
+      if (error.response && error.response.status === 422) {
+        console.error("validation errors:", error.response.data);
+        const validationErrors = error.response.data.errors;
+        dispatch(setError({ message: validationErrors.category_title[0] }));
+      } else {
+        console.error("submission failed:", error);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  return (
+    <div className="overflow-y-auto bg-slate-200 font-outfit p-4">
       <div className="text-center my-2 mt-10">
         <h3 className="text-slate-700 relative font-prata font-normal text-2xl sm:text-3xl">
           Create{" "}
@@ -124,5 +122,5 @@ export default function AddSubCategory(){
         </form>
       </div>
     </div>
-    )
+  );
 }

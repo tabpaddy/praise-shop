@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { AdminContext } from "../../../../../context/AdminContext";
-import axios from "axios";
 import DeleteAdminModel from "./DeleteAdminModal";
+import api from "../../../../../axiosInstance/api";
 
 export default function ManageAdmin() {
   const [manageAdmin, setManageAdmin] = useState([]);
@@ -14,15 +14,12 @@ export default function ManageAdmin() {
 
   const fetchAdminData = async () => {
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/admin/sub-admin",
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${admin?.adminToken}`,
-          },
-        }
-      );
+      const response = await api.get("/api/admin/sub-admin", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${admin?.adminToken}`,
+        },
+      });
       //console.log(response.data.subAdmin)
       setManageAdmin(response.data.subAdmin); // get all the subadmin
     } catch (error) {
@@ -53,62 +50,65 @@ export default function ManageAdmin() {
         <h1 className="text-2xl font-bold text-slate-800 mb-8">Manage Admin</h1>
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <div className="overflow-x-auto">
-          <table className="min-w-full">
-            <thead className="bg-slate-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  S/N
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  email
-                </th>
-                <th className="px-6 py-3 text-center text-xs font-medium text-slate-500 uppercase tracking-wider">
-                  Operations
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {Array.isArray(manageAdmin) && manageAdmin.length > 0 ? (
-                manageAdmin.map((admin, index) => {
-                  return (
-                    <tr
-                      key={admin.id}
-                      className="hover:bg-slate-50 transition-colors"
-                    >
-                      <td className="px-6 py-4 text-sm text-slate-700">
-                        {index + 1}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-slate-700">
-                        {admin.name}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-slate-700">
-                        {admin.email}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-center text-slate-700">
-                        <button
-                          className="text-red-500 hover:text-red-800"
-                          onClick={() =>
-                            deleteAdminModelClick([admin.id, admin.name])
-                          }
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
+            <table className="min-w-full">
+              <thead className="bg-slate-50">
                 <tr>
-                  <td colSpan={"6"} className="text-center py-4 text-slate-600">
-                    No admin available.
-                  </td>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    S/N
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    Name
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    email
+                  </th>
+                  <th className="px-6 py-3 text-center text-xs font-medium text-slate-500 uppercase tracking-wider">
+                    Operations
+                  </th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {Array.isArray(manageAdmin) && manageAdmin.length > 0 ? (
+                  manageAdmin.map((admin, index) => {
+                    return (
+                      <tr
+                        key={admin.id}
+                        className="hover:bg-slate-50 transition-colors"
+                      >
+                        <td className="px-6 py-4 text-sm text-slate-700">
+                          {index + 1}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-slate-700">
+                          {admin.name}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-slate-700">
+                          {admin.email}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-center text-slate-700">
+                          <button
+                            className="text-red-500 hover:text-red-800"
+                            onClick={() =>
+                              deleteAdminModelClick([admin.id, admin.name])
+                            }
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={"6"}
+                      className="text-center py-4 text-slate-600"
+                    >
+                      No admin available.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

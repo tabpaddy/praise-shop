@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { AdminContext } from "../../../../../context/AdminContext";
-import axios from "axios";
 import DeleteSubCategoryModal from "./DeleteSubCategory";
 import EditSubCategory from "./EditSubCategory";
+import api from "../../../../../axiosInstance/api";
 
 export default function ManageSubCategory() {
   const [manageSubCategory, setManageSubCategory] = useState([]);
@@ -18,15 +18,12 @@ export default function ManageSubCategory() {
 
   const fetchSubCategoryData = async () => {
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/admin/manage-sub-category",
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${admin.adminToken}`,
-          },
-        }
-      );
+      const response = await api.get("/api/admin/manage-sub-category", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${admin.adminToken}`,
+        },
+      });
 
       //console.log(response.data.sub_categories);
       setManageSubCategory(response.data.sub_categories); // get all the categories

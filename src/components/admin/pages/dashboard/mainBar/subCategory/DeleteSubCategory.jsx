@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { AdminContext } from "../../../../../context/AdminContext";
-import axios from "axios";
+import api from "../../../../../axiosInstance/api";
 
 export default function DeleteSubCategoryModal({
   modalOpen,
@@ -41,8 +41,8 @@ export default function DeleteSubCategoryModal({
   const deleteSubCategorySubmit = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.delete(
-        `http://127.0.0.1:8000/api/admin/manage-sub-category/${subCategoryId}`,
+      const response = await api.delete(
+        `/api/admin/manage-sub-category/${subCategoryId}`,
         {
           headers: {
             "Content-Type": "application/json",

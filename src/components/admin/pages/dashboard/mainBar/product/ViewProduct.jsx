@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { AdminContext } from "../../../../../context/AdminContext";
-import axios from "axios";
 import DeleteProduct from "./DeleteProduct";
 import { Link } from "react-router-dom";
+import api from "../../../../../axiosInstance/api";
 
 export default function ViewProduct() {
   const [manageProduct, setManageProduct] = useState([]);
@@ -16,8 +16,8 @@ export default function ViewProduct() {
 
   const fetchProductData = async () => {
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/admin/manage-product",
+      const response = await api.get(
+        "/api/admin/manage-product",
         {
           headers: {
             "Content-Type": "application/json",

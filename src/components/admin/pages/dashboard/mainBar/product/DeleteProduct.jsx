@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { AdminContext } from "../../../../../context/AdminContext";
 import axios from "axios";
+import api from "../../../../../axiosInstance/api";
 
 export default function DeleteProduct({
   modalOpen,
@@ -36,8 +37,8 @@ export default function DeleteProduct({
   const deleteProductSubmit = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.delete(
-        `http://127.0.0.1:8000/api/admin/manage-product/${productId}`,
+      const response = await api.delete(
+        `/api/admin/manage-product/${productId}`,
         {
           headers: {
             "Content-Type": "application/json",
