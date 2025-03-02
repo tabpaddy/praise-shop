@@ -1,8 +1,8 @@
 import { createContext, useCallback, useEffect, useState } from "react";
 
 import CryptoJS from "crypto-js";
-import axios from "axios";
 import { useIdleTimer } from "react-idle-timer";
+import api from "../axiosInstance/api";
 
 export const AdminContext = createContext();
 
@@ -34,8 +34,8 @@ export const AdminProvider = ({ children }) => {
   const logoutAdmin = useCallback(async () => {
     try {
       if (admin && admin.adminToken) {
-        const response = await axios.post(
-          "http://127.0.0.1:8000/api/admin/logout",
+        const response = await api.post(
+          "/api/admin/logout",
           { adminEmail: admin.email }, // send user email
           {
             headers: {

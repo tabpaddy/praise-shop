@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaNairaSign } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { UserContext } from "../../../context/UserContext";
@@ -17,7 +17,7 @@ import {
   setZipCode,
 } from "../../../redux/DeliveryInformationSlice";
 import stripe_logo from "../../../../assets/stripe_logo.png";
-import razorpay_logo from "../../../../assets/razorpay_logo.png";
+import paystack_logo from "../../../../assets/paystack_logo.png";
 import api from "../../../axiosInstance/api";
 
 export default function PADP() {
@@ -39,6 +39,29 @@ export default function PADP() {
   } = useSelector((state) => state.deliveryInformation);
   const { subTotal, shippingFee, total } = useSelector((state) => state.cart);
   const { user } = useContext(UserContext);
+
+  useEffect(() => {
+    if (user) {
+      api
+        .get("/delivery-information")
+        .then((res) => {
+          if (res.data) {
+            dispatch(setFirstName(res.data.first_name));
+            dispatch(setLastName(res.data.last_name));
+            dispatch(setEmail(res.data.email));
+            dispatch(setStreet(res.data.street));
+            dispatch(setCity(res.data.city));
+            dispatch(setState(res.data.state));
+            dispatch(setZipCode(res.data.zip_code));
+            dispatch(setCountry(res.data.country));
+            dispatch(setPhone(res.data.phone));
+          }
+        })
+        .catch((error) =>
+          console.error("Error fetching delivery info:", error)
+        );
+    }
+  }, [user, dispatch]);
 
   const validateForm = () => {
     const newErrors = {};
@@ -385,8 +408,8 @@ export default function PADP() {
                       <input
                         type="radio"
                         name="paymentMethod"
-                        value={"razorpay"}
-                        checked={paymentMethod === "razorpay"}
+                        value={"paystack"}
+                        checked={paymentMethod === "paystack"}
                         onChange={(e) => {
                           setPaymentMethod(e.target.value);
                           dispatch(setError({ ...error, paymentMethod: "" }));
@@ -395,8 +418,8 @@ export default function PADP() {
                         size={20}
                       />
                       <img
-                        src={razorpay_logo}
-                        alt="razorpay payment"
+                        src={paystack_logo}
+                        alt="paystack payment"
                         className="sm:w-20 w-16"
                       />
                     </div>
