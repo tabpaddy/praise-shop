@@ -19,6 +19,7 @@ import {
 import stripe_logo from "../../../../assets/stripe_logo.png";
 import paystack_logo from "../../../../assets/paystack_logo.png";
 import api from "../../../axiosInstance/api";
+import SuccessModal from "./SuccessModal";
 
 export default function PADP() {
   const dispatch = useDispatch();
@@ -39,22 +40,23 @@ export default function PADP() {
   } = useSelector((state) => state.deliveryInformation);
   const { subTotal, shippingFee, total } = useSelector((state) => state.cart);
   const { user } = useContext(UserContext);
+  const [successModal, setSuccessModal] = useState(false);
 
   useEffect(() => {
     if (user) {
       api
         .get("/delivery-information")
         .then((res) => {
-          if (res.data) {
-            dispatch(setFirstName(res.data.first_name));
-            dispatch(setLastName(res.data.last_name));
-            dispatch(setEmail(res.data.email));
-            dispatch(setStreet(res.data.street));
-            dispatch(setCity(res.data.city));
-            dispatch(setState(res.data.state));
-            dispatch(setZipCode(res.data.zip_code));
-            dispatch(setCountry(res.data.country));
-            dispatch(setPhone(res.data.phone));
+          if (res.data.deliveryInfo) {
+            dispatch(setFirstName(res.data.deliveryInfo.first_name));
+            dispatch(setLastName(res.data.deliveryInfo.last_name));
+            dispatch(setEmail(res.data.deliveryInfo.email));
+            dispatch(setStreet(res.data.deliveryInfo.street));
+            dispatch(setCity(res.data.deliveryInfo.city));
+            dispatch(setState(res.data.deliveryInfo.state));
+            dispatch(setZipCode(res.data.deliveryInfo.zip_code));
+            dispatch(setCountry(res.data.deliveryInfo.country));
+            dispatch(setPhone(res.data.deliveryInfo.phone));
           }
         })
         .catch((error) =>
@@ -125,11 +127,11 @@ export default function PADP() {
       Authorization: user ? `Bearer ${user?.userToken}` : "",
     };
     try {
-      const response = await api.post("/payment-information", formData, {
+      const response = await api.post("/payment-order", formData, {
         headers,
       });
       if (response.status === 200) {
-        dispatch(setSuccess(response.data.message));
+        setSuccessModal(dispatch(setSuccess(response.data.message)));
         setTimeout(() => {
           dispatch(clearForm());
           window.location.href = "/order";
@@ -459,6 +461,11 @@ export default function PADP() {
           </div>
         </div>
       </form>
+      <SuccessModal
+        modalOpen={successModal}
+        modalClose={setSuccessModal(false)}
+        success={success}
+      />
     </div>
   );
 }
