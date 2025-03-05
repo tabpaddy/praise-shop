@@ -141,7 +141,7 @@ export default function Header() {
     } else {
       setCartCount(cart.length); // Use local count if no cart_id or user
     }
-  }, [user, cart_id, dispatch]);
+  }, [user, cart_id, cart.length, dispatch]);
 
   // console.log(user)
   return (
@@ -235,7 +235,7 @@ export default function Header() {
                           </Link>
                         </li>
                         <li>
-                          <button
+                          <Link
                             to="/logout"
                             className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
                             onClick={
@@ -243,7 +243,7 @@ export default function Header() {
                             }
                           >
                             Logout
-                          </button>
+                          </Link>
                         </li>
                       </>
                     ) : (

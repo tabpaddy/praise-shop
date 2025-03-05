@@ -15,7 +15,7 @@ import { FaMinus, FaNairaSign, FaPlus } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 
 export default function Cart() {
-  const { cart, cart_id, quantities } = useSelector((state) => state.cart);
+  const { cart, cart_id, quantities, subTotal, shippingFee, total } = useSelector((state) => state.cart);
   const { user } = useContext(UserContext);
   const dispatch = useDispatch();
 
@@ -72,23 +72,25 @@ export default function Cart() {
     return (item.product?.price || item.price || 0) * quantity;
   };
 
-  // calculate shipping fee
-  const calculateShippingFee = () => {
-    return cart.reduce((sum, item) => sum + calculateItemTotal(item) * 0.1, 0); // 10% of subtotal
-  };
-  dispatch(setShippingFee(calculateShippingFee()));
+  // Calculate totals and update Redux store
+  useEffect(() => {
+    const calculateShippingFee = () => {
+      return cart.reduce(
+        (sum, item) => sum + calculateItemTotal(item) * 0.1,
+        0
+      );
+    };
+    const calculateSubtotal = () => {
+      return cart.reduce((sum, item) => sum + calculateItemTotal(item), 0);
+    };
+    const calculateTotal = () => {
+      return calculateSubtotal() + calculateShippingFee();
+    };
 
-  // Calculate subtotal for all items
-  const calculateSubtotal = () => {
-    return cart.reduce((sum, item) => sum + calculateItemTotal(item), 0);
-  };
-  dispatch(setSubTotal(calculateSubtotal()));
-
-  // calculate total
-  const calculateTotal = () => {
-    return calculateSubtotal() + calculateShippingFee();
-  };
-  dispatch(setTotal(calculateTotal()));
+    dispatch(setShippingFee(calculateShippingFee()));
+    dispatch(setSubTotal(calculateSubtotal()));
+    dispatch(setTotal(calculateTotal()));
+  }, [cart, quantities, dispatch]); // Only run when cart or quantities change
 
   const handleDeleteButton = async (id, size) => {
     try {
@@ -229,7 +231,7 @@ export default function Cart() {
                     <div className="flex items-center font-outfit font-light">
                       <FaNairaSign />
                       <p>
-                        {new Intl.NumberFormat().format(calculateSubtotal())}
+                        {new Intl.NumberFormat().format(subTotal)}
                       </p>
                     </div>
                   </div>
@@ -238,7 +240,7 @@ export default function Cart() {
                     <div className="flex items-center font-outfit font-light">
                       <FaNairaSign />
                       <p>
-                        {new Intl.NumberFormat().format(calculateShippingFee())}
+                        {new Intl.NumberFormat().format(shippingFee)}
                       </p>
                     </div>
                   </div>
@@ -246,7 +248,7 @@ export default function Cart() {
                     <p className="">Total</p>
                     <div className="flex items-center font-outfit text-base font-light">
                       <FaNairaSign />
-                      <p>{new Intl.NumberFormat().format(calculateTotal())}</p>
+                      <p>{new Intl.NumberFormat().format(total)}</p>
                     </div>
                   </div>
                   <Link

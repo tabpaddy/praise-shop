@@ -44,8 +44,11 @@ export default function PADP() {
 
   useEffect(() => {
     if (user) {
+        const headers = {
+            Authorization: `Bearer ${user.userToken}`
+          };
       api
-        .get("/delivery-information")
+        .get("/api/delivery-information", {headers, withCredentials: true})
         .then((res) => {
           if (res.data.deliveryInfo) {
             dispatch(setFirstName(res.data.deliveryInfo.first_name));
@@ -127,15 +130,25 @@ export default function PADP() {
       Authorization: user ? `Bearer ${user?.userToken}` : "",
     };
     try {
-      const response = await api.post("/payment-order", formData, {
+      const response = await api.post("/api/payment-order", formData, {
         headers,
       });
       if (response.status === 200) {
-        setSuccessModal(dispatch(setSuccess(response.data.message)));
-        setTimeout(() => {
-          dispatch(clearForm());
-          window.location.href = "/order";
-        }, 2000);
+        if (response.data.clientSecret) {
+            // Handle Stripe payment confirmation on the frontend
+            console.log("Stripe client secret:", response.data.clientSecret);
+          } else if (response.data.payment_url) {
+            // Redirect to Paystack payment page
+            window.location.href = response.data.payment_url;
+          } else {
+            // Handle COD or simple success
+            dispatch(setSuccess(response.data.message));
+            setSuccessModal(true);
+            setTimeout(() => {
+              dispatch(clearForm());
+              window.location.href = "/order";
+            }, 2000);
+          }
       }
     } catch (error) {
       if (error.response && error.response.status === 422) {
@@ -425,7 +438,7 @@ export default function PADP() {
                         className="sm:w-20 w-16"
                       />
                     </div>
-                    <div className="flex items-center gap-2 border-2 border-slate-200 px-1 py-1 sm:py-2">
+                    <div className="flex items-center gap-1 border-2 border-slate-200 px-1 py-1 sm:py-2">
                       <input
                         type="radio"
                         name="paymentMethod" // Same name ensures single selection
@@ -463,7 +476,7 @@ export default function PADP() {
       </form>
       <SuccessModal
         modalOpen={successModal}
-        modalClose={setSuccessModal(false)}
+        modalClose={() => setSuccessModal(false)}
         success={success}
       />
     </div>
