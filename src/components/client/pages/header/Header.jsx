@@ -212,7 +212,7 @@ export default function Header() {
             <div ref={dropdownRef}>
               {" "}
               {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 bg-white border rounded-md shadow-md w-40">
+                <div className="absolute right-0 mt-2 bg-gray-100 border rounded-md shadow-md w-40">
                   <ul className="py-2">
                     {user ? (
                       <>
@@ -235,7 +235,7 @@ export default function Header() {
                           </Link>
                         </li>
                         <li>
-                          <Link
+                          <button
                             to="/logout"
                             className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
                             onClick={
@@ -243,7 +243,7 @@ export default function Header() {
                             }
                           >
                             Logout
-                          </Link>
+                          </button>
                         </li>
                       </>
                     ) : (

@@ -37,7 +37,7 @@ export default function LogoutUserModal({ modalOpen, modalClose }) {
       onClick={modalClose} // Close modal when clicking outside
     >
       <div
-        className="absolute top-[5rem] left-1/2 transform -translate-x-1/2 w-full"
+        className="absolute top-[5rem] left-1/2 transform -translate-x-1/2 w-3/4"
         onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
       >
         <div>

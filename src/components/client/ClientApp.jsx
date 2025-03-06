@@ -36,7 +36,7 @@ export default function ClientApp() {
       <>
         <Header />
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/*" element={<Home />} />
           <Route path="/collection" element={<Collection />} />
           <Route path="/product/:id" element={<Product />} />
           <Route path="/about" element={<About />} />
