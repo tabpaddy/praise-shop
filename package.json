@@ -23,6 +23,7 @@
     "react-router-dom": "^7.1.1",
     "react-spinners": "^0.15.0",
     "swiper": "^11.2.0",
+    "use-debounce": "^10.0.4",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
