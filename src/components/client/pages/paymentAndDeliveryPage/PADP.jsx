@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { FaNairaSign } from "react-icons/fa6";
+import { FaMoneyBillWave, FaNairaSign } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { UserContext } from "../../../context/UserContext";
 import {
@@ -44,11 +44,11 @@ export default function PADP() {
 
   useEffect(() => {
     if (user) {
-        const headers = {
-            Authorization: `Bearer ${user.userToken}`
-          };
+      const headers = {
+        Authorization: `Bearer ${user.userToken}`,
+      };
       api
-        .get("/api/delivery-information", {headers, withCredentials: true})
+        .get("/api/delivery-information", { headers, withCredentials: true })
         .then((res) => {
           if (res.data.deliveryInfo) {
             dispatch(setFirstName(res.data.deliveryInfo.first_name));
@@ -135,20 +135,20 @@ export default function PADP() {
       });
       if (response.status === 200) {
         if (response.data.clientSecret) {
-            // Handle Stripe payment confirmation on the frontend
-            console.log("Stripe client secret:", response.data.clientSecret);
-          } else if (response.data.payment_url) {
-            // Redirect to Paystack payment page
-            window.location.href = response.data.payment_url;
-          } else {
-            // Handle COD or simple success
-            dispatch(setSuccess(response.data.message));
-            setSuccessModal(true);
-            setTimeout(() => {
-              dispatch(clearForm());
-              window.location.href = "/order";
-            }, 2000);
-          }
+          // Handle Stripe payment confirmation on the frontend
+          console.log("Stripe client secret:", response.data.clientSecret);
+        } else if (response.data.payment_url) {
+          // Redirect to Paystack payment page
+          window.location.href = response.data.payment_url;
+        } else {
+          // Handle COD or simple success
+          dispatch(setSuccess(response.data.message));
+          setSuccessModal(true);
+          setTimeout(() => {
+            dispatch(clearForm());
+            window.location.href = "/order";
+          }, 2000);
+        }
       }
     } catch (error) {
       if (error.response && error.response.status === 422) {
@@ -163,71 +163,70 @@ export default function PADP() {
     }
   };
   return (
-    <div className="mb-52">
+    <div className="mb-20 px-4 sm:px-6 lg:px-8">
       <form
         onSubmit={handleOrder}
-        className="grid md:grid-cols-2 grid-cols-1 gap-5"
+        className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto"
       >
-        <div className="mx-auto">
-          <div className="text-left my-3 mt-10">
-            <h3 className="text-slate-700 relative font-outfit font-normal text-2xl sm:text-3xl">
+        {/* Delivery Information */}
+        <div>
+          <div className="text-left my-6">
+            <h3 className="text-slate-700 font-outfit font-normal text-2xl sm:text-3xl">
               Delivery{" "}
-              <span className="text-black relative font-semibold after:content-[''] after:absolute after:w-[30px] after:pt-1 after:h-[1px] after:bg-black after:top-1/2 after:left-full after:ml-2">
+              <span className="text-black font-semibold relative after:content-[''] after:absolute after:w-8 after:h-px after:bg-black after:top-1/2 after:left-full after:ml-2">
                 Information
               </span>
             </h3>
           </div>
 
-          <div className="items-start font-outfit max-w-md">
-            <div className="flex items-center  gap-2">
-              <div className="mb-4 flex gap-3">
-                <div className="">
-                  <input
-                    type="text"
-                    className={`p-2 my-1 w-full border-2 rounded ${
-                      error.firstName ? "border-red-500" : "border-slate-200"
-                    }`}
-                    placeholder="First Name"
-                    value={firstName}
-                    onChange={(e) => {
-                      dispatch(setFirstName(e.target.value));
-                      dispatch(setError({ ...error, firstName: "" }));
-                    }}
-                  />
-                  {error.firstName && (
-                    <span className="text-xs text-red-500">
-                      {error.firstName}
-                    </span>
-                  )}
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    className={`p-2 my-1 w-full border-2 rounded ${
-                      error.lastName ? "border-red-500" : "border-slate-200"
-                    }`}
-                    placeholder="Last Name"
-                    value={lastName}
-                    onChange={(e) => {
-                      dispatch(setLastName(e.target.value));
-                      dispatch(setError({ ...error, lastName: "" }));
-                    }}
-                  />
-                  {error.lastName && (
-                    <span className="text-xs text-red-500">
-                      {error.lastName}
-                    </span>
-                  )}
-                </div>
+          <div className="font-outfit space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <input
+                  type="text"
+                  className={`w-full p-3 border-2 rounded-lg ${
+                    error.firstName ? "border-red-500" : "border-slate-200"
+                  } focus:outline-none focus:ring-2 focus:ring-slate-400`}
+                  placeholder="First Name"
+                  value={firstName}
+                  onChange={(e) => {
+                    dispatch(setFirstName(e.target.value));
+                    dispatch(setError({ ...error, firstName: "" }));
+                  }}
+                />
+                {error.firstName && (
+                  <span className="text-xs text-red-500 mt-1 block">
+                    {error.firstName}
+                  </span>
+                )}
+              </div>
+              <div>
+                <input
+                  type="text"
+                  className={`w-full p-3 border-2 rounded-lg ${
+                    error.lastName ? "border-red-500" : "border-slate-200"
+                  } focus:outline-none focus:ring-2 focus:ring-slate-400`}
+                  placeholder="Last Name"
+                  value={lastName}
+                  onChange={(e) => {
+                    dispatch(setLastName(e.target.value));
+                    dispatch(setError({ ...error, lastName: "" }));
+                  }}
+                />
+                {error.lastName && (
+                  <span className="text-xs text-red-500 mt-1 block">
+                    {error.lastName}
+                  </span>
+                )}
               </div>
             </div>
-            <div className="mb-4">
+            <div>
               <input
                 type="email"
                 placeholder="Email Address"
-                className={`p-2 my-1 w-full border-2 rounded ${
+                className={`w-full p-3 border-2 rounded-lg ${
                   error.email ? "border-red-500" : "border-slate-200"
-                }`}
+                } focus:outline-none focus:ring-2 focus:ring-slate-400`}
                 value={email}
                 onChange={(e) => {
                   dispatch(setEmail(e.target.value));
@@ -235,16 +234,18 @@ export default function PADP() {
                 }}
               />
               {error.email && (
-                <span className="text-xs text-red-500">{error.email}</span>
+                <span className="text-xs text-red-500 mt-1 block">
+                  {error.email}
+                </span>
               )}
             </div>
-            <div className="mb-4">
+            <div>
               <input
                 type="text"
                 placeholder="Street"
-                className={`p-2 my-1 w-full border-2 rounded ${
+                className={`w-full p-3 border-2 rounded-lg ${
                   error.street ? "border-red-500" : "border-slate-200"
-                }`}
+                } focus:outline-none focus:ring-2 focus:ring-slate-400`}
                 value={street}
                 onChange={(e) => {
                   dispatch(setStreet(e.target.value));
@@ -252,225 +253,256 @@ export default function PADP() {
                 }}
               />
               {error.street && (
-                <span className="text-xs text-red-500">{error.street}</span>
+                <span className="text-xs text-red-500 mt-1 block">
+                  {error.street}
+                </span>
               )}
             </div>
-            <div className="flex items-center gap-2">
-              <div className="mb-4 flex gap-3">
-                <div className="">
-                  <input
-                    type="text"
-                    placeholder="City"
-                    className={`p-2 my-1 w-full border-2 rounded ${
-                      error.city ? "border-red-500" : "border-slate-200"
-                    }`}
-                    value={city}
-                    onChange={(e) => {
-                      dispatch(setCity(e.target.value));
-                      dispatch(setError({ ...error, city: "" }));
-                    }}
-                  />
-                  {error.city && (
-                    <span className="text-xs text-red-500">{error.city}</span>
-                  )}
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    className={`p-2 my-1 w-full border-2 rounded ${
-                      error.state ? "border-red-500" : "border-slate-200"
-                    }`}
-                    value={state}
-                    onChange={(e) => {
-                      dispatch(setState(e.target.value));
-                      dispatch(setError({ ...error, state: "" }));
-                    }}
-                    placeholder="State"
-                  />
-                  {error.state && (
-                    <span className="text-xs text-red-500">{error.state}</span>
-                  )}
-                </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <input
+                  type="text"
+                  placeholder="City"
+                  className={`w-full p-3 border-2 rounded-lg ${
+                    error.city ? "border-red-500" : "border-slate-200"
+                  } focus:outline-none focus:ring-2 focus:ring-slate-400`}
+                  value={city}
+                  onChange={(e) => {
+                    dispatch(setCity(e.target.value));
+                    dispatch(setError({ ...error, city: "" }));
+                  }}
+                />
+                {error.city && (
+                  <span className="text-xs text-red-500 mt-1 block">
+                    {error.city}
+                  </span>
+                )}
+              </div>
+              <div>
+                <input
+                  type="text"
+                  placeholder="State"
+                  className={`w-full p-3 border-2 rounded-lg ${
+                    error.state ? "border-red-500" : "border-slate-200"
+                  } focus:outline-none focus:ring-2 focus:ring-slate-400`}
+                  value={state}
+                  onChange={(e) => {
+                    dispatch(setState(e.target.value));
+                    dispatch(setError({ ...error, state: "" }));
+                  }}
+                />
+                {error.state && (
+                  <span className="text-xs text-red-500 mt-1 block">
+                    {error.state}
+                  </span>
+                )}
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="mb-4 flex gap-3">
-                <div className="">
-                  <input
-                    type="text"
-                    className={`p-2 my-1 w-full border-2 rounded ${
-                      error.zipCode ? "border-red-500" : "border-slate-200"
-                    }`}
-                    value={zipCode}
-                    onChange={(e) => {
-                      dispatch(setZipCode(e.target.value));
-                      dispatch(setError({ ...error, zipCode: "" }));
-                    }}
-                    placeholder="Zip Code"
-                  />
-                  {error.zipCode && (
-                    <span className="text-xs text-red-500">
-                      {error.zipCode}
-                    </span>
-                  )}
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    className={`p-2 my-1 w-full border-2 rounded ${
-                      error.country ? "border-red-500" : "border-slate-200"
-                    }`}
-                    value={country}
-                    onChange={(e) => {
-                      dispatch(setCountry(e.target.value));
-                      dispatch(setError({ ...error, country: "" }));
-                    }}
-                    placeholder="Country"
-                  />
-                  {error.country && (
-                    <span className="text-xs text-red-500">
-                      {error.country}
-                    </span>
-                  )}
-                </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <input
+                  type="text"
+                  placeholder="Zip Code"
+                  className={`w-full p-3 border-2 rounded-lg ${
+                    error.zipCode ? "border-red-500" : "border-slate-200"
+                  } focus:outline-none focus:ring-2 focus:ring-slate-400`}
+                  value={zipCode}
+                  onChange={(e) => {
+                    dispatch(setZipCode(e.target.value));
+                    dispatch(setError({ ...error, zipCode: "" }));
+                  }}
+                />
+                {error.zipCode && (
+                  <span className="text-xs text-red-500 mt-1 block">
+                    {error.zipCode}
+                  </span>
+                )}
+              </div>
+              <div>
+                <input
+                  type="text"
+                  placeholder="Country"
+                  className={`w-full p-3 border-2 rounded-lg ${
+                    error.country ? "border-red-500" : "border-slate-200"
+                  } focus:outline-none focus:ring-2 focus:ring-slate-400`}
+                  value={country}
+                  onChange={(e) => {
+                    dispatch(setCountry(e.target.value));
+                    dispatch(setError({ ...error, country: "" }));
+                  }}
+                />
+                {error.country && (
+                  <span className="text-xs text-red-500 mt-1 block">
+                    {error.country}
+                  </span>
+                )}
               </div>
             </div>
-            <div className="mb-4">
+            <div>
               <input
                 type="text"
-                className={`p-2 my-1 w-full border-2 rounded ${
+                placeholder="Phone"
+                className={`w-full p-3 border-2 rounded-lg ${
                   error.phone ? "border-red-500" : "border-slate-200"
-                }`}
+                } focus:outline-none focus:ring-2 focus:ring-slate-400`}
                 value={phone}
                 onChange={(e) => {
                   dispatch(setPhone(e.target.value));
                   dispatch(setError({ ...error, phone: "" }));
+                  dispatch(setError({ ...error, phone: "" }));
                 }}
-                placeholder="Phone"
               />
               {error.phone && (
-                <span className="text-xs text-red-500">{error.phone}</span>
+                <span className="text-xs text-red-500 mt-1 block">
+                  {error.phone}
+                </span>
               )}
             </div>
           </div>
         </div>
 
-        <div className="mx-auto">
-          <div className="sm:w-full w-11/12  mt-20">
-            <div className="w-full max-w-md mb-4 mx-3 sm:mx-0 text-right">
-              <div className="text-left my-3 mt-5 ">
-                <h3 className="text-slate-700 relative font-outfit font-normal text-xl sm:text-lg">
-                  Cart{" "}
-                  <span className="text-black relative font-semibold after:content-[''] after:absolute after:w-[30px] after:pt-1 after:h-[1px] after:bg-black after:top-1/2 after:left-full after:ml-2">
-                    Totals
-                  </span>
-                </h3>
-              </div>
-              <div className="w-full">
-                <div className="flex justify-between font-outfit text-base font-medium text-stone-700 py-3">
-                  <p className="">Subtotal</p>
-                  <div className="flex items-center font-outfit font-light">
-                    <FaNairaSign />
-                    <p>{new Intl.NumberFormat().format(subTotal)}</p>
-                  </div>
-                </div>
-                <div className="flex border-y-2 border-slate-200 justify-between font-medium font-outfit text-base text-stone-700 py-3">
-                  <p className="">Shipping Fee</p>
-                  <div className="flex items-center font-outfit font-light">
-                    <FaNairaSign />
-                    <p>{new Intl.NumberFormat().format(shippingFee)}</p>
-                  </div>
-                </div>
-                <div className="flex justify-between font-outfit text-xl font-bold text-stone-900 py-3">
-                  <p className="">Total</p>
-                  <div className="flex items-center font-outfit text-base font-light">
-                    <FaNairaSign />
-                    <p>{new Intl.NumberFormat().format(total)}</p>
-                  </div>
-                </div>
+        {/* Cart Totals and Payment Methods */}
+        <div className="mt-6 md:mt-0">
+          <div className="max-w-md mx-auto">
+            <div className="text-left my-6">
+              <h3 className="text-slate-700 font-outfit font-normal text-2xl sm:text-3xl">
+                Cart{" "}
+                <span className="text-black font-semibold relative after:content-[''] after:absolute after:w-8 after:h-px after:bg-black after:top-1/2 after:left-full after:ml-2">
+                  Totals
+                </span>
+              </h3>
+            </div>
 
-                <div>
-                  <div className="text-left my-3 mt-10 ">
-                    <h3 className="text-slate-700 relative font-outfit font-normal text-xl sm:text-lg">
-                      PAYMENT{" "}
-                      <span className="text-black relative font-semibold after:content-[''] after:absolute after:w-[30px] after:pt-1 after:h-[1px] after:bg-black after:top-1/2 after:left-full after:ml-2">
-                        METHOD
-                      </span>
-                    </h3>
-                  </div>
-                  <div className="grid grid-cols-3 gap-2 mb-4">
-                    <div className="flex items-center gap-2 border-2 border-slate-200 px-1 py-1 sm:py-2">
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value={"stripe"}
-                        checked={paymentMethod === "stripe"}
-                        onChange={(e) => {
-                          setPaymentMethod(e.target.value);
-                          dispatch(setError({ ...error, paymentMethod: "" }));
-                        }}
-                        id=""
-                        size={20}
-                      />
-                      <img
-                        src={stripe_logo}
-                        sizes="10"
-                        alt="stripe payment"
-                        className="sm:w-16 w-10"
-                      />
-                    </div>
-                    <div className="flex items-center gap-2 border-2 border-slate-200 px-1 py-1 sm:py-2">
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value={"paystack"}
-                        checked={paymentMethod === "paystack"}
-                        onChange={(e) => {
-                          setPaymentMethod(e.target.value);
-                          dispatch(setError({ ...error, paymentMethod: "" }));
-                        }}
-                        id=""
-                        size={20}
-                      />
-                      <img
-                        src={paystack_logo}
-                        alt="paystack payment"
-                        className="sm:w-20 w-16"
-                      />
-                    </div>
-                    <div className="flex items-center gap-1 border-2 border-slate-200 px-1 py-1 sm:py-2">
-                      <input
-                        type="radio"
-                        name="paymentMethod" // Same name ensures single selection
-                        value={"cod"}
-                        checked={paymentMethod === "cod"}
-                        onChange={(e) => {
-                          setPaymentMethod(e.target.value);
-                          dispatch(setError({ ...error, paymentMethod: "" }));
-                        }}
-                        id=""
-                        size={20}
-                      />
-                      <label className="text-xs text-slate-500">
-                        CASH ON DELIVERY
-                      </label>
-                    </div>
-                  </div>
-                  {error.paymentMethod && (
-                    <span className="text-xs text-red-500 block mb-2">
-                      {error.paymentMethod}
-                    </span>
-                  )}
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="px-10 py-3 font-outfit font-medium text-base bg-black text-white hover:text-slate-300"
-                  >
-                    {isLoading ? "Processing..." : "Place Order"}
-                  </button>
+            <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+              <div className="flex justify-between font-outfit text-base text-stone-700 py-2">
+                <p>Subtotal</p>
+                <div className="flex items-center">
+                  <FaNairaSign className="text-sm" />
+                  <p>{new Intl.NumberFormat().format(subTotal)}</p>
+                </div>
+              </div>
+              <div className="flex justify-between font-outfit text-base text-stone-700 py-2 border-y border-slate-200">
+                <p>Shipping Fee</p>
+                <div className="flex items-center">
+                  <FaNairaSign className="text-sm" />
+                  <p>{new Intl.NumberFormat().format(shippingFee)}</p>
+                </div>
+              </div>
+              <div className="flex justify-between font-outfit text-xl font-bold text-stone-900 py-3">
+                <p>Total</p>
+                <div className="flex items-center">
+                  <FaNairaSign className="text-base" />
+                  <p>{new Intl.NumberFormat().format(total)}</p>
                 </div>
               </div>
             </div>
+
+            <div className="text-left my-6">
+              <h3 className="text-slate-700 font-outfit font-normal text-2xl sm:text-3xl">
+                Payment{" "}
+                <span className="text-black font-semibold relative after:content-[''] after:absolute after:w-8 after:h-px after:bg-black after:top-1/2 after:left-full after:ml-2">
+                  Method
+                </span>
+              </h3>
+            </div>
+
+            <div className="space-y-3">
+              <label
+                className={`flex items-center justify-between p-3 border-2 rounded-lg cursor-pointer transition-colors duration-200 ${
+                  paymentMethod === "stripe"
+                    ? "border-indigo-500 bg-indigo-50"
+                    : "border-slate-200 hover:bg-gray-50"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="stripe"
+                    checked={paymentMethod === "stripe"}
+                    onChange={(e) => {
+                      setPaymentMethod(e.target.value);
+                      dispatch(setError({ ...error, paymentMethod: "" }));
+                    }}
+                    className="w-5 h-5 text-indigo-600"
+                  />
+                  <img
+                    src={stripe_logo}
+                    alt="Stripe payment"
+                    className="w-16 h-auto"
+                  />
+                </div>
+              </label>
+
+              <label
+                className={`flex items-center justify-between p-3 border-2 rounded-lg cursor-pointer transition-colors duration-200 ${
+                  paymentMethod === "paystack"
+                    ? "border-indigo-500 bg-indigo-50"
+                    : "border-slate-200 hover:bg-gray-50"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="paystack"
+                    checked={paymentMethod === "paystack"}
+                    onChange={(e) => {
+                      setPaymentMethod(e.target.value);
+                      dispatch(setError({ ...error, paymentMethod: "" }));
+                    }}
+                    className="w-5 h-5 text-indigo-600"
+                  />
+                  <img
+                    src={paystack_logo}
+                    alt="Paystack payment"
+                    className="w-20 h-auto"
+                  />
+                </div>
+              </label>
+
+              <label
+                className={`flex items-center justify-between p-3 border-2 rounded-lg cursor-pointer transition-colors duration-200 ${
+                  paymentMethod === "cod"
+                    ? "border-indigo-500 bg-indigo-50"
+                    : "border-slate-200 hover:bg-gray-50"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="cod"
+                    checked={paymentMethod === "cod"}
+                    onChange={(e) => {
+                      setPaymentMethod(e.target.value);
+                      dispatch(setError({ ...error, paymentMethod: "" }));
+                    }}
+                    className="w-5 h-5 text-indigo-600"
+                  />
+                  <div className="flex items-center gap-2">
+                    <FaMoneyBillWave className="text-slate-700" />
+                    <span className="text-sm font-outfit text-slate-700">
+                      Cash on Delivery
+                    </span>
+                  </div>
+                </div>
+              </label>
+
+              {error.paymentMethod && (
+                <span className="text-xs text-red-500 block mt-2">
+                  {error.paymentMethod}
+                </span>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full mt-6 px-6 py-3 font-outfit font-medium text-base bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200 disabled:bg-gray-500"
+            >
+              {isLoading ? "Processing..." : "Place Order"}
+            </button>
           </div>
         </div>
       </form>

@@ -11,6 +11,7 @@ export default function SearchModal({ isOpen, onClose }) {
   const { searchTerm, result } = useSelector((state) => state.search);
   const [debouncedSearchTerm] = useDebounce(searchTerm, 500); // 500ms delay
   const dispatch = useDispatch();
+
   useEffect(() => {
     const handleKeydown = (event) => {
       if (event.key === "Escape") {
@@ -27,14 +28,13 @@ export default function SearchModal({ isOpen, onClose }) {
     };
   }, [isOpen, onClose]);
 
-  // fetch result from the server
   useEffect(() => {
     if (!debouncedSearchTerm) {
       dispatch(setResult([]));
       return;
     }
 
-    const fetchSearchResults = async (debouncedSearchTerm) => {
+    const fetchSearchResults = async () => {
       try {
         const response = await api.get(
           `/api/search?query=${debouncedSearchTerm}`,
@@ -52,62 +52,78 @@ export default function SearchModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
-
-
   return (
     <div
-      className="fixed inset-0 z-50 backdrop-blur-md bg-black/30"
-      onClick={onClose} // Close modal when clicking outside
+      className="fixed inset-0 z-50 flex items-start justify-center pt-16 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ease-in-out"
+      onClick={onClose}
     >
       <div
-        className="absolute top-[5rem] left-1/2 transform -translate-x-1/2 w-full max-w-[90%] sm:max-w-[80%] md:max-w-[50%] lg:max-w-[60%] xl:max-w-[60%] px-4 sm:px-8"
-        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
+        className="w-full max-w-3xl mx-4 bg-white rounded-xl shadow-2xl overflow-hidden transform transition-all duration-300 ease-in-out scale-95 hover:scale-100"
+        onClick={(e) => e.stopPropagation()}
       >
-        <div className="relative">
+        {/* Search Input */}
+        <div className="relative p-4 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
           <FiSearch
-            className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-400"
-            size={20}
+            className="absolute top-1/2 left-8 transform -translate-y-1/2 text-gray-500"
+            size={22}
           />
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Search for products..."
             value={searchTerm}
-            className="w-full p-3 pl-10 border border-gray-300 rounded-md shadow-md focus:outline-none focus:ring-0 text-sm bg-white"
+            className="w-full py-3 pl-14 pr-4 text-gray-800 bg-transparent border-none rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-600 placeholder-gray-400 font-outfit text-base transition-all duration-200"
             onChange={(e) => dispatch(setSearchTerm(e.target.value))}
           />
         </div>
 
         {/* Results */}
-        {(!result || result.length === 0) && searchTerm ? (
-          <p className="text-stone-700">No results found.</p>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {result.map((item) => (
-              <div
-              key={item.id}
-              className="block font-outfit font-medium text-sm leading-2 text-left"
-            >
-              <Link to={`/product/${item.id}`}>
-                {/* Product Image */}
-                <img
-                  className="object-cover shadow-sm w-full h-32 rounded-md"
-                  src={item.image1_url}
-                  alt={item.name}
-                />
-  
-                {/* Product Name */}
-                <p className="text-xs my-1">{item.name}</p>
-  
-                {/* Price Section */}
-                <div className="flex items-center justify-left gap-1 text-lg font-semibold text-slate-800">
-                  <FaNairaSign className="text-base" />
-                  <p>{item.price}</p>
-                </div>
-              </Link>
+        <div className={searchTerm ? "p-6 max-h-[70vh] overflow-y-auto" : ""}>
+          {(!result || result.length === 0) && searchTerm ? (
+            <p className="text-center text-gray-500 font-outfit text-lg italic">
+              No wares found. Try a different search!
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {result.map((item) => (
+                <Link
+                  to={`/product/${item.id}`}
+                  key={item.id}
+                  className="group relative block bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 ease-in-out overflow-hidden border border-gray-100"
+                >
+                  {/* Product Image */}
+                  <div className="relative overflow-hidden aspect-w-4 aspect-h-3">
+                    <img
+                      className="w-full h-full object-contain transform group-hover:scale-105 transition-transform duration-500 ease-in-out"
+                      src={item.image1_url}
+                      alt={item.name}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </div>
+
+                  {/* Product Info */}
+                  <div className="p-4">
+                    <p className="text-sm font-outfit text-gray-700 truncate group-hover:text-indigo-600 transition-colors duration-200">
+                      {item.name}
+                    </p>
+                    <div className="flex items-center gap-1 mt-2">
+                      <FaNairaSign className="text-indigo-500 text-base" />
+                      <p className="text-lg font-semibold text-gray-800 group-hover:text-indigo-500 transition-colors duration-200">
+                        {new Intl.NumberFormat().format(item.price)}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/10">
+                    <span className="text-white font-outfit text-sm bg-indigo-500 px-3 py-1 rounded-full shadow-md">
+                      View Product
+                    </span>
+                  </div>
+                </Link>
+              ))}
             </div>
-            ))}
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
