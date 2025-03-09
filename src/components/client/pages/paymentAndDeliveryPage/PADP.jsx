@@ -20,6 +20,9 @@ import stripe_logo from "../../../../assets/stripe_logo.png";
 import paystack_logo from "../../../../assets/paystack_logo.png";
 import api from "../../../axiosInstance/api";
 import SuccessModal from "./SuccessModal";
+import { Elements } from "@stripe/stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import AlertModal from "../productPage/alertModal";
 
 export default function PADP() {
   const dispatch = useDispatch();
@@ -41,6 +44,7 @@ export default function PADP() {
   const { subTotal, shippingFee, total } = useSelector((state) => state.cart);
   const { user } = useContext(UserContext);
   const [successModal, setSuccessModal] = useState(false);
+  const [alertModal, setAlertModal] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -137,6 +141,27 @@ export default function PADP() {
         if (response.data.clientSecret) {
           // Handle Stripe payment confirmation on the frontend
           console.log("Stripe client secret:", response.data.clientSecret);
+          const stripe = await loadStripe(
+            process.env.REACT_APP_STRIPE_PUBLIC_KEY
+          );
+          const { error } = await stripe.confirmCardPayment(
+            response.data.clientSecret
+          );
+
+          if (error) {
+            // Handle error
+            dispatch(setError({ message: "Payment failed" }));
+            setAlertModal(true);
+          } else {
+            // Payment succeeded
+            dispatch(setSuccess("Payment successful!"));
+            setSuccessModal(true);
+            // Redirect or update state
+            setTimeout(() => {
+              dispatch(clearForm());
+              window.location.href = "/order";
+            }, 2000);
+          }
         } else if (response.data.payment_url) {
           // Redirect to Paystack payment page
           window.location.href = response.data.payment_url;
@@ -146,8 +171,9 @@ export default function PADP() {
           setSuccessModal(true);
           setTimeout(() => {
             dispatch(clearForm());
+            setSuccessModal(false);
             window.location.href = "/order";
-          }, 2000);
+          }, 8000);
         }
       }
     } catch (error) {
@@ -510,6 +536,11 @@ export default function PADP() {
         modalOpen={successModal}
         modalClose={() => setSuccessModal(false)}
         success={success}
+      />
+      <AlertModal
+        modalOpen={alertModal}
+        modalClose={() => setAlertModal(false)}
+        message={error}
       />
     </div>
   );
