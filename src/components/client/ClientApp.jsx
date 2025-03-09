@@ -32,9 +32,10 @@ export default function ClientApp() {
   // }, []);
 
   return (
-    <div className="2xl:mx-52 3xl:mx-80 xl:mx-28 lg:mx-16 md:mx-8 sm:mx-4 mx-2">
+    <div className="2xl:mx-52 3xl:mx-80 xl:mx-28 lg:mx-16 md:mx-8 sm:mx-4 mx-2 flex flex-col min-h-screen">
       <>
         <Header />
+        <main className="flex-grow">
         <Routes>
           <Route path="/*" element={<Home />} />
           <Route path="/collection" element={<Collection />} />
@@ -54,6 +55,7 @@ export default function ClientApp() {
             }
           />
         </Routes>
+        </main>
         <Footer />
       </>
     </div>

@@ -49,9 +49,9 @@ export default function Latest() {
           </span>
         </h3>
         <p className="font-outfit font-normal text-stone-400 text-base sm:text-lg my-2">
-          Explore the **newest arrivals**, featuring the latest styles and
-          trends designed to **elevate your fashion**.
-        </p>
+          Explore the <b><i>newest arrivals</i></b>, featuring the latest styles and
+          trends designed to <b><i>elevate your fashion</i></b>.
+        </p> 
       </div>
 
       {/* Latest Collection Grid */}

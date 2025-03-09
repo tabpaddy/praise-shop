@@ -58,7 +58,7 @@ export default function BestSeller() {
         </h3>
         <p className="font-outfit font-normal text-stone-400 text-base sm:text-lg my-2">
           Discover our top-selling products, loved by customers for their
-          **exceptional quality** and **great value**.
+          <b><i>exceptional quality</i></b> and <b><i>great value</i></b>.
         </p>
       </div>
 

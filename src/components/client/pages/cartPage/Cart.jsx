@@ -244,7 +244,7 @@ export default function Cart() {
                       </p>
                     </div>
                   </div>
-                  <div className="flex justify-between font-outfit text-xl font-bold text-stone-900 py-3">
+                  <div className="flex justify-between font-outfit mb-3 text-xl font-bold text-stone-900 py-3">
                     <p className="">Total</p>
                     <div className="flex items-center font-outfit text-base font-light">
                       <FaNairaSign />
