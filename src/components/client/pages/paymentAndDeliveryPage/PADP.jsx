@@ -20,14 +20,65 @@ import stripe_logo from "../../../../assets/stripe_logo.png";
 import paystack_logo from "../../../../assets/paystack_logo.png";
 import api from "../../../axiosInstance/api";
 import SuccessModal from "./SuccessModal";
-import { Elements } from "@stripe/stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
 import AlertModal from "../productPage/alertModal";
+import {
+  Elements,
+  CardElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
+// Load Stripe outside the component
+const stripePromise = loadStripe(
+  import.meta.env.VITE_REACT_APP_STRIPE_PUBLIC_KEY
+);
+
+const CheckoutForm = ({ handleStripePayment, isLoading }) => {
+  const stripe = useStripe();
+  const elements = useElements();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!stripe || !elements) {
+      return;
+    }
+
+    const cardElement = elements.getElement(CardElement);
+    handleStripePayment(stripe, cardElement);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="mt-4">
+      <CardElement
+        options={{
+          style: {
+            base: {
+              fontSize: "16px",
+              color: "#424770",
+              "::placeholder": { color: "#aab7c4" },
+            },
+            invalid: { color: "#9e2146" },
+          },
+        }}
+      />
+      <button
+        type="submit"
+        disabled={isLoading || !stripe}
+        className="w-full mt-4 px-6 py-3 font-outfit font-medium text-base bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200 disabled:bg-gray-500"
+      >
+        {isLoading ? "Processing..." : "Confirm Payment"}
+      </button>
+    </form>
+  );
+};
 
 export default function PADP() {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState(""); // Track selected payment method
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [clientSecret, setClientSecret] = useState(null); // Store Stripe client secret
   const {
     firstName,
     lastName,
@@ -48,9 +99,7 @@ export default function PADP() {
 
   useEffect(() => {
     if (user) {
-      const headers = {
-        Authorization: `Bearer ${user.userToken}`,
-      };
+      const headers = { Authorization: `Bearer ${user.userToken}` };
       api
         .get("/api/delivery-information", { headers, withCredentials: true })
         .then((res) => {
@@ -74,35 +123,16 @@ export default function PADP() {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!firstName.trim()) {
-      newErrors.firstName = "First Name is Required.";
-    }
-    if (!lastName.trim()) {
-      newErrors.lastName = "Last Name is Required.";
-    }
-    if (!email.trim()) {
-      newErrors.email = "Email is required.";
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = "Email is invalid.";
-    }
-    if (!street.trim()) {
-      newErrors.street = "Street is Required.";
-    }
-    if (!city.trim()) {
-      newErrors.city = "City is Required.";
-    }
-    if (!state.trim()) {
-      newErrors.state = "State is Required.";
-    }
-    if (!zipCode.trim()) {
-      newErrors.zipCode = "ZipCode is Required.";
-    }
-    if (!country.trim()) {
-      newErrors.country = "Country is Required.";
-    }
-    if (!phone.trim()) {
-      newErrors.phone = "Phone is Required.";
-    }
+    if (!firstName.trim()) newErrors.firstName = "First Name is Required.";
+    if (!lastName.trim()) newErrors.lastName = "Last Name is Required.";
+    if (!email.trim()) newErrors.email = "Email is required.";
+    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = "Email is invalid.";
+    if (!street.trim()) newErrors.street = "Street is Required.";
+    if (!city.trim()) newErrors.city = "City is Required.";
+    if (!state.trim()) newErrors.state = "State is Required.";
+    if (!zipCode.trim()) newErrors.zipCode = "ZipCode is Required.";
+    if (!country.trim()) newErrors.country = "Country is Required.";
+    if (!phone.trim()) newErrors.phone = "Phone is Required.";
     if (!paymentMethod)
       newErrors.paymentMethod = "Please select a payment method.";
 
@@ -113,6 +143,7 @@ export default function PADP() {
   const handleOrder = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+
     if (!validateForm()) {
       setIsLoading(false);
       return;
@@ -128,66 +159,89 @@ export default function PADP() {
     formData.append("zipCode", zipCode);
     formData.append("country", country);
     formData.append("phone", phone);
-    formData.append("paymentMethod", paymentMethod); // Include payment method
+    formData.append("paymentMethod", paymentMethod);
+    formData.append("total", total);
 
-    const headers = {
-      Authorization: user ? `Bearer ${user?.userToken}` : "",
-    };
+    const headers = { Authorization: `Bearer ${user?.userToken}`};
+
     try {
       const response = await api.post("/api/payment-order", formData, {
         headers,
       });
       if (response.status === 200) {
         if (response.data.clientSecret) {
-          // Handle Stripe payment confirmation on the frontend
-          console.log("Stripe client secret:", response.data.clientSecret);
-          const stripe = await loadStripe(
-            process.env.REACT_APP_STRIPE_PUBLIC_KEY
-          );
-          const { error } = await stripe.confirmCardPayment(
-            response.data.clientSecret
-          );
-
-          if (error) {
-            // Handle error
-            dispatch(setError({ message: "Payment failed" }));
-            setAlertModal(true);
-          } else {
-            // Payment succeeded
-            dispatch(setSuccess("Payment successful!"));
-            setSuccessModal(true);
-            // Redirect or update state
-            setTimeout(() => {
-              dispatch(clearForm());
-              window.location.href = "/order";
-            }, 2000);
-          }
+          setClientSecret(response.data.clientSecret); // Show Stripe payment form
+          setIsLoading(false); // Allow user to proceed with Stripe payment
         } else if (response.data.payment_url) {
-          // Redirect to Paystack payment page
-          window.location.href = response.data.payment_url;
+          window.location.href = response.data.payment_url; // Redirect to Paystack
         } else {
-          // Handle COD or simple success
+          // Handle COD
           dispatch(setSuccess(response.data.message));
           setSuccessModal(true);
           setTimeout(() => {
             dispatch(clearForm());
             setSuccessModal(false);
             window.location.href = "/order";
-          }, 8000);
+          }, 2000);
         }
       }
     } catch (error) {
       if (error.response && error.response.status === 422) {
-        console.error("validation errors:", error.response.data.errors);
-        const validationErrors = error.response.data.errors;
-        dispatch(setError({ message: validationErrors }));
+        console.error("Validation errors:", error.response.data.errors);
+        dispatch(setError({ message: error.response.data.errors }));
       } else {
-        console.error("submission failed:", error);
+        console.error("Submission failed:", error);
+        dispatch(setError({ message: "An error occurred during payment" }));
+        setAlertModal(true);
       }
+      setIsLoading(false);
+    }
+  };
+
+  const handleStripePayment = async (stripe, cardElement) => {
+    setIsLoading(true);
+
+    try {
+      const { error, paymentIntent } = await stripe.confirmCardPayment(
+        clientSecret,
+        {
+          payment_method: {
+            card: cardElement,
+            billing_details: {
+              name: `${firstName} ${lastName}`,
+              email: email,
+              address: {
+                line1: street,
+                city: city,
+                state: state,
+                postal_code: zipCode,
+                country: country,
+              },
+            },
+          },
+        }
+      );
+
+      if (error) {
+        dispatch(setError({ message: error.message }));
+        setAlertModal(true);
+      } else if (paymentIntent.status === "succeeded") {
+        dispatch(setSuccess("Payment successful!"));
+        setSuccessModal(true);
+        setTimeout(() => {
+          dispatch(clearForm());
+          window.location.href = "/order";
+        }, 2000);
+      }
+    } catch (error) {
+      console.error("Stripe payment error:", error);
+      dispatch(setError({ message: "Payment processing failed" }));
+      setAlertModal(true);
     } finally {
       setIsLoading(false);
     }
   };
+
   return (
     <div className="mb-20 px-4 sm:px-6 lg:px-8">
       <form
@@ -204,7 +258,6 @@ export default function PADP() {
               </span>
             </h3>
           </div>
-
           <div className="font-outfit space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -256,6 +309,7 @@ export default function PADP() {
                 value={email}
                 onChange={(e) => {
                   dispatch(setEmail(e.target.value));
+                  dispatch(setError({ ...error, email: "" }));
                   dispatch(setError({ ...error, email: "" }));
                 }}
               />
@@ -375,7 +429,6 @@ export default function PADP() {
                 onChange={(e) => {
                   dispatch(setPhone(e.target.value));
                   dispatch(setError({ ...error, phone: "" }));
-                  dispatch(setError({ ...error, phone: "" }));
                 }}
               />
               {error.phone && (
@@ -398,7 +451,6 @@ export default function PADP() {
                 </span>
               </h3>
             </div>
-
             <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
               <div className="flex justify-between font-outfit text-base text-stone-700 py-2">
                 <p>Subtotal</p>
@@ -422,7 +474,6 @@ export default function PADP() {
                 </div>
               </div>
             </div>
-
             <div className="text-left my-6">
               <h3 className="text-slate-700 font-outfit font-normal text-2xl sm:text-3xl">
                 Payment{" "}
@@ -431,7 +482,6 @@ export default function PADP() {
                 </span>
               </h3>
             </div>
-
             <div className="space-y-3">
               <label
                 className={`flex items-center justify-between p-3 border-2 rounded-lg cursor-pointer transition-colors duration-200 ${
@@ -459,7 +509,6 @@ export default function PADP() {
                   />
                 </div>
               </label>
-
               <label
                 className={`flex items-center justify-between p-3 border-2 rounded-lg cursor-pointer transition-colors duration-200 ${
                   paymentMethod === "paystack"
@@ -486,7 +535,6 @@ export default function PADP() {
                   />
                 </div>
               </label>
-
               <label
                 className={`flex items-center justify-between p-3 border-2 rounded-lg cursor-pointer transition-colors duration-200 ${
                   paymentMethod === "cod"
@@ -514,7 +562,6 @@ export default function PADP() {
                   </div>
                 </div>
               </label>
-
               {error.paymentMethod && (
                 <span className="text-xs text-red-500 block mt-2">
                   {error.paymentMethod}
@@ -522,6 +569,7 @@ export default function PADP() {
               )}
             </div>
 
+            {/* Button to send form data to backend */}
             <button
               type="submit"
               disabled={isLoading}
@@ -529,6 +577,16 @@ export default function PADP() {
             >
               {isLoading ? "Processing..." : "Place Order"}
             </button>
+
+            {/* Stripe payment form appears after backend response */}
+            {paymentMethod === "stripe" && clientSecret && (
+              <Elements stripe={stripePromise}>
+                <CheckoutForm
+                  handleStripePayment={handleStripePayment}
+                  isLoading={isLoading}
+                />
+              </Elements>
+            )}
           </div>
         </div>
       </form>
