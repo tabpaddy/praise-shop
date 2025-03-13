@@ -28,6 +28,7 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import { clearCart } from "../../../redux/CartSlice";
 
 // Load Stripe outside the component
 const stripePromise = loadStripe(
@@ -180,10 +181,12 @@ export default function PADP() {
           setSuccessModal(true);
           setTimeout(() => {
             dispatch(clearForm());
+            dispatch(clearCart());
             setSuccessModal(false);
             window.location.href = "/order";
           }, 2000);
         }
+        dispatch(clearForm());
       }
     } catch (error) {
       if (error.response && error.response.status === 422) {
@@ -194,6 +197,8 @@ export default function PADP() {
         dispatch(setError({ message: "An error occurred during payment" }));
         setAlertModal(true);
       }
+      setIsLoading(false);
+    } finally{
       setIsLoading(false);
     }
   };
@@ -230,6 +235,7 @@ export default function PADP() {
         setSuccessModal(true);
         setTimeout(() => {
           dispatch(clearForm());
+          dispatch(clearCart()); // Add this to clear the cart
           window.location.href = "/order";
         }, 2000);
       }

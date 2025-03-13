@@ -11,7 +11,7 @@ import PasswordReset from "./pages/auth/PasswordReset";
 import Product from "./pages/productPage/Product";
 import Cart from "./pages/cartPage/Cart";
 import PADP from "./pages/paymentAndDeliveryPage/PADP";
-import ProtectedRoute from "../protectedRoutes/UserProtectedRoutes";
+import Order from "./pages/orderPage/Order";
 import ProtectedRouteUser from "../protectedRoutes/UserProtectedRoutes";
 // import api from "../axiosInstance/api";
 // import { useEffect } from "react";
@@ -36,25 +36,33 @@ export default function ClientApp() {
       <>
         <Header />
         <main className="flex-grow">
-        <Routes>
-          <Route path="/*" element={<Home />} />
-          <Route path="/collection" element={<Collection />} />
-          <Route path="/product/:id" element={<Product />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/login" element={<LogIn />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path={`/reset-password`} element={<PasswordReset />} />
-          <Route
-            path="/padp"
-            element={
-              <ProtectedRouteUser>
-                <PADP />
-              </ProtectedRouteUser>
-            }
-          />
-        </Routes>
+          <Routes>
+            <Route path="/*" element={<Home />} />
+            <Route path="/collection" element={<Collection />} />
+            <Route path="/product/:id" element={<Product />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/login" element={<LogIn />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path={`/reset-password`} element={<PasswordReset />} />
+            <Route
+              path="/padp"
+              element={
+                <ProtectedRouteUser>
+                  <PADP />
+                </ProtectedRouteUser>
+              }
+            />
+            <Route
+              path="/orders"
+              element={
+                <ProtectedRouteUser>
+                  <Order />
+                </ProtectedRouteUser>
+              }
+            />
+          </Routes>
         </main>
         <Footer />
       </>
