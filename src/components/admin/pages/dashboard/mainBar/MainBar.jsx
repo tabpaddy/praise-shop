@@ -7,6 +7,7 @@ export default function MainBar() {
 
   const [productNum, setProductNum] = useState("0");
   const [userNum, setUserNum] = useState("0");
+  const [orderNum, setOrderNum] = useState("0");
 
   const adminName = admin.name;
 
@@ -54,10 +55,32 @@ export default function MainBar() {
     }
   };
 
+  const fetchOrderNumber = async () => {
+    try {
+      const response = await api.get("/api/admin/order-count", {
+        headers: {
+          Authorization: `Bearer ${admin.adminToken}`,
+        },
+      });
+      setOrderNum(response.data.order);
+      console.log(response.data.order);
+    } catch (error) {
+      if (error.response && error.response.status === 422) {
+        console.error(
+          "Error getting number of order:",
+          error.response.data || error.message
+        );
+      } else {
+        console.error("getting Order number failed:", error);
+      }
+    }
+  };
+
   useEffect(() => {
     const fetchNumber = async () => {
       await fetchProductNumber();
       await fetchUserNumber();
+      await fetchOrderNumber();
     };
 
     if (admin.adminToken) {
@@ -92,7 +115,7 @@ export default function MainBar() {
         </div>
         <div className="flex flex-col items-center justify-center p-6 bg-white shadow-sm rounded-md hover:shadow-lg transition-shadow">
           <p className="text-xl font-bold">Orders</p>
-          <span className="text-lg font-medium text-gray-700">10</span>
+          <span className="text-lg font-medium text-gray-700">{orderNum}</span>
         </div>
       </div>
 
