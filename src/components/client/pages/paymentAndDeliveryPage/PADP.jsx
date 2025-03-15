@@ -29,6 +29,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { clearCart } from "../../../redux/CartSlice";
+import { syncCartWithBackend } from "../cartPage/Cart"; // Import from Cart.jsx
 
 // Load Stripe outside the component
 const stripePromise = loadStripe(
@@ -97,6 +98,8 @@ export default function PADP() {
   const { user } = useContext(UserContext);
   const [successModal, setSuccessModal] = useState(false);
   const [alertModal, setAlertModal] = useState(false);
+  const { cart, cart_id, quantities } =
+      useSelector((state) => state.cart);
 
   useEffect(() => {
     if (user) {
@@ -150,6 +153,9 @@ export default function PADP() {
       return;
     }
 
+     // Sync cart with backend
+     await syncCartWithBackend(user, cart_id, dispatch);
+
     const formData = new FormData();
     formData.append("firstName", firstName);
     formData.append("lastName", lastName);
@@ -162,6 +168,16 @@ export default function PADP() {
     formData.append("phone", phone);
     formData.append("paymentMethod", paymentMethod);
     formData.append("total", total);
+
+    // Add cart items with quantities
+  const items = cart.map((item) => ({
+    id: item.id,
+    product_id: item.product_id,
+    price: item.product.price, // Ensure this matches backend price
+    quantity: quantities[item.id] || 1,
+    size: item.size
+  }));
+  formData.append("items", JSON.stringify(items));
 
     const headers = { Authorization: `Bearer ${user?.userToken}`};
 
@@ -183,7 +199,7 @@ export default function PADP() {
             dispatch(clearForm());
             dispatch(clearCart());
             setSuccessModal(false);
-            window.location.href = "/order";
+            window.location.href = "/orders";
           }, 2000);
         }
         dispatch(clearForm());
@@ -194,7 +210,7 @@ export default function PADP() {
         dispatch(setError({ message: error.response.data.errors }));
       } else {
         console.error("Submission failed:", error);
-        dispatch(setError({ message: "An error occurred during payment" }));
+        dispatch(setError({ message: error.response.data.error }));
         setAlertModal(true);
       }
       setIsLoading(false);

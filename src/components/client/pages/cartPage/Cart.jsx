@@ -14,46 +14,38 @@ import { AiFillDelete } from "react-icons/ai";
 import { FaMinus, FaNairaSign, FaPlus } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 
+export const syncCartWithBackend = async (user, cart_id, dispatch) => {
+  try {
+    const headers = {
+      Authorization: user ? `Bearer ${user.userToken}` : "",
+    };
+    if (user && cart_id) {
+      console.log("Merging cart for user", user.id, "with cart_id", cart_id);
+      await api.post(
+        "/api/merge-cart",
+        { cart_id },
+        { headers, withCredentials: true }
+      );
+    }
+    const endpoint = user ? `/api/cart/${user.id}` : `/api/cart/${cart_id}`;
+    console.log("Fetching from endpoint:", endpoint);
+    const response = await api.get(endpoint, {
+      headers,
+      withCredentials: true,
+    });
+    console.log("Backend response:", response.data);
+    dispatch(setUserCart(response.data));
+  } catch (error) {
+    console.error("Error syncing cart:", error.response?.data || error.message);
+  }
+};
+
 export default function Cart() {
-  const { cart, cart_id, quantities, subTotal, shippingFee, total } = useSelector((state) => state.cart);
+  const { cart, cart_id, quantities, subTotal, shippingFee, total } =
+    useSelector((state) => state.cart);
   const { user } = useContext(UserContext);
   const dispatch = useDispatch();
 
-  const syncCartWithBackend = async () => {
-    try {
-      const headers = {
-        Authorization: user ? `Bearer ${user.userToken}` : "",
-      };
-      //   console.log(
-      //     "User:",
-      //     user ? "Authenticated" : "Guest",
-      //     "Cart ID:",
-      //     cart_id
-      //   );
-      if (user && cart_id) {
-        console.log("Merging cart for user", user.id, "with cart_id", cart_id);
-        await api.post(
-          "/api/merge-cart",
-          { cart_id },
-          { headers, withCredentials: true }
-        );
-      }
-      const endpoint = user ? `/api/cart/${user.id}` : `/api/cart/${cart_id}`;
-      console.log("Fetching from endpoint:", endpoint);
-      const response = await api.get(endpoint, {
-        headers,
-        withCredentials: true,
-      });
-      console.log("Backend response:", response.data);
-      dispatch(setUserCart(response.data));
-    } catch (error) {
-      console.error(
-        "Error syncing cart:",
-        error.response?.data || error.message
-      );
-      console.log("Axios error details:", error);
-    }
-  };
 
   useEffect(() => {
     console.log("useEffect triggered - User:", user, "Cart ID:", cart_id);
@@ -69,19 +61,17 @@ export default function Cart() {
   // Calculate total price for an individual item
   const calculateItemTotal = (item) => {
     const quantity = quantities[item.id] || 1;
-    return (item.product?.price || item.price || 0) * quantity;
+    const price = parseFloat(item.product?.price || item.price) || 0;
+    return price * quantity;
   };
 
   // Calculate totals and update Redux store
   useEffect(() => {
-    const calculateShippingFee = () => {
-      return cart.reduce(
-        (sum, item) => sum + calculateItemTotal(item) * 0.1,
-        0
-      );
-    };
     const calculateSubtotal = () => {
       return cart.reduce((sum, item) => sum + calculateItemTotal(item), 0);
+    };
+    const calculateShippingFee = () => {
+      return calculateSubtotal() * 0.1; // 10% of subtotal, not per item
     };
     const calculateTotal = () => {
       return calculateSubtotal() + calculateShippingFee();
@@ -125,6 +115,12 @@ export default function Cart() {
   //   console.log("cart:", cart);
   //   console.log("guest id:", cart_id);
   //   console.log("user:", user);
+
+  useEffect(() => {
+    console.log("useEffect triggered - User:", user, "Cart ID:", cart_id);
+    if (cart_id || user) syncCartWithBackend(user, cart_id, dispatch);
+  }, [user, cart_id, dispatch]);
+
   return (
     <div className={cart.length === 0 ? `mb-20 md:mb-64 lg:mb-96 ` : "mb-10"}>
       <div className="text-left my-3 mt-10 px-6">
@@ -230,18 +226,14 @@ export default function Cart() {
                     <p className="">Subtotal</p>
                     <div className="flex items-center font-outfit font-light">
                       <FaNairaSign />
-                      <p>
-                        {new Intl.NumberFormat().format(subTotal)}
-                      </p>
+                      <p>{new Intl.NumberFormat().format(subTotal)}</p>
                     </div>
                   </div>
                   <div className="flex border-y-2 border-slate-200 justify-between font-medium font-outfit text-base text-stone-700 py-3">
                     <p className="">Shipping Fee</p>
                     <div className="flex items-center font-outfit font-light">
                       <FaNairaSign />
-                      <p>
-                        {new Intl.NumberFormat().format(shippingFee)}
-                      </p>
+                      <p>{new Intl.NumberFormat().format(shippingFee)}</p>
                     </div>
                   </div>
                   <div className="flex justify-between font-outfit mb-3 text-xl font-bold text-stone-900 py-3">
