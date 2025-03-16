@@ -218,7 +218,7 @@ export default function Header() {
                       <>
                         <li>
                           <Link
-                            to="/profile"
+                            to="/padp"
                             className="block px-4 py-2 hover:bg-gray-100 cursor-pointer font-outfit font-normal"
                             onClick={toggleProfileDropdownClose}
                           >
