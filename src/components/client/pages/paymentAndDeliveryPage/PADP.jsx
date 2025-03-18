@@ -30,49 +30,71 @@ import {
 import { loadStripe } from "@stripe/stripe-js";
 import { clearCart } from "../../../redux/CartSlice";
 import { syncCartWithBackend } from "../cartPage/Cart"; // Import from Cart.jsx
+import { CountryDropdown } from "react-country-region-selector"; // For comparison, but we'll use data instead
+import Select from "react-select"; // Searchable dropdown
 
 // Load Stripe outside the component
 const stripePromise = loadStripe(
   import.meta.env.VITE_REACT_APP_STRIPE_PUBLIC_KEY
 );
 
+// Get country list from react-country-region-selector
+import { getCountries } from "react-country-region-selector";
+const countryList = getCountries().map((country) => ({
+  value: country.code,
+  label: country.name,
+})).sort((a, b) => a.label.localeCompare(b.label)); // Sort alphabetically
+
 const CheckoutForm = ({ handleStripePayment, isLoading }) => {
   const stripe = useStripe();
   const elements = useElements();
+  const [cardBrand, setCardBrand] = useState(""); // Track card type
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!stripe || !elements) {
-      return;
-    }
-
+    if (!stripe || !elements) return;
     const cardElement = elements.getElement(CardElement);
     handleStripePayment(stripe, cardElement);
   };
 
+  const cardOptions = {
+    style: {
+      base: {
+        fontSize: "18px",
+        color: "#1f2937",
+        padding: "12px",
+        "::placeholder": { color: "#9ca3af" },
+        border: "1px solid #d1d5db",
+        borderRadius: "8px",
+      },
+      invalid: { color: "#dc2626", borderColor: "#dc2626" },
+    },
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="mt-4">
-      <CardElement
-        options={{
-          style: {
-            base: {
-              fontSize: "16px",
-              color: "#424770",
-              "::placeholder": { color: "#aab7c4" },
-            },
-            invalid: { color: "#9e2146" },
-          },
-        }}
-      />
-      <button
-        type="submit"
-        disabled={isLoading || !stripe}
-        className="w-full mt-4 px-6 py-3 font-outfit font-medium text-base bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200 disabled:bg-gray-500"
-      >
-        {isLoading ? "Processing..." : "Confirm Payment"}
-      </button>
-    </form>
+    <div className="mt-6 bg-white p-6 rounded-lg shadow-md border border-gray-200">
+      <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+        <span>Enter Card Details</span>
+        {cardBrand && (
+          <span className="text-sm text-gray-600">({cardBrand})</span>
+        )}
+      </h4>
+      <form onSubmit={handleSubmit}>
+        <div className="p-3 border rounded-lg bg-gray-50">
+          <CardElement
+            options={cardOptions}
+            onChange={(e) => setCardBrand(e.brand || "")} // Detect card type
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={isLoading || !stripe}
+          className="w-full mt-4 px-6 py-3 font-outfit font-medium text-base bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200 disabled:bg-gray-500"
+        >
+          {isLoading ? "Processing..." : "Confirm Payment"}
+        </button>
+      </form>
+    </div>
   );
 };
 
@@ -98,8 +120,7 @@ export default function PADP() {
   const { user } = useContext(UserContext);
   const [successModal, setSuccessModal] = useState(false);
   const [alertModal, setAlertModal] = useState(false);
-  const { cart, cart_id, quantities } =
-      useSelector((state) => state.cart);
+  const { cart, cart_id, quantities } = useSelector((state) => state.cart);
 
   useEffect(() => {
     if (user) {
@@ -153,8 +174,8 @@ export default function PADP() {
       return;
     }
 
-     // Sync cart with backend
-     await syncCartWithBackend(user, cart_id, dispatch);
+    // Sync cart with backend
+    await syncCartWithBackend(user, cart_id, dispatch);
 
     const formData = new FormData();
     formData.append("firstName", firstName);
@@ -170,16 +191,16 @@ export default function PADP() {
     formData.append("total", total);
 
     // Add cart items with quantities
-  const items = cart.map((item) => ({
-    id: item.id,
-    product_id: item.product_id,
-    price: item.product.price, // Ensure this matches backend price
-    quantity: quantities[item.id] || 1,
-    size: item.size
-  }));
-  formData.append("items", JSON.stringify(items));
+    const items = cart.map((item) => ({
+      id: item.id,
+      product_id: item.product_id,
+      price: item.product.price, // Ensure this matches backend price
+      quantity: quantities[item.id] || 1,
+      size: item.size,
+    }));
+    formData.append("items", JSON.stringify(items));
 
-    const headers = { Authorization: `Bearer ${user?.userToken}`};
+    const headers = { Authorization: `Bearer ${user?.userToken}` };
 
     try {
       const response = await api.post("/api/payment-order", formData, {
@@ -214,7 +235,7 @@ export default function PADP() {
         setAlertModal(true);
       }
       setIsLoading(false);
-    } finally{
+    } finally {
       setIsLoading(false);
     }
   };
@@ -252,7 +273,8 @@ export default function PADP() {
         setTimeout(() => {
           dispatch(clearForm());
           dispatch(clearCart()); // Add this to clear the cart
-          window.location.href = "/order";
+          setSuccessModal(false);
+          window.location.href = "/orders";
         }, 2000);
       }
     } catch (error) {
@@ -264,12 +286,58 @@ export default function PADP() {
     }
   };
 
+   // Custom styles for react-select
+   const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      padding: "0.5rem",
+      borderWidth: "2px",
+      borderColor: error.country ? "#ef4444" : state.isFocused ? "#94a3b8" : "#e2e8f0",
+      borderRadius: "0.5rem",
+      boxShadow: state.isFocused ? "0 0 0 2px #94a3b8" : "none",
+      "&:hover": {
+        borderColor: error.country ? "#ef4444" : "#d1d5db",
+      },
+      fontFamily: "Outfit, sans-serif",
+      fontSize: "1rem",
+      color: "#1f2937",
+      backgroundColor: "#fff",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      borderRadius: "0.5rem",
+      boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isSelected ? "#4f46e5" : state.isFocused ? "#f3f4f6" : "white",
+      color: state.isSelected ? "white" : "#1f2937",
+      "&:active": {
+        backgroundColor: "#818cf8",
+        color: "white",
+      },
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: "#9ca3af",
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      color: "#1f2937",
+    }),
+    dropdownIndicator: (provided) => ({
+      ...provided,
+      color: "#6b7280",
+      "&:hover": {
+        color: "#4b5563",
+      },
+    }),
+  };
+
+
   return (
     <div className="mb-20 px-4 sm:px-6 lg:px-8">
-      <form
-        onSubmit={handleOrder}
-        className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto"
-      >
+      <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
         {/* Delivery Information */}
         <div>
           <div className="text-left my-6">
@@ -280,7 +348,7 @@ export default function PADP() {
               </span>
             </h3>
           </div>
-          <div className="font-outfit space-y-4">
+          <form onSubmit={handleOrder} className="font-outfit space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <input
@@ -331,7 +399,6 @@ export default function PADP() {
                 value={email}
                 onChange={(e) => {
                   dispatch(setEmail(e.target.value));
-                  dispatch(setError({ ...error, email: "" }));
                   dispatch(setError({ ...error, email: "" }));
                 }}
               />
@@ -421,17 +488,17 @@ export default function PADP() {
                 )}
               </div>
               <div>
-                <input
-                  type="text"
-                  placeholder="Country"
-                  className={`w-full p-3 border-2 rounded-lg ${
-                    error.country ? "border-red-500" : "border-slate-200"
-                  } focus:outline-none focus:ring-2 focus:ring-slate-400`}
-                  value={country}
-                  onChange={(e) => {
-                    dispatch(setCountry(e.target.value));
+                <Select
+                  options={countryList}
+                  value={countryList.find((option) => option.value === country) || null}
+                  onChange={(selectedOption) => {
+                    dispatch(setCountry(selectedOption ? selectedOption.value : ""));
                     dispatch(setError({ ...error, country: "" }));
                   }}
+                  placeholder="Select or type a country..."
+                  styles={customStyles}
+                  isClearable
+                  className="font-outfit"
                 />
                 {error.country && (
                   <span className="text-xs text-red-500 mt-1 block">
@@ -459,7 +526,14 @@ export default function PADP() {
                 </span>
               )}
             </div>
-          </div>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full mt-6 px-6 py-3 font-outfit font-medium text-base bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200 disabled:bg-gray-500"
+            >
+              {isLoading ? "Processing..." : "Place Order"}
+            </button>
+          </form>
         </div>
 
         {/* Cart Totals and Payment Methods */}
@@ -590,28 +664,18 @@ export default function PADP() {
                 </span>
               )}
             </div>
-
-            {/* Button to send form data to backend */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full mt-6 px-6 py-3 font-outfit font-medium text-base bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200 disabled:bg-gray-500"
-            >
-              {isLoading ? "Processing..." : "Place Order"}
-            </button>
-
-            {/* Stripe payment form appears after backend response */}
-            {paymentMethod === "stripe" && clientSecret && (
-              <Elements stripe={stripePromise}>
-                <CheckoutForm
-                  handleStripePayment={handleStripePayment}
-                  isLoading={isLoading}
-                />
-              </Elements>
-            )}
           </div>
+          {/* Stripe Payment Form (Outside main form) */}
+          {paymentMethod === "stripe" && clientSecret && (
+            <Elements stripe={stripePromise}>
+              <CheckoutForm
+                handleStripePayment={handleStripePayment}
+                isLoading={isLoading}
+              />
+            </Elements>
+          )}
         </div>
-      </form>
+      </div>
       <SuccessModal
         modalOpen={successModal}
         modalClose={() => setSuccessModal(false)}
