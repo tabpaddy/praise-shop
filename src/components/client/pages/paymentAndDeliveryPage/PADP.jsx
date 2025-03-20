@@ -30,20 +30,33 @@ import {
 import { loadStripe } from "@stripe/stripe-js";
 import { clearCart } from "../../../redux/CartSlice";
 import { syncCartWithBackend } from "../cartPage/Cart"; // Import from Cart.jsx
-import { CountryDropdown } from "react-country-region-selector"; // For comparison, but we'll use data instead
-import Select from "react-select"; // Searchable dropdown
+import Select from "react-select";
+import { components } from "react-select"; // For custom arrow
 
 // Load Stripe outside the component
 const stripePromise = loadStripe(
   import.meta.env.VITE_REACT_APP_STRIPE_PUBLIC_KEY
 );
 
-// Get country list from react-country-region-selector
-import { getCountries } from "react-country-region-selector";
-const countryList = getCountries().map((country) => ({
-  value: country.code,
-  label: country.name,
-})).sort((a, b) => a.label.localeCompare(b.label)); // Sort alphabetically
+// Prepare country list for react-select
+// Basic country list for demo purposes
+const countryList = [
+  { value: "NG", label: "Nigeria" },
+  { value: "US", label: "United States" },
+  { value: "GB", label: "United Kingdom" },
+  { value: "CA", label: "Canada" },
+  { value: "AU", label: "Australia" },
+  { value: "GH", label: "Ghana" },
+  { value: "ZA", label: "South Africa" },
+  // Add more countries as needed or import from a full list
+].sort((a, b) => a.label.localeCompare(b.label)); // Sort alphabetically
+
+// Custom dropdown arrow
+const CustomDropdownIndicator = (props) => (
+  <components.DropdownIndicator {...props}>
+    <span className="text-gray-500 text-lg">▼</span>
+  </components.DropdownIndicator>
+);
 
 const CheckoutForm = ({ handleStripePayment, isLoading }) => {
   const stripe = useStripe();
@@ -156,7 +169,7 @@ export default function PADP() {
     if (!city.trim()) newErrors.city = "City is Required.";
     if (!state.trim()) newErrors.state = "State is Required.";
     if (!zipCode.trim()) newErrors.zipCode = "ZipCode is Required.";
-    if (!country.trim()) newErrors.country = "Country is Required.";
+    if (!country) newErrors.country = "Country is Required.";
     if (!phone.trim()) newErrors.phone = "Phone is Required.";
     if (!paymentMethod)
       newErrors.paymentMethod = "Please select a payment method.";
@@ -223,7 +236,6 @@ export default function PADP() {
             window.location.href = "/orders";
           }, 2000);
         }
-        dispatch(clearForm());
       }
     } catch (error) {
       if (error.response && error.response.status === 422) {
@@ -231,7 +243,7 @@ export default function PADP() {
         dispatch(setError({ message: error.response.data.errors }));
       } else {
         console.error("Submission failed:", error);
-        dispatch(setError({ message: error.response.data.error }));
+        dispatch(setError({ message: error.response.data.error || error.response.data.message }));
         setAlertModal(true);
       }
       setIsLoading(false);
@@ -257,6 +269,7 @@ export default function PADP() {
                 city: city,
                 state: state,
                 postal_code: zipCode,
+                phone: phone,
                 country: country,
               },
             },
@@ -265,8 +278,9 @@ export default function PADP() {
       );
 
       if (error) {
-        dispatch(setError({ message: error.message }));
+        dispatch(setError({ message: `${error.message}. Your order has been cancelled.` }));
         setAlertModal(true);
+        setClientSecret(null); // Hide the payment form
       } else if (paymentIntent.status === "succeeded") {
         dispatch(setSuccess("Payment successful!"));
         setSuccessModal(true);
@@ -279,20 +293,25 @@ export default function PADP() {
       }
     } catch (error) {
       console.error("Stripe payment error:", error);
-      dispatch(setError({ message: "Payment processing failed" }));
+      dispatch(setError({ message: "Payment processing failed. Your order has been cancelled." }));
       setAlertModal(true);
+      setClientSecret(null); // Hide the payment form
     } finally {
       setIsLoading(false);
     }
   };
 
    // Custom styles for react-select
-   const customStyles = {
+  const customStyles = {
     control: (provided, state) => ({
       ...provided,
-      padding: "0.5rem",
+       padding: "2px",
       borderWidth: "2px",
-      borderColor: error.country ? "#ef4444" : state.isFocused ? "#94a3b8" : "#e2e8f0",
+      borderColor: error.country
+        ? "#ef4444"
+        : state.isFocused
+        ? "#94a3b8"
+        : "#e2e8f0",
       borderRadius: "0.5rem",
       boxShadow: state.isFocused ? "0 0 0 2px #94a3b8" : "none",
       "&:hover": {
@@ -310,7 +329,11 @@ export default function PADP() {
     }),
     option: (provided, state) => ({
       ...provided,
-      backgroundColor: state.isSelected ? "#4f46e5" : state.isFocused ? "#f3f4f6" : "white",
+      backgroundColor: state.isSelected
+        ? "#4f46e5"
+        : state.isFocused
+        ? "#f3f4f6"
+        : "white",
       color: state.isSelected ? "white" : "#1f2937",
       "&:active": {
         backgroundColor: "#818cf8",
@@ -324,13 +347,6 @@ export default function PADP() {
     singleValue: (provided) => ({
       ...provided,
       color: "#1f2937",
-    }),
-    dropdownIndicator: (provided) => ({
-      ...provided,
-      color: "#6b7280",
-      "&:hover": {
-        color: "#4b5563",
-      },
     }),
   };
 
@@ -499,6 +515,7 @@ export default function PADP() {
                   styles={customStyles}
                   isClearable
                   className="font-outfit"
+                  components={{ DropdownIndicator: CustomDropdownIndicator }}
                 />
                 {error.country && (
                   <span className="text-xs text-red-500 mt-1 block">
