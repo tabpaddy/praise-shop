@@ -116,6 +116,7 @@ export default function PADP() {
   const [isLoading, setIsLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [clientSecret, setClientSecret] = useState(null); // Store Stripe client secret
+  const [order_id, setOrder_id] = useState(null); // order id
   const {
     firstName,
     lastName,
@@ -222,6 +223,7 @@ export default function PADP() {
       if (response.status === 200) {
         if (response.data.clientSecret) {
           setClientSecret(response.data.clientSecret); // Show Stripe payment form
+          setOrder_id(response.data.order_id); // order id
           setIsLoading(false); // Allow user to proceed with Stripe payment
         } else if (response.data.payment_url) {
           window.location.href = response.data.payment_url; // Redirect to Paystack
@@ -243,7 +245,11 @@ export default function PADP() {
         dispatch(setError({ message: error.response.data.errors }));
       } else {
         console.error("Submission failed:", error);
-        dispatch(setError({ message: error.response.data.error || error.response.data.message }));
+        dispatch(
+          setError({
+            message: error.response.data.error || error.response.data.message,
+          })
+        );
         setAlertModal(true);
       }
       setIsLoading(false);
@@ -264,12 +270,12 @@ export default function PADP() {
             billing_details: {
               name: `${firstName} ${lastName}`,
               email: email,
+              phone: phone,
               address: {
                 line1: street,
                 city: city,
                 state: state,
                 postal_code: zipCode,
-                phone: phone,
                 country: country,
               },
             },
@@ -278,7 +284,19 @@ export default function PADP() {
       );
 
       if (error) {
-        dispatch(setError({ message: `${error.message}. Your order has been cancelled.` }));
+        // Notify backend to delete the order
+        await api.post(
+          "/api/cancel-order",
+          { order_id: order_id },
+          {
+            headers: { Authorization: `Bearer ${user?.userToken}` },
+          }
+        );
+        dispatch(
+          setError({
+            message: `${error.message}. Your order has been cancelled.`,
+          })
+        );
         setAlertModal(true);
         setClientSecret(null); // Hide the payment form
       } else if (paymentIntent.status === "succeeded") {
@@ -293,7 +311,19 @@ export default function PADP() {
       }
     } catch (error) {
       console.error("Stripe payment error:", error);
-      dispatch(setError({ message: "Payment processing failed. Your order has been cancelled." }));
+      // Notify backend to delete the order
+      await api.post(
+        "/api/cancel-order",
+        { order_id: order_id },
+        {
+          headers: { Authorization: `Bearer ${user?.userToken}` },
+        }
+      );
+      dispatch(
+        setError({
+          message: "Payment processing failed. Your order has been cancelled.",
+        })
+      );
       setAlertModal(true);
       setClientSecret(null); // Hide the payment form
     } finally {
@@ -301,11 +331,11 @@ export default function PADP() {
     }
   };
 
-   // Custom styles for react-select
+  // Custom styles for react-select
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
-       padding: "2px",
+      padding: "2px",
       borderWidth: "2px",
       borderColor: error.country
         ? "#ef4444"
@@ -349,7 +379,6 @@ export default function PADP() {
       color: "#1f2937",
     }),
   };
-
 
   return (
     <div className="mb-20 px-4 sm:px-6 lg:px-8">
@@ -506,9 +535,14 @@ export default function PADP() {
               <div>
                 <Select
                   options={countryList}
-                  value={countryList.find((option) => option.value === country) || null}
+                  value={
+                    countryList.find((option) => option.value === country) ||
+                    null
+                  }
                   onChange={(selectedOption) => {
-                    dispatch(setCountry(selectedOption ? selectedOption.value : ""));
+                    dispatch(
+                      setCountry(selectedOption ? selectedOption.value : "")
+                    );
                     dispatch(setError({ ...error, country: "" }));
                   }}
                   placeholder="Select or type a country..."

@@ -46,7 +46,6 @@ export default function Cart() {
   const { user } = useContext(UserContext);
   const dispatch = useDispatch();
 
-
   useEffect(() => {
     console.log("useEffect triggered - User:", user, "Cart ID:", cart_id);
     if (cart_id || user) syncCartWithBackend();
@@ -134,9 +133,17 @@ export default function Cart() {
 
       <div className="my-5 px-6 mb-10">
         {cart.length === 0 ? (
-          <p className="flex justify-center my-52 font-mono text-2xl md:text-7xl xl:9xl">
-            Your cart is empty
-          </p>
+          <div className="my-32 text-center">
+            <p className=" font-mono text-2xl mb-20 md:text-7xl 2xl:text-9xl">
+              Your cart is empty
+            </p>
+            <Link
+              to={"/collection"}
+              className="font-outfit text-xl md:text-4xl 2xl:text-7xl bg-black text-white px-6 py-3 hover:text-slate-300 rounded-sm shadow-sm hover:shadow-2xl transition"
+            >
+              Click here To add Item
+            </Link>
+          </div>
         ) : (
           <div>
             {cart.map((item) => (
