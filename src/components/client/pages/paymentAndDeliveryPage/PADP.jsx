@@ -580,7 +580,9 @@ export default function PADP() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-6 px-6 py-3 font-outfit font-medium text-base bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200 disabled:bg-gray-500"
+              className={`w-full mt-6 px-6 py-3 font-outfit font-medium text-base bg-black text-white rounded-lg hover:bg-gray-800 transition-colors duration-200 disabled:bg-gray-500 ${
+                paymentMethod === "stripe" && clientSecret ? "hidden" : "block"
+              }`}
             >
               {isLoading ? "Processing..." : "Place Order"}
             </button>
