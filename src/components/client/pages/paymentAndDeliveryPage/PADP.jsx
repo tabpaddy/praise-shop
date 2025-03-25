@@ -285,13 +285,13 @@ export default function PADP() {
 
       if (error) {
         // Notify backend to delete the order
-        await api.post(
-          "/api/cancel-order",
-          { order_id: order_id },
-          {
-            headers: { Authorization: `Bearer ${user?.userToken}` },
-          }
-        );
+        // await api.post(
+        //   "/api/cancel-order",
+        //   { order_id: order_id },
+        //   {
+        //     headers: { Authorization: `Bearer ${user?.userToken}` },
+        //   }
+        // );
         dispatch(
           setError({
             message: `${error.message}. Your order has been cancelled.`,
@@ -311,14 +311,6 @@ export default function PADP() {
       }
     } catch (error) {
       console.error("Stripe payment error:", error);
-      // Notify backend to delete the order
-      await api.post(
-        "/api/cancel-order",
-        { order_id: order_id },
-        {
-          headers: { Authorization: `Bearer ${user?.userToken}` },
-        }
-      );
       dispatch(
         setError({
           message: "Payment processing failed. Your order has been cancelled.",
@@ -326,6 +318,16 @@ export default function PADP() {
       );
       setAlertModal(true);
       setClientSecret(null); // Hide the payment form
+      setTimeout(() => {
+        // Notify backend to delete the order
+        api.post(
+          "/api/cancel-order",
+          { order_id: order_id },
+          {
+            headers: { Authorization: `Bearer ${user?.userToken}` },
+          }
+        );
+      }, 30000);
     } finally {
       setIsLoading(false);
     }
