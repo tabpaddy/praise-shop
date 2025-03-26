@@ -79,7 +79,57 @@ export default function Orders() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                
+                {manageOrder.length > 0 ? (
+                  manageOrder.map((order, index) => (
+                    <tr key={order.id}>
+                      <td className="px-4 py-3 text-sm text-slate-600">
+                        {index + 1}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-slate-600">
+                        {order.user?.name || "N/A"}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-slate-600">
+                        {order.invoice_no}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-slate-600">
+                        {order.amount}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-slate-600">
+                        {order.payment_method}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-slate-600">
+                        {order.payment_status}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-slate-600">
+                        {order.order_status}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-slate-600">
+                        {new Date(order.created_at).toLocaleDateString()}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-slate-600">
+                        {order.deliveryInformation?.first_name}{" "}
+                        {order.deliveryInformation?.last_name}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-slate-600">
+                        {order.items ? JSON.parse(order.items).length : 0} items
+                      </td>
+                      <td className="px-6 py-3 text-center">
+                        <button className="text-indigo-600 hover:text-indigo-800">
+                          View
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="11"
+                      className="px-4 py-3 text-center text-sm text-slate-600"
+                    >
+                      No orders found
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

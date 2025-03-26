@@ -32,6 +32,7 @@ import { clearCart } from "../../../redux/CartSlice";
 import { syncCartWithBackend } from "../cartPage/Cart"; // Import from Cart.jsx
 import Select from "react-select";
 import { components } from "react-select"; // For custom arrow
+import { useLocation } from "react-router-dom";
 
 // Load Stripe outside the component
 const stripePromise = loadStripe(
@@ -135,6 +136,18 @@ export default function PADP() {
   const [successModal, setSuccessModal] = useState(false);
   const [alertModal, setAlertModal] = useState(false);
   const { cart, cart_id, quantities } = useSelector((state) => state.cart);
+  const location = useLocation(); // Add this to access query params
+
+
+  // Check for error in URL on mount
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const errorMessage = queryParams.get('error');
+    if (errorMessage) {
+      dispatch(setError({ message: errorMessage }));
+      setAlertModal(true);
+    }
+  }, [location, dispatch]);
 
   useEffect(() => {
     if (user) {
