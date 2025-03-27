@@ -154,7 +154,7 @@ export default function Collection() {
         filtered.sort((a, b) => a.price - b.price);
         break;
       case "bestseller":
-        filtered.sort((a, b) => b.sold_count - a.sold_count);
+        filtered.sort((a, b) => a.bestseller > b.bestseller);
         break;
       case "newest":
         filtered.sort(
@@ -292,6 +292,7 @@ export default function Collection() {
                   <img
                     className="object-contain shadow-sm w-full rounded-md"
                     src={item.image1_url}
+                    loading="lazy"
                     alt={item.name}
                   />
 

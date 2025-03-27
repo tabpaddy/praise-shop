@@ -157,6 +157,7 @@ export default function Cart() {
                     <img
                       src={item.image1_url || item.image}
                       alt={item.product?.name || item.name || "Item"}
+                      loading="lazy"
                       className="w-[80px] sm:w-[95px] rounded object-contain"
                     />
                   </div>

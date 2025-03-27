@@ -66,6 +66,7 @@ export default function Latest() {
               <img
                 className="object-contain shadow-sm w-full rounded-md"
                 src={item.image1_url}
+                loading="lazy"
                 alt={item.name}
               />
 

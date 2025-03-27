@@ -75,6 +75,7 @@ export default function RelatedProduct(){
                 className="object-contain shadow-sm w-full rounded-md"
                 src={item.image1_url}
                 alt={item.name}
+                loading="lazy"
               />
 
               {/* Product Name */}

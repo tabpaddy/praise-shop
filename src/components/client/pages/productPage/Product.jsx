@@ -154,6 +154,7 @@ export default function Product() {
               <img
                 src={product.image1_url}
                 alt={product.name}
+                loading="lazy"
                 className="w-full h-full object-cover rounded-lg shadow-md border max-h-[500px] sm:max-h-[600px]"
               />
             </div>
@@ -175,6 +176,7 @@ export default function Product() {
                     <img
                       src={img}
                       alt={`${product.name} thumbnail ${index + 1}`}
+                      loading="lazy"
                       className="w-full h-full object-cover border rounded-sm cursor-pointer hover:opacity-85 transition-opacity"
                     />
                   </div>
