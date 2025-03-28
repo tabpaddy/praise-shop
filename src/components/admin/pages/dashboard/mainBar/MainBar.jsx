@@ -63,7 +63,7 @@ export default function MainBar() {
         },
       });
       setOrderNum(response.data.order);
-      console.log(response.data.order);
+      // console.log(response.data.order);
     } catch (error) {
       if (error.response && error.response.status === 422) {
         console.error(

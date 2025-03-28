@@ -1,9 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 import { AdminContext } from "../../../../../context/AdminContext";
 import api from "../../../../../axiosInstance/api";
+import { FaNairaSign } from "react-icons/fa6";
+import ViewOrder from "./ViewOrder";
 
 export default function Orders() {
   const [manageOrder, setManageOrder] = useState([]);
+  const [viewOrder, setViewOrder] = useState(false);
+  const [viewOrderDetails, setViewOrderDetails] = useState([]);
 
   const { admin } = useContext(AdminContext);
 
@@ -14,8 +18,8 @@ export default function Orders() {
           Authorization: `Bearer ${admin.adminToken}`,
         },
       });
-      console.log(response.data.order);
-      setManageOrder(response.data.order);
+      console.log(response.data.orders);
+      setManageOrder(response.data.orders);
     } catch (error) {
       if (error.response && error.response.status === 422) {
         console.error(
@@ -31,6 +35,30 @@ export default function Orders() {
   useEffect(() => {
     fetchOrders();
   }, [admin.adminToken]);
+
+  const viewOrderClick = (order) => {
+    const delivery = order.delivery_information;
+    const user = order.user;
+    setViewOrder(true);
+    setViewOrderDetails([
+      delivery.first_name,
+      delivery.last_name,
+      delivery.phone,
+      delivery.street,
+      delivery.email,
+      delivery.city,
+      delivery.country,
+      delivery.zip_code,
+      delivery.state,
+      user.name,
+      order.invoice_no,
+      order.amount,
+      order.payment_method,
+      order.payment_status,
+      order.payment_reference || "N/A",
+      order.order_status,
+    ]);
+  };
 
   return (
     <div className="overflow-y-auto bg-slate-200 font-outfit p-6 min-h-screen">
@@ -79,7 +107,7 @@ export default function Orders() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {manageOrder.length > 0 ? (
+                {Array.isArray(manageOrder) && manageOrder.length > 0 ? (
                   manageOrder.map((order, index) => (
                     <tr key={order.id}>
                       <td className="px-4 py-3 text-sm text-slate-600">
@@ -92,7 +120,9 @@ export default function Orders() {
                         {order.invoice_no}
                       </td>
                       <td className="px-4 py-3 text-sm text-slate-600">
-                        {order.amount}
+                        <div className="flex gap-1 items-center">
+                          <FaNairaSign /> {order.amount}
+                        </div>
                       </td>
                       <td className="px-4 py-3 text-sm text-slate-600">
                         {order.payment_method}
@@ -107,14 +137,18 @@ export default function Orders() {
                         {new Date(order.created_at).toLocaleDateString()}
                       </td>
                       <td className="px-4 py-3 text-sm text-slate-600">
-                        {order.deliveryInformation?.first_name}{" "}
-                        {order.deliveryInformation?.last_name}
+                        {order.delivery_information?.first_name}{" "}
+                        {order.delivery_information?.last_name}{" "}
+                        {order.delivery_information.email}
                       </td>
                       <td className="px-4 py-3 text-sm text-slate-600">
-                        {order.items ? JSON.parse(order.items).length : 0} items
+                        <p>{order.items ? order.items.length : 0} items</p>
                       </td>
                       <td className="px-6 py-3 text-center">
-                        <button className="text-indigo-600 hover:text-indigo-800">
+                        <button
+                          className="text-indigo-600 hover:text-indigo-800"
+                          onClick={() => viewOrderClick(order)}
+                        >
                           View
                         </button>
                       </td>
@@ -135,6 +169,26 @@ export default function Orders() {
           </div>
         </div>
       </div>
+      <ViewOrder
+        modalOpen={manageOrder}
+        modalClose={() => setManageOrder()}
+        first_name={viewOrderDetails.first_name}
+        last_name={viewOrderDetails.last_name}
+        phone={viewOrderDetails.phone}
+        street={viewOrderDetails.street}
+        email={viewOrderDetails.email}
+        city={viewOrderDetails.city}
+        country={viewOrderDetails.country}
+        zip_code={viewOrderDetails.zip_code}
+        state={viewOrderDetails.state}
+        username={viewOrderDetails.name}
+        invoice_no={viewOrderDetails.invoice_no}
+        amount={viewOrderDetails.amount}
+        payment_method={viewOrderDetails.payment_method}
+        payment_status={viewOrderDetails.payment_status}
+        payment_reference={viewOrderDetails.payment_reference}
+        order_status={viewOrderDetails.order_status}
+      />
     </div>
   );
 }

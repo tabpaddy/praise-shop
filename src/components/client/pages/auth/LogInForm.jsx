@@ -109,7 +109,7 @@ export default function LogInForm() {
         // console.log("expiresIn:", response.data.expiresIn);
         dispatch(setSuccess(response.data.message));
         const tokenExpiration = new Date(
-          Date.now() + response.data.expiresIn * 1000
+          Date.now() + response.data.expiresIn * 30000
         ); // Example: expiresIn in seconds
         updateUser({ ...userData, tokenExpiration, userToken, userDataId }); // Save user to context and localStorage
 
