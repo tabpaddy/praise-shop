@@ -5,11 +5,10 @@ import RelatedProduct from "./RelatedProduct";
 import { HiArrowsRightLeft, HiShieldCheck, HiTruck } from "react-icons/hi2";
 import ProductReview from "./ProductReview";
 import { useDispatch, useSelector } from "react-redux";
-import { addItem, setCartId, setUserCart } from "../../../redux/CartSlice";
+import { addItem, setCartId } from "../../../redux/CartSlice";
 import AlertModal from "./alertModal";
 import { UserContext } from "../../../context/UserContext";
 import api from "../../../axiosInstance/api"; // import api instance
-import axios from "axios";
 import { v4 as uuidv4 } from 'uuid';
 
 export default function Product() {
@@ -31,9 +30,9 @@ export default function Product() {
       setProduct(response.data.product);
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        console.error("Error fetching product:", error.response.data);
+        // console.error("Error fetching product:", error.response.data);
       } else {
-        console.error("getting product failed:", error);
+        // console.error("getting product failed:", error);
         navigate("/"); //redirect to home
       }
     }
@@ -96,7 +95,7 @@ export default function Product() {
     }
   
     try {
-      console.log("User context:", user);
+      // console.log("User context:", user);
       if (user) {
         await api.get("/sanctum/csrf-cookie", { withCredentials: true });
         await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -132,7 +131,7 @@ export default function Product() {
         //   dispatch(setUserCart(cartResponse.data));
         // }
       }
-      console.log(response.data);
+      // console.log(response.data);
     } catch (error) {
       console.error("Error adding to cart:", {
         status: error.response?.status,
