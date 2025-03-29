@@ -39,25 +39,28 @@ export default function Orders() {
   const viewOrderClick = (order) => {
     const delivery = order.delivery_information;
     const user = order.user;
+    console.log("Order Data:", order);
     setViewOrder(true);
-    setViewOrderDetails([
-      delivery.first_name,
-      delivery.last_name,
-      delivery.phone,
-      delivery.street,
-      delivery.email,
-      delivery.city,
-      delivery.country,
-      delivery.zip_code,
-      delivery.state,
-      user.name,
-      order.invoice_no,
-      order.amount,
-      order.payment_method,
-      order.payment_status,
-      order.payment_reference || "N/A",
-      order.order_status,
-    ]);
+    setViewOrderDetails({
+      first_name: delivery.first_name,
+      last_name: delivery.last_name,
+      phone: delivery.phone,
+      street: delivery.street,
+      email: delivery.email,
+      city: delivery.city,
+      country: delivery.country,
+      zip_code: delivery.zip_code,
+      state: delivery.state,
+      username: user.name,
+      invoice_no: order.invoice_no,
+      amount: order.amount,
+      payment_method: order.payment_method,
+      payment_status: order.payment_status,
+      payment_reference: order.payment_reference || "N/A",
+      order_status: order.order_status,
+      order_date: order.created_at,
+      items: order.items,
+    });
   };
 
   return (
@@ -170,24 +173,9 @@ export default function Orders() {
         </div>
       </div>
       <ViewOrder
-        modalOpen={manageOrder}
-        modalClose={() => setManageOrder()}
-        first_name={viewOrderDetails.first_name}
-        last_name={viewOrderDetails.last_name}
-        phone={viewOrderDetails.phone}
-        street={viewOrderDetails.street}
-        email={viewOrderDetails.email}
-        city={viewOrderDetails.city}
-        country={viewOrderDetails.country}
-        zip_code={viewOrderDetails.zip_code}
-        state={viewOrderDetails.state}
-        username={viewOrderDetails.name}
-        invoice_no={viewOrderDetails.invoice_no}
-        amount={viewOrderDetails.amount}
-        payment_method={viewOrderDetails.payment_method}
-        payment_status={viewOrderDetails.payment_status}
-        payment_reference={viewOrderDetails.payment_reference}
-        order_status={viewOrderDetails.order_status}
+        modalOpen={viewOrder}
+        modalClose={() => setViewOrder(false)}
+        {...viewOrderDetails}
       />
     </div>
   );
