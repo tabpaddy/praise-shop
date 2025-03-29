@@ -44,7 +44,8 @@ export default function ManageSubCategory() {
   }, [admin.adminToken]);
 
   if (!admin || !admin.adminToken) {
-    console.error("admin token is missing");
+    // console.error("admin token is missing");
+    alert("admin token is missing");
     return;
   }
 

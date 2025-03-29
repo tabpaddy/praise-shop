@@ -40,14 +40,14 @@ export default function ViewOrder({
   }, [order_status, payment_status]);
 
   // Debug initial props and state
-  useEffect(() => {
-    console.log("Props - Order Status:", order_status);
-    console.log("Props - Payment Status:", payment_status);
-    console.log("State - Order Status:", orderStatus);
-    console.log("State - Payment Status:", paymentStatus);
-    console.log("Items:", items);
-    console.log("Order Date:", order_date);
-  }, [order_status, payment_status, orderStatus, paymentStatus, items, order_date]);
+//   useEffect(() => {
+//     console.log("Props - Order Status:", order_status);
+//     console.log("Props - Payment Status:", payment_status);
+//     console.log("State - Order Status:", orderStatus);
+//     console.log("State - Payment Status:", paymentStatus);
+//     console.log("Items:", items);
+//     console.log("Order Date:", order_date);
+//   }, [order_status, payment_status, orderStatus, paymentStatus, items, order_date]);
 
   // Handle Escape key to close modal
   useEffect(() => {

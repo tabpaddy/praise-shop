@@ -6,7 +6,7 @@ import { HiArrowsRightLeft, HiShieldCheck, HiTruck } from "react-icons/hi2";
 import ProductReview from "./ProductReview";
 import { useDispatch, useSelector } from "react-redux";
 import { addItem, setCartId } from "../../../redux/CartSlice";
-import AlertModal from "./alertModal";
+import AlertModal from "./AlertModal";
 import { UserContext } from "../../../context/UserContext";
 import api from "../../../axiosInstance/api"; // import api instance
 import { v4 as uuidv4 } from 'uuid';

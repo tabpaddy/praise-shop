@@ -71,7 +71,7 @@ export default function EditProduct() {
             },
           }
         );
-        console.log(response.data.product);
+        // console.log(response.data.product);
         setProduct(response.data.product);
       } catch (error) {
         console.error("Error fetching product:", error);

@@ -79,7 +79,7 @@ export default function LogInForm() {
       setLoading(false);
       return; // Stop submission if validation fails
     }
-    console.log(ip_address);
+    // console.log(ip_address);
     try {
       // await fetchCsrfToken();
       // console.log("CSRF Cookie:", document.cookie);
@@ -200,7 +200,7 @@ export default function LogInForm() {
             }}
           />
           <span
-            className="absolute top-3 right-3 cursor-pointer"
+            className="absolute top-4 right-3 cursor-pointer"
             onClick={() => setPasswordVisible(!passwordVisible)}
           >
             {passwordVisible ? <Svg1 /> : <Svg2 />}

@@ -46,15 +46,12 @@ export default function AddProduct() {
 
   const fetchCategoryData = async () => {
     try {
-      const response = await api.get(
-        "/api/admin/manage-category",
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${admin.adminToken}`,
-          },
-        }
-      );
+      const response = await api.get("/api/admin/manage-category", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${admin.adminToken}`,
+        },
+      });
       setManageCategory(response.data.categories);
     } catch (error) {
       if (error.response && error.response.status === 422) {
@@ -70,15 +67,12 @@ export default function AddProduct() {
 
   const fetchSubCategoryData = async () => {
     try {
-      const response = await api.get(
-        "/api/admin/manage-sub-category",
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${admin.adminToken}`,
-          },
-        }
-      );
+      const response = await api.get("/api/admin/manage-sub-category", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${admin.adminToken}`,
+        },
+      });
       setManageSubCategory(response.data.sub_categories);
     } catch (error) {
       if (error.response && error.response.status === 422) {
@@ -98,7 +92,8 @@ export default function AddProduct() {
   }, [admin.adminToken]);
 
   if (!admin || !admin.adminToken) {
-    console.error("admin token is missing");
+    // console.error("admin token is missing");
+    alert("Admin token is missing");
     return;
   }
 
@@ -162,8 +157,8 @@ export default function AddProduct() {
     formData.append("subCategory", subCategory);
     // Append sizes as a JSON string (or handle on backend as you wish)
     sizes.forEach((size) => {
-        formData.append("sizes[]", size);
-      });
+      formData.append("sizes[]", size);
+    });
     formData.append("bestseller", bestSeller ? 1 : 0);
     formData.append("image1", image1File);
     formData.append("image2", image2File);
@@ -195,7 +190,7 @@ export default function AddProduct() {
           document
             .querySelectorAll('input[type="file"]')
             .forEach((input) => (input.value = ""));
-          window.location.href = '/admin/dashboard/view-products'
+          window.location.href = "/admin/dashboard/view-products";
         }, 3000);
       }
     } catch (error) {

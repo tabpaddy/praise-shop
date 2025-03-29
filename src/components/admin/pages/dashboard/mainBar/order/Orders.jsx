@@ -18,7 +18,7 @@ export default function Orders() {
           Authorization: `Bearer ${admin.adminToken}`,
         },
       });
-      console.log(response.data.orders);
+      // console.log(response.data.orders);
       setManageOrder(response.data.orders);
     } catch (error) {
       if (error.response && error.response.status === 422) {

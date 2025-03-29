@@ -6,7 +6,7 @@ import api from "../axiosInstance/api";
 
 export const AdminContext = createContext();
 
-const ENCRYPTION_KEY = "admin-encryption-key"; // Use an environment variable in production
+const ENCRYPTION_KEY = import.meta.env.VITE_REACT_APP_ENCRYPTION_KEY; // Use an environment variable in production
 
 export const AdminProvider = ({ children }) => {
   const [admin, setAdmin] = useState(() => {
@@ -46,7 +46,7 @@ export const AdminProvider = ({ children }) => {
         );
 
         if (response.status === 200) {
-          console.log("Logout successful");
+          // console.log("Logout successful");
           setAdmin(null);
           localStorage.removeItem("admin");
           setTimeout(() => {
@@ -61,7 +61,8 @@ export const AdminProvider = ({ children }) => {
 
   // Use the react-idle-timer hook
   const handleOnIdle = () => {
-    console.log("User is idle. Logging out.");
+    // console.log("User is idle. Logging out.");
+    alert('User is idle for 30 minutes. Logging out.....')
     logoutAdmin();
   };
 

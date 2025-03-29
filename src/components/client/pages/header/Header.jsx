@@ -127,7 +127,7 @@ export default function Header() {
            { cart_id: cart_id },
            { headers, withCredentials: true }
          );
-        console.log(response.data.count);
+        // console.log(response.data.count);
         setCartCount(response.data.count);
       } catch (error) {
         console.error("Error fetching cart count:", error);

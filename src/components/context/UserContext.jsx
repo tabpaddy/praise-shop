@@ -7,18 +7,18 @@ import api from "../axiosInstance/api";
 
 export const UserContext = createContext();
 
-const ENCRYPTION_KEY = "your-encryption-key"; // Use an environment variable in production
+const ENCRYPTION_KEY = import.meta.env.VITE_REACT_APP_ENCRYPTION_KEY; // Use an environment variable in production
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     // Decrypt user data from localStorage on initialization
     const savedUser = localStorage.getItem("user");
     if (savedUser) {
-      console.log("Encrypted data from localStorage:", savedUser);
+      // console.log("Encrypted data from localStorage:", savedUser);
       const bytes = CryptoJS.AES.decrypt(savedUser, ENCRYPTION_KEY);
-      console.log("Decrypted bytes:", bytes);
+      // console.log("Decrypted bytes:", bytes);
       const decryptedData = bytes.toString(CryptoJS.enc.Utf8);
-      console.log("Decrypted data:", decryptedData);
+      // console.log("Decrypted data:", decryptedData);
       return JSON.parse(decryptedData);
     }
     return null;
@@ -63,7 +63,8 @@ export const UserProvider = ({ children }) => {
 
   // use the react-idle-timer hook
   const handleOnIdle = () => {
-    console.log("User is idle");
+    // console.log("User is idle");
+    alert('User is idle for 30 minutes. Logging out...');
     logoutUser();
   };
 
@@ -83,7 +84,8 @@ export const UserProvider = ({ children }) => {
       // console.log("Token Expiry Time:", tokenExpiryTime);
 
       if (currentTime > tokenExpiryTime) {
-        console.log("Token expired. Logging out...");
+        // console.log("Token expired. Logging out...");
+        alert('Token expired. Logging out...');
         logoutUser();
       }
     }

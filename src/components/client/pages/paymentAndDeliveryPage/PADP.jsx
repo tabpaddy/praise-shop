@@ -254,10 +254,10 @@ export default function PADP() {
       }
     } catch (error) {
       if (error.response && error.response.status === 422) {
-        console.error("Validation errors:", error.response.data.errors);
+        // console.error("Validation errors:", error.response.data.errors);
         dispatch(setError({ message: error.response.data.errors }));
       } else {
-        console.error("Submission failed:", error);
+        // console.error("Submission failed:", error);
         dispatch(
           setError({
             message: error.response.data.error || error.response.data.message,

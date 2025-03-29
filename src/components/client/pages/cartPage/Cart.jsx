@@ -20,7 +20,7 @@ export const syncCartWithBackend = async (user, cart_id, dispatch) => {
       Authorization: user ? `Bearer ${user.userToken}` : "",
     };
     if (user && cart_id) {
-      console.log("Merging cart for user", user.id, "with cart_id", cart_id);
+      // console.log("Merging cart for user", user.id, "with cart_id", cart_id);
       await api.post(
         "/api/merge-cart",
         { cart_id },
@@ -28,12 +28,12 @@ export const syncCartWithBackend = async (user, cart_id, dispatch) => {
       );
     }
     const endpoint = user ? `/api/cart/${user.id}` : `/api/cart/${cart_id}`;
-    console.log("Fetching from endpoint:", endpoint);
+    // console.log("Fetching from endpoint:", endpoint);
     const response = await api.get(endpoint, {
       headers,
       withCredentials: true,
     });
-    console.log("Backend response:", response.data);
+    // console.log("Backend response:", response.data);
     dispatch(setUserCart(response.data));
   } catch (error) {
     console.error("Error syncing cart:", error.response?.data || error.message);
@@ -47,7 +47,7 @@ export default function Cart() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log("useEffect triggered - User:", user, "Cart ID:", cart_id);
+    // console.log("useEffect triggered - User:", user, "Cart ID:", cart_id);
     if (cart_id || user) syncCartWithBackend();
   }, [user, cart_id, dispatch]);
 
@@ -116,7 +116,7 @@ export default function Cart() {
   //   console.log("user:", user);
 
   useEffect(() => {
-    console.log("useEffect triggered - User:", user, "Cart ID:", cart_id);
+    // console.log("useEffect triggered - User:", user, "Cart ID:", cart_id);
     if (cart_id || user) syncCartWithBackend(user, cart_id, dispatch);
   }, [user, cart_id, dispatch]);
 

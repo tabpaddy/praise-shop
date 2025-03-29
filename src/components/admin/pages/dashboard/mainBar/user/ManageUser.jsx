@@ -59,7 +59,8 @@ export default function ManageUser() {
   }, [admin?.adminToken]); // Dependency array
 
   if (!admin || !admin.adminToken) {
-    console.error("Admin token is missing or invalid");
+    // console.error("Admin token is missing or invalid");
+    alert("Admin token is missing or invalid");
     return;
   }
 

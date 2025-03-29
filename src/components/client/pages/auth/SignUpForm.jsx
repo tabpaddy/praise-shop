@@ -209,7 +209,7 @@ export default function SignUpForm() {
           />
           {/* Eye Icon */}
           <span
-            className="absolute top-3 right-3 cursor-pointer"
+            className="absolute top-4 right-3 cursor-pointer"
             onClick={() => setPasswordVisible(!passwordVisible)}
           >
             {passwordVisible ? <Svg1 /> : <Svg2 />}
@@ -256,7 +256,7 @@ export default function SignUpForm() {
           />
           {/* Eye Icon */}
           <span
-            className="absolute top-3 right-3 cursor-pointer"
+            className="absolute top-4 right-3 cursor-pointer"
             onClick={() =>
               setPasswordConfirmationVisible(!passwordConfirmationVisible)
             }

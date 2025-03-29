@@ -31,7 +31,7 @@ export default function Order() {
           withCredentials: true,
         });
         setOrders(response.data.orders || []);
-        console.log("Orders:", response.data.orders);
+        // console.log("Orders:", response.data.orders);
         if (paymentSuccess) {
           dispatch(clearCart());
         }
@@ -68,8 +68,6 @@ export default function Order() {
       delivery.zip_code || "N/A",
       delivery.state || "N/A",
     ]);
-    console.log("Order Object:", order);
-    console.log("Delivery Information:", order.delivery_information);
   };
 
   return (

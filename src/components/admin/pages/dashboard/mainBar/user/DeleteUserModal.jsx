@@ -33,7 +33,8 @@ export default function DeleteUserModal({
   if (!modalOpen) return null;
 
   if (!admin || !admin.adminToken) {
-    console.error("Admin token is missing or invalid");
+    // console.error("Admin token is missing or invalid");
+    alert("Admin token is invalid or missing");
     return;
   }
 
