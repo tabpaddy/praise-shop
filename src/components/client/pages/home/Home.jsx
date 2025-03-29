@@ -1,7 +1,7 @@
 import Subscribe from "../subscribe/Subscribe";
 import BestSeller from "../best/BestSeller";
 import Latest from "../latest/Latest";
-import hero_img from "../../../../assets/hero_img.png";
+import hero_img from "src/assets/hero_img.png";
 import { FaExchangeAlt } from "react-icons/fa";
 import { MdSupportAgent, MdHighQuality } from "react-icons/md";
 
