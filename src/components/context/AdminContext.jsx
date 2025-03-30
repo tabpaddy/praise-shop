@@ -70,6 +70,7 @@ export const AdminProvider = ({ children }) => {
     timeout: 1800000, // 30 minutes (1,800,000 milliseconds)
     onIdle: handleOnIdle,
     debounce: 500,   // Optional: Debounce idle detection by 500ms
+    disabled: !admin, // Disable when user is false
   });
 
   // check token expiration and auto-logout

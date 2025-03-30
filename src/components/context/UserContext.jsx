@@ -72,6 +72,7 @@ export const UserProvider = ({ children }) => {
     timeout: 1000 * 60 * 30, // 30 minutes
     onIdle: handleOnIdle,
     debounce: 500,
+    disabled: !user, // Disable when user is false
   });
 
   // Check token expiration and auto-logout
