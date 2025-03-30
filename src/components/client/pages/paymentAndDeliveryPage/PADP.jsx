@@ -16,8 +16,8 @@ import {
   setSuccess,
   setZipCode,
 } from "../../../redux/DeliveryInformationSlice";
-import stripe_logo from "src/assets/stripe_logo.png";
-import paystack_logo from "src/assets/paystack_logo.png";
+import stripe_logo from "../../../../assets/stripe_logo.png";
+import paystack_logo from "../../../../assets/paystack_logo.png";
 import api from "../../../axiosInstance/api";
 import SuccessModal from "./SuccessModal";
 import AlertModal from "../productPage/AlertModal";

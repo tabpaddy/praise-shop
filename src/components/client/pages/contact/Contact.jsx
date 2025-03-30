@@ -1,5 +1,5 @@
 import Subscribe from "../subscribe/Subscribe";
-import contact_img from "src/assets/contact_img.png";
+import contact_img from "../../../../assets/contact_img.png";
 
 export default function Contact() {
   return (

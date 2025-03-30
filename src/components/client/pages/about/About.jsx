@@ -1,5 +1,5 @@
 import Subscribe from "../subscribe/Subscribe";
-import about_img from "src/assets/about_img.png";
+import about_img from "../../../../assets/about_img.png";
 import ChooseUs from "./ChooseUs";
 
 export default function About() {
