@@ -6,7 +6,7 @@ import ClientApp from "./components/client/ClientApp";
 function App() {
   return (
     <Routes>
-      <Route path="/admin/*" element={<AdminApp />} />
+      <Route path="/admin/*" element={<ClientApp />} />
       <Route path="/*" element={<AdminApp />} />
     </Routes>
   );
