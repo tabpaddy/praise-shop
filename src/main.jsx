@@ -9,15 +9,13 @@ import { BrowserRouter } from "react-router-dom";
 import { AdminProvider } from "./components/context/AdminContext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <UserProvider>
-        <AdminProvider>
+  <Provider store={store}>
+    <UserProvider>
+      <AdminProvider>
         <BrowserRouter>
-        <App />
+          <App />
         </BrowserRouter>
-        </AdminProvider>
-      </UserProvider>
-    </Provider>
-  </React.StrictMode>
+      </AdminProvider>
+    </UserProvider>
+  </Provider>
 );
