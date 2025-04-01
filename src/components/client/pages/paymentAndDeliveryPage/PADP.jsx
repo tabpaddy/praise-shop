@@ -397,7 +397,7 @@ export default function PADP() {
 
   return (
     <div className="mb-20 px-4 sm:px-6 lg:px-8">
-      <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+      <div className={cart.length < 1 ? `flex justify-center` :`grid md:grid-cols-2 gap-8 max-w-6xl mx-auto`}>
         {/* Delivery Information */}
         <div>
           <div className="text-left my-6">
@@ -592,6 +592,7 @@ export default function PADP() {
                 </span>
               )}
             </div>
+            {cart.length > 0 && (
             <button
               type="submit"
               disabled={isLoading}
@@ -601,10 +602,12 @@ export default function PADP() {
             >
               {isLoading ? "Processing..." : "Place Order"}
             </button>
+            )}
           </form>
         </div>
 
         {/* Cart Totals and Payment Methods */}
+        {cart.length > 0 && (
         <div className="mt-6 md:mt-0">
           <div className="max-w-md mx-auto">
             <div className="text-left my-6">
@@ -743,6 +746,7 @@ export default function PADP() {
             </Elements>
           )}
         </div>
+        )}
       </div>
       <SuccessModal
         modalOpen={successModal}
