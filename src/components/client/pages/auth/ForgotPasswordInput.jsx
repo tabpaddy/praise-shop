@@ -5,6 +5,7 @@ export default function ForgotPasswordInput({ isOpen, onClose }) {
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
   const [email, setEmail] = useState("");
+  const [loading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const handleKeydown = (event) => {
@@ -35,7 +36,9 @@ export default function ForgotPasswordInput({ isOpen, onClose }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // Start loading indicator
     if (!validateForm()) {
+      setIsLoading(false); // Stop loading if validation fails
       return;
     }
 
@@ -71,6 +74,8 @@ export default function ForgotPasswordInput({ isOpen, onClose }) {
       } else {
         setError("Unable to connect to the server. Please check your network.");
       }
+    } finally{
+      setIsLoading(false); // Stop loading indicator
     }
   };
 
@@ -109,9 +114,10 @@ export default function ForgotPasswordInput({ isOpen, onClose }) {
 
           <button
             type="submit"
+            disabled={loading}
             className="w-full bg-black text-white py-2 px-4 rounded-md mt-4 hover:bg-gray-800 hover:text-slate-300 transition"
           >
-            Send Reset Link
+            {loading ? 'Loading...' : 'Send Reset Link'}
           </button>
         </form>
       </div>
