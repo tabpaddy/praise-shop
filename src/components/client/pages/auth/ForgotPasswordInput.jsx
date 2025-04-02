@@ -51,7 +51,7 @@ export default function ForgotPasswordInput({ isOpen, onClose }) {
       );
 
       if (response.status === 200) {
-        setMessage("Password reset link sent successfully.");
+        setMessage("Password reset link sent successfully to your email.");
 
         setTimeout(() => {
           setEmail(""); // Clear the input field

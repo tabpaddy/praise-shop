@@ -104,7 +104,7 @@ export default function Product() {
       const headers = {
         Authorization: user ? `Bearer ${user?.userToken}` : "",
       };
-      console.log("Request headers:", headers);
+      // console.log("Request headers:", headers);
       const response = await api.post(
         "/api/add-to-cart",
         { product_id: product.id, size: selectedSize, cart_id: cartId },

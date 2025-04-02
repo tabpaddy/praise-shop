@@ -102,7 +102,6 @@ export default function LogInForm() {
         // Update the user context with user data
         const userData = response.data.user; // Replace `response.data.user` with the actual user object from your API
         const userToken = response.data.token;
-        const userDataId = response.data.userId;
 
         // console.log("User data:", userData);
         // console.log("Token:", userToken);
@@ -111,7 +110,7 @@ export default function LogInForm() {
         const tokenExpiration = new Date(
           Date.now() + response.data.expiresIn * 30000
         ); // Example: expiresIn in seconds
-        updateUser({ ...userData, tokenExpiration, userToken, userDataId }); // Save user to context and localStorage
+        updateUser({ ...userData, tokenExpiration, userToken}); // Save user to context and localStorage
 
         // Merge guest cart
         
