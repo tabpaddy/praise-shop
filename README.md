@@ -123,11 +123,11 @@ Live at https://shopwithpraise.vercel.app.
             Admin Dashboard
             Product and user management interface.To view locally, 
 
-see https://github.com/tabpaddy/praise-shop/screenshots/ folder.
+see /screenshots folder.
 
 
 ### Why No Live Backend?
-    - Built for resume purposes with a $0 budget. Frontend is hosted on Vercel; backend runs locally (see backend/ folder for setup).
+Built for resume purposes with a $0 budget. Frontend is hosted on Vercel; backend runs locally (see backend/ folder for setup).
 
 
 ### Lessons Learned
