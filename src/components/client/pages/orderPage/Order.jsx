@@ -108,7 +108,7 @@ export default function Order() {
             {orders.map((order) => (
               <div
                 key={order.id}
-                className="border-y border-slate-200 py-4 grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-3 sm:gap-4"
+                className="border-y border-slate-200 items-center py-4 grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-3 sm:gap-4"
               >
                 {/* Order Info */}
                 <div className="flex flex-col gap-2">
@@ -173,7 +173,7 @@ export default function Order() {
 
                 {/* Track Order Button - Full width on mobile */}
                 <button
-                  className="text-stone-800 font-outfit text-xs sm:text-sm md:text-base px-3 py-1 sm:px-4 sm:py-2 hover:border hover:border-gray-500 hover:rounded-md transition w-full sm:w-auto"
+                  className="text-stone-800 font-outfit h-10 text-xs sm:text-sm md:text-base px-3 py-1 sm:px-4 sm:py-2 hover:border hover:border-gray-500 hover:rounded-md transition w-full sm:w-auto"
                   onClick={() => TrackOrderClick(order)}
                 >
                   Track Order
